@@ -3,6 +3,8 @@
 
 #include "Window.h"
 #include "Shader.h"
+#include "VertexBuffer.h"
+#include "VAO.h"
 
 #include <filesystem>
 #include <fstream>
@@ -28,32 +30,25 @@ int main()
     }
 
     float vertices[] = {
-        -0.5f, -0.5f, -0.0f,
+        -0.5f, -0.5f, 0.0f,
         0.5f, -0.5f, 0.0f,
         0.0f, 0.5f, 0.0f};
 
-    std::uint32_t VBO;
-    glGenBuffers(1, &VBO);
-
-    std::uint32_t VAO;
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
+    VAO vao;
+    VertexBuffer buffer(vertices, 9 * sizeof(float));
+    vao.AddVertexBuffer(buffer, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
 
     Shader shader("../../../app/shaders/vs.glsl", "../../../app/shaders/fs.glsl");
-    shader.Use();
-    glBindVertexArray(VAO);
 
     while (!window.ShouldClose())
     {
         glClear(GL_COLOR_BUFFER_BIT);
+
+        shader.Use();
+        vao.Bind();
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
-        window.PollEvents();
         window.SwapBuffers();
+        window.PollEvents();
     }
 }

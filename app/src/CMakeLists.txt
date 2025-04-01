@@ -4,6 +4,10 @@ set(SOURCES
     "Window.cpp"
     "Shader.h"
     "Shader.cpp"
+    "VertexBuffer.h"
+    "VertexBuffer.cpp"
+    "VAO.h"
+    "VAO.cpp"
 )
 
 add_executable("RayTracer" ${SOURCES})
