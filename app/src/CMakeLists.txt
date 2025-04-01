@@ -1,5 +1,9 @@
 set(SOURCES
 	"Main.cpp"
+    "Window.h"
+    "Window.cpp"
+    "Shader.h"
+    "Shader.cpp"
 )
 
 add_executable("RayTracer" ${SOURCES})
