@@ -8,6 +8,8 @@ set(SOURCES
     "VertexBuffer.cpp"
     "VAO.h"
     "VAO.cpp"
+    "IndexBuffer.h"
+    "IndexBuffer.cpp"
 )
 
 add_executable("RayTracer" ${SOURCES})
