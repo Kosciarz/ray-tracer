@@ -22,7 +22,7 @@ public:
 
     inline void Use() const { glUseProgram(m_ProgramID); }
 
-    inline void Unbind() const { glUseProgram(0); }
+    inline void Unuse() const { glUseProgram(0); }
 
     inline std::uint32_t GetProgramID() const { return m_ProgramID; }
 

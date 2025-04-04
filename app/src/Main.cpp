@@ -31,33 +31,48 @@ int main()
         return -1;
     }
 
-    std::vector<float> vertices = {
+    std::vector<float> vertices1 = {
         -0.5f, -0.5f, 0.0f,
         0.5f, -0.5f, 0.0f,
+        0.5f, 0.5f, 0.0f};
+
+    std::vector<float> vertices2 = {
         0.5f, 0.5f, 0.0f,
-        -0.5f, 0.5f, 0.0f};
+        -0.5f, 0.5f, 0.5f,
+        -0.5f, -0.5f, 0.0f};
 
-    std::vector<std::uint32_t> indices = {
-        0, 1, 2,
-        2, 3, 0};
+    Shader shader1("../../../app/shaders/vs.glsl", "../../../app/shaders/fs.glsl");
+    Shader shader2("../../../app/shaders/vs.glsl", "../../../app/shaders/yellowfs.glsl");
 
-    Shader shader("../../../app/shaders/vs.glsl", "../../../app/shaders/fs.glsl");
+    VAO vao1;
+    vao1.Bind();
+    VertexBuffer buffer1(vertices1.data(), vertices1.size() * sizeof(float));
 
-    VAO vao;
-    vao.Bind();
-    VertexBuffer buffer(vertices.data(), vertices.size() * sizeof(float));
-    IndexBuffer elementBuffer(indices.data(), indices.size() * sizeof(std::uint32_t));
+    vao1.AddVertexBuffer(buffer1, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
+    vao1.Unbind();
 
-    vao.AddVertexBuffer(buffer, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
-    vao.Unbind();
+    VAO vao2;
+    vao2.Bind();
+    VertexBuffer buffer2(vertices2.data(), vertices2.size() * sizeof(float));
+
+    vao2.AddVertexBuffer(buffer2, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
+    vao2.Unbind();
 
     while (!window.ShouldClose())
     {
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        shader.Use();
-        vao.Bind();
-        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+        shader1.Use();
+        vao1.Bind();
+        glDrawArrays(GL_TRIANGLES, 0, vertices2.size());
+        vao1.Unbind();
+        shader1.Unuse();
+
+        shader2.Use();
+        vao2.Bind();
+        glDrawArrays(GL_TRIANGLES, 0, vertices2.size());
+        vao2.Unbind();
+        shader2.Unuse();
 
         window.SwapBuffers();
         window.PollEvents();
