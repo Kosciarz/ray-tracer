@@ -18,13 +18,13 @@ class Shader
 public:
     Shader(const std::filesystem::path& vertexShaderPath, const std::filesystem::path& fragmentShaderPath);
 
-    ~Shader() { glDeleteProgram(m_ProgramID); };
+    ~Shader();
 
-    inline void Use() const { glUseProgram(m_ProgramID); }
+    void Use() const;
 
-    inline void Unuse() const { glUseProgram(0); }
+    void Unuse() const;
 
-    inline std::uint32_t GetProgramID() const { return m_ProgramID; }
+    std::uint32_t GetProgramID() const;
 
 private:
     static std::string ReadFile(const std::filesystem::path& path);

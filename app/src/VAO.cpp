@@ -2,31 +2,32 @@
 
 #include "VAO.h"
 #include "VertexBuffer.h"
+#include "Utils.h"
 
 VAO::VAO()
 {
-    glGenVertexArrays(1, &m_VAO);
+    GLCALL(glGenVertexArrays(1, &m_VAO));
 }
 
 VAO::~VAO()
 {
-    glDeleteVertexArrays(1, &m_VAO);
+    GLCALL(glDeleteVertexArrays(1, &m_VAO));
 }
 
 void VAO::Bind() const
 {
-    glBindVertexArray(m_VAO);
+    GLCALL(glBindVertexArray(m_VAO));
 }
 
 void VAO::Unbind() const
 {
-    glBindVertexArray(0);
+    GLCALL(glBindVertexArray(0));
 }
 
-void VAO::AddVertexBuffer(const VertexBuffer& buffer, std::uint32_t index, std::uint32_t size, std::uint32_t type, std::int32_t stride, const void* offset)
+void VAO::AddVertexBuffer(const VertexBuffer& buffer, std::uint32_t index, std::uint32_t size, std::uint32_t type, std::int32_t stride, const void* offset) const
 {
     Bind();
     buffer.Bind();
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(index, size, type, GL_FALSE, stride, offset);
+    GLCALL(glEnableVertexAttribArray(0));
+    GLCALL(glVertexAttribPointer(index, size, type, GL_FALSE, stride, offset));
 }

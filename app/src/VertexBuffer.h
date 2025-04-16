@@ -3,6 +3,7 @@
 #include <glad/gl.h>
 
 #include <cstdint>
+#include <iostream>
 
 class VertexBuffer
 {
@@ -15,7 +16,7 @@ public:
 
     void Unbind() const;
 
-    void UpdateData(const void* data, const std::size_t size);
+    void UpdateData(const void* data, const std::size_t size) const;
 
 private:
     std::uint32_t m_BufferID;

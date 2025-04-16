@@ -15,7 +15,7 @@ public:
 
     void Unbind() const;
 
-    void AddVertexBuffer(const VertexBuffer& buffer, std::uint32_t index, std::uint32_t size, std::uint32_t type, std::int32_t stride, const void* offset);
+    void AddVertexBuffer(const VertexBuffer& buffer, std::uint32_t index, std::uint32_t size, std::uint32_t type, std::int32_t stride, const void* offset) const;
 
 private:
     std::uint32_t m_VAO;

@@ -11,17 +11,17 @@ public:
 
     ~Window();
 
-    inline bool ShouldClose() const { return glfwWindowShouldClose(m_Window); }
+    bool ShouldClose() const;
 
-    inline void PollEvents() const { glfwPollEvents(); }
+    void PollEvents() const;
 
-    inline void SwapBuffers() const { glfwSwapBuffers(m_Window); }
+    void SwapBuffers() const;
 
-    inline GLFWwindow* GetWindow() { return m_Window; }
+    GLFWwindow* GetWindow();
 
 private:
     static void Resize(GLFWwindow* window, const int width, const int height);
 
 private:
-    GLFWwindow* m_Window;
+    GLFWwindow* m_Window = nullptr;
 };

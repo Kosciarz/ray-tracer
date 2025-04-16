@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 
 #include "Window.h"
+#include "Utils.h"
 
 #include <iostream>
 #include <cstdint>
@@ -10,7 +11,7 @@ Window::Window(const std::uint16_t width, const std::uint16_t height, const char
 {
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 #ifdef __APPLE__
@@ -26,6 +27,12 @@ Window::Window(const std::uint16_t width, const std::uint16_t height, const char
 
     glfwMakeContextCurrent(m_Window);
     glfwSetFramebufferSizeCallback(m_Window, Resize);
+
+    if (!gladLoadGL(glfwGetProcAddress))
+    {
+        glfwTerminate();
+        throw std::runtime_error{"failed to initialize GLAD"};
+    }
 }
 
 Window::~Window()
@@ -34,7 +41,27 @@ Window::~Window()
     glfwTerminate();
 }
 
+bool Window::ShouldClose() const
+{
+    return glfwWindowShouldClose(m_Window);
+}
+
+void Window::PollEvents() const
+{
+    glfwPollEvents();
+}
+
+void Window::SwapBuffers() const
+{
+    glfwSwapBuffers(m_Window);
+}
+
+GLFWwindow* Window::GetWindow()
+{
+    return m_Window;
+}
+
 void Window::Resize(GLFWwindow* window, const int width, const int height)
 {
-    glViewport(0, 0, width, height);
+    GLCALL(glViewport(0, 0, width, height));
 }
