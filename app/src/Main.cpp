@@ -43,8 +43,8 @@ static std::uint32_t CompileShader(const std::uint32_t shaderType, const std::fi
 
 static std::uint32_t CreateShader()
 {
-    std::uint32_t vertexShader = CompileShader(GL_VERTEX_SHADER, "../../../app/shaders/vs.glsl");
-    std::uint32_t fragmentShader = CompileShader(GL_FRAGMENT_SHADER, "../../../app/shaders/fs.glsl");
+    std::uint32_t vertexShader = CompileShader(GL_VERTEX_SHADER, "../../../../../app/shaders/vs.glsl");
+    std::uint32_t fragmentShader = CompileShader(GL_FRAGMENT_SHADER, "../../../../../app/shaders/fs.glsl");
     if (!vertexShader || !fragmentShader)
         return 0;
 
