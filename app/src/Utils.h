@@ -22,7 +22,7 @@ inline const char* GetGLErrorString(GLenum error)
 }
 
 #ifdef DEBUG
-#define GLCALL(x) \
+#define GL_CHECK(x) \
     x; \
     { \
         GLenum error = glGetError(); \

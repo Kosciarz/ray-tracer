@@ -18,17 +18,17 @@ Shader::Shader(const std::filesystem::path& vertexPath, const std::filesystem::p
 
 Shader::~Shader()
 {
-    GLCALL(glDeleteProgram(m_ProgramID));
+    GL_CHECK(glDeleteProgram(m_ProgramID));
 }
 
 void Shader::Use() const
 {
-    GLCALL(glUseProgram(m_ProgramID));
+    GL_CHECK(glUseProgram(m_ProgramID));
 }
 
 void Shader::Unuse() const
 {
-    GLCALL(glUseProgram(0));
+    GL_CHECK(glUseProgram(0));
 }
 
 std::uint32_t Shader::GetProgramID() const
@@ -55,15 +55,15 @@ std::uint32_t Shader::CompileShader(const std::uint32_t shaderType, const std::s
 {
     const char* sourcePtr = source.c_str();
     std::uint32_t shader = glCreateShader(shaderType);
-    GLCALL(glShaderSource(shader, 1, &sourcePtr, nullptr));
-    GLCALL(glCompileShader(shader));
+    GL_CHECK(glShaderSource(shader, 1, &sourcePtr, nullptr));
+    GL_CHECK(glCompileShader(shader));
 
     std::int32_t success;
-    GLCALL(glGetShaderiv(shader, GL_COMPILE_STATUS, &success));
+    GL_CHECK(glGetShaderiv(shader, GL_COMPILE_STATUS, &success));
     if (success != GL_TRUE)
     {
         char message[512];
-        GLCALL(glGetShaderInfoLog(shader, 512, NULL, message));
+        GL_CHECK(glGetShaderInfoLog(shader, 512, NULL, message));
         std::cerr << "Error: failed to compile "
             << (shaderType == GL_VERTEX_SHADER ? "vertex" : "fragment")
             << " shader" << '\n'
@@ -79,21 +79,21 @@ void Shader::CreateShader()
    std::uint32_t fragmentShader = CompileShader(GL_FRAGMENT_SHADER, m_Sources.fragment);
 
    m_ProgramID = glCreateProgram();
-   GLCALL(glAttachShader(m_ProgramID, vertexShader));
-   GLCALL(glAttachShader(m_ProgramID, fragmentShader));
-   GLCALL(glLinkProgram(m_ProgramID));
-   GLCALL(glValidateProgram(m_ProgramID));
+   GL_CHECK(glAttachShader(m_ProgramID, vertexShader));
+   GL_CHECK(glAttachShader(m_ProgramID, fragmentShader));
+   GL_CHECK(glLinkProgram(m_ProgramID));
+   GL_CHECK(glValidateProgram(m_ProgramID));
 
    std::int32_t success;
-   GLCALL(glGetProgramiv(m_ProgramID, GL_LINK_STATUS, &success));
+   GL_CHECK(glGetProgramiv(m_ProgramID, GL_LINK_STATUS, &success));
    if (success != GL_TRUE)
    {
        char message[512];
-       GLCALL(glGetProgramInfoLog(m_ProgramID, sizeof(message), nullptr, message));
+       GL_CHECK(glGetProgramInfoLog(m_ProgramID, sizeof(message), nullptr, message));
        std::cerr << "Error: failed to link program: " << message << '\n';
    }
 
-   GLCALL(glDeleteShader(vertexShader));
-   GLCALL(glDeleteShader(fragmentShader));
+   GL_CHECK(glDeleteShader(vertexShader));
+   GL_CHECK(glDeleteShader(fragmentShader));
 }
 

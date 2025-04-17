@@ -62,17 +62,17 @@ int main()
 
     while (!window.ShouldClose())
     {
-        GLCALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+        GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
         shader1.Use();
         vao1.Bind();
-        GLCALL(glDrawArrays(GL_TRIANGLES, 0, vertices2.size() / 3));
+        GL_CHECK(glDrawArrays(GL_TRIANGLES, 0, vertices2.size() / 3));
         vao1.Unbind();
         shader1.Unuse();
 
         shader2.Use();
         vao2.Bind();
-        GLCALL(glDrawArrays(GL_TRIANGLES, 0, vertices2.size() / 3));
+        GL_CHECK(glDrawArrays(GL_TRIANGLES, 0, vertices2.size() / 3));
         vao2.Unbind();
         shader2.Unuse();
 

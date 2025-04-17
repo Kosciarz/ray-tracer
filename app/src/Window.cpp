@@ -63,5 +63,5 @@ GLFWwindow* Window::GetWindow()
 
 void Window::Resize(GLFWwindow* window, const int width, const int height)
 {
-    GLCALL(glViewport(0, 0, width, height));
+    GL_CHECK(glViewport(0, 0, width, height));
 }
