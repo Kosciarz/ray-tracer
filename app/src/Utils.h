@@ -21,7 +21,7 @@ inline const char* GetGLErrorString(GLenum error)
     }
 }
 
-#ifdef DEBUG
+#ifndef NDEBUG
 #define GL_CHECK(x) \
     x; \
     { \

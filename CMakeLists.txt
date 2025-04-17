@@ -32,9 +32,16 @@ FetchContent_Declare(
 	GIT_SHALLOW true
 )
 
+FetchContent_Declare(
+	stb
+	GIT_REPOSITORY https://github.com/nothings/stb.git
+	GIT_TAG master
+	GIT_SHALLOW true
+)
+
 find_package(OpenGL REQUIRED)
 
-FetchContent_MakeAvailable(glfw3 glm glad)
+FetchContent_MakeAvailable(glfw3 glm glad stb)
 
 add_subdirectory("${glad_SOURCE_DIR}/cmake" glad_cmake)
 glad_add_library(glad REPRODUCIBLE EXCLUDE_FROM_ALL LOADER API gl:core=4.6)

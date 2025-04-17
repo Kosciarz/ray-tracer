@@ -1,5 +1,6 @@
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
+#include <stb_image.h>
 
 #include "Shader.h"
 #include "VAO.h"
@@ -29,36 +30,38 @@ int main()
     glfwSetKeyCallback(window.GetWindow(), KeyCallback);
 
 
-    std::vector<float> vertices1 = {
+    std::vector<float> vertexCords1 = {
         -0.5f, -0.5f, 0.0f,
         0.5f, -0.5f, 0.0f,
-        0.5f, 0.5f, 0.0f
+        0.0f, 0.5f, 0.0f
     };
 
-    std::vector<float> vertices2 = {
-        0.5f, 0.5f, 0.0f,
-        -0.5f, 0.5f, 0.5f,
-        -0.5f, -0.5f, 0.0f
+    std::vector<float> textureCords1 = {
+        0.0f, 0.0f, 
+        1.0f, 0.0f, 
+        0.5f, 1.0f 
     };
 
-#ifdef DEBUG
-    fs::path shaderPath{SHADER_DIR};
+
+#ifndef NDEBUG
+    auto shaderPath = fs::path(ASSETS_DIR) / "shaders";
+    auto texturePath = fs::path(ASSETS_DIR) / "textures";
 #endif
 
     Shader shader1(shaderPath / "vs.glsl", shaderPath / "fs.glsl");
-    Shader shader2(shaderPath / "vs.glsl", shaderPath / "yellowfs.glsl");
+
+    std::uint32_t texture;
+    GL_CHECK(glGenTextures(1, &texture));
+    GL_CHECK(glBindTexture(GL_TEXTURE_2D, texture));
+    GL_CHECK();
+
 
     VAO vao1;
     vao1.Bind();
-    VertexBuffer buffer1(vertices1.data(), vertices1.size() * sizeof(float));
+    VertexBuffer buffer1(vertexCords1.data(), vertexCords1.size() * sizeof(float));
     vao1.AddVertexBuffer(buffer1, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
     vao1.Unbind();
 
-    VAO vao2;
-    vao2.Bind();
-    VertexBuffer buffer2(vertices2.data(), vertices2.size() * sizeof(float));
-    vao2.AddVertexBuffer(buffer2, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
-    vao2.Unbind();
 
     while (!window.ShouldClose())
     {
@@ -66,18 +69,11 @@ int main()
 
         shader1.Use();
         vao1.Bind();
-        GL_CHECK(glDrawArrays(GL_TRIANGLES, 0, vertices2.size() / 3));
+        GL_CHECK(glDrawArrays(GL_TRIANGLES, 0, vertexCords1.size() / 3));
         vao1.Unbind();
         shader1.Unuse();
-
-        shader2.Use();
-        vao2.Bind();
-        GL_CHECK(glDrawArrays(GL_TRIANGLES, 0, vertices2.size() / 3));
-        vao2.Unbind();
-        shader2.Unuse();
 
         window.SwapBuffers();
         window.PollEvents();
     }
-
 }
