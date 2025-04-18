@@ -38,7 +38,7 @@ if(NOT EXISTS ${STB_IMAGE_DIR}/stb_image.h)
 		DOWNLOAD
 		https://raw.githubusercontent.com/nothings/stb/master/stb_image.h
 		${STB_IMAGE_DIR}/stb_image.h
-		TSL_VERIFY ON
+		TLS_VERIFY ON
 	)
 endif()
 
