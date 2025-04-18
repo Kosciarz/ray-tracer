@@ -30,48 +30,85 @@ int main()
     glfwSetKeyCallback(window.GetWindow(), KeyCallback);
 
 
-    std::vector<float> vertexCords1 = {
-        -0.5f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        0.0f, 0.5f, 0.0f
+    std::vector<float> vertices = {
+        // positions          // colors           // texture coords
+         0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
+         0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
+        -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
+        -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
     };
 
-    std::vector<float> textureCords1 = {
-        0.0f, 0.0f, 
-        1.0f, 0.0f, 
-        0.5f, 1.0f 
+    std::vector<std::uint32_t> indices = {
+        0, 1, 2,
+        2, 3, 0
     };
-
 
 #ifndef NDEBUG
-    auto shaderPath = fs::path(ASSETS_DIR) / "shaders";
-    auto texturePath = fs::path(ASSETS_DIR) / "textures";
+    const auto shadersPath = fs::path(ASSETS_DIR) / "shaders";
+    const auto texturesPath = fs::path(ASSETS_DIR) / "textures";
 #endif
 
-    Shader shader1(shaderPath / "vs.glsl", shaderPath / "fs.glsl");
+    Shader shader(shadersPath / "vs.glsl", shadersPath / "fs.glsl");
+
+#pragma region texture
 
     std::uint32_t texture;
     GL_CHECK(glGenTextures(1, &texture));
     GL_CHECK(glBindTexture(GL_TEXTURE_2D, texture));
-    GL_CHECK();
 
+    GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT));
+    GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT));
+    GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
+    GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 
-    VAO vao1;
-    vao1.Bind();
-    VertexBuffer buffer1(vertexCords1.data(), vertexCords1.size() * sizeof(float));
-    vao1.AddVertexBuffer(buffer1, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
-    vao1.Unbind();
+    std::int32_t width, height, nrChannels;
+    const auto texturePath1 = (texturesPath / "wooden_container.jpg").string();
+    auto* data = stbi_load(texturePath1.c_str(), &width, &height, &nrChannels, 0);
+    if (!data)
+    {
+        std::cerr << "Error: failed to load texture data" << '\n';
+        return -1;
+    }
+    else
+    {
+        GL_CHECK(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data));
+        GL_CHECK(glGenerateMipmap(GL_TEXTURE_2D));
+    }
 
+    stbi_image_free(data);
+
+#pragma endregion
+
+#pragma region buffers
+
+    VAO vao;
+    vao.Bind();
+
+    VertexBuffer buffer(vertices.data(), vertices.size() * sizeof(float));
+    
+    IndexBuffer indexBuffer(indices.size() * sizeof(std::uint32_t), indices.data(), GL_STATIC_DRAW);
+    
+    vao.AddVertexBuffer(buffer, 0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    vao.EnableVertexAttribArray(0);
+
+    vao.AddVertexBuffer(buffer, 1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    vao.EnableVertexAttribArray(1);
+
+    vao.AddVertexBuffer(buffer, 2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    vao.EnableVertexAttribArray(2);
+
+    vao.Unbind();
+
+#pragma endregion
 
     while (!window.ShouldClose())
     {
-        GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+        GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
 
-        shader1.Use();
-        vao1.Bind();
-        GL_CHECK(glDrawArrays(GL_TRIANGLES, 0, vertexCords1.size() / 3));
-        vao1.Unbind();
-        shader1.Unuse();
+        shader.Use();
+        GL_CHECK(glBindTexture(GL_TEXTURE_2D, texture));
+        vao.Bind();
+        GL_CHECK(glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0));
 
         window.SwapBuffers();
         window.PollEvents();

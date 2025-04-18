@@ -3,11 +3,11 @@
 #include "IndexBuffer.h"
 #include "Utils.h"
 
-IndexBuffer::IndexBuffer(const void* data, std::int32_t size)
+IndexBuffer::IndexBuffer(GLsizeiptr size, const void* data, GLenum usage)
 {
     GL_CHECK(glGenBuffers(1, &m_BufferID));
     GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_BufferID));
-    GL_CHECK(glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, GL_STATIC_DRAW));
+    GL_CHECK(glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, usage));
 }
 
 IndexBuffer::~IndexBuffer()

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <glad/gl.h>
+
 #include "VertexBuffer.h"
 
 #include <cstdint>
@@ -15,7 +17,10 @@ public:
 
     void Unbind() const;
 
-    void AddVertexBuffer(const VertexBuffer& buffer, std::uint32_t index, std::uint32_t size, std::uint32_t type, std::int32_t stride, const void* offset) const;
+    void AddVertexBuffer(const VertexBuffer& buffer, GLuint index, GLint size, GLenum type,
+        GLboolean normalized, GLsizei stride, const void* offset) const;
+
+    void EnableVertexAttribArray(GLuint enableArray) const;
 
 private:
     std::uint32_t m_VAO;

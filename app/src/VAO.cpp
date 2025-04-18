@@ -24,10 +24,14 @@ void VAO::Unbind() const
     GL_CHECK(glBindVertexArray(0));
 }
 
-void VAO::AddVertexBuffer(const VertexBuffer& buffer, std::uint32_t index, std::uint32_t size, std::uint32_t type, std::int32_t stride, const void* offset) const
+void VAO::AddVertexBuffer(const VertexBuffer& buffer, GLuint index, GLint size, GLenum type,
+    GLboolean normalized, GLsizei stride, const void* offset) const
 {
-    Bind();
     buffer.Bind();
-    GL_CHECK(glEnableVertexAttribArray(0));
-    GL_CHECK(glVertexAttribPointer(index, size, type, GL_FALSE, stride, offset));
+    GL_CHECK(glVertexAttribPointer(index, size, type, normalized, stride, offset));
+}
+
+void VAO::EnableVertexAttribArray(GLuint enableArray) const 
+{
+    GL_CHECK(glEnableVertexAttribArray(enableArray));
 }

@@ -1,11 +1,13 @@
 #pragma once
 
+#include <glad/gl.h>
+
 #include <cstdint>
 
 class IndexBuffer
 {
 public:
-    IndexBuffer(const void* data, std::int32_t size);
+    IndexBuffer(GLsizeiptr size, const void* data, GLenum drawType);
 
     ~IndexBuffer();
 
