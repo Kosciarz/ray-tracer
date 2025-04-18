@@ -24,6 +24,8 @@ public:
 
     void Unuse() const;
 
+    void SetUniform(const char* name, std::uint32_t value) const;
+
     std::uint32_t GetProgramID() const;
 
 private:
