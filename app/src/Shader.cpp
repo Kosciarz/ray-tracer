@@ -56,7 +56,7 @@ void Shader::LoadSources(const std::filesystem::path& vertexPath, const std::fil
     m_Sources.fragment = ReadFile(fragmentPath);
 }
 
-std::uint32_t Shader::CompileShader(const std::uint32_t shaderType, const std::string& source)
+std::uint32_t Shader::CompileShader(const GLenum shaderType, const std::string& source)
 {
     const char* sourcePtr = source.c_str();
     std::uint32_t shader = glCreateShader(shaderType);

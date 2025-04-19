@@ -35,7 +35,7 @@ private:
 
     void CreateShader();
 
-    std::uint32_t CompileShader(const std::uint32_t shaderType, const std::string& source);
+    std::uint32_t CompileShader(const GLenum shaderType, const std::string& source);
 
 private:
     ShaderSource m_Sources;

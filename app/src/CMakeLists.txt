@@ -14,6 +14,7 @@ set(SOURCES
     "Vec3.h"
     "Vec3.cpp"
     "StbImageImpl.cpp"
+    "Timer.h"
 )
 
 add_executable("RayTracer" ${SOURCES})

@@ -8,6 +8,7 @@
 #include "Window.h"
 #include "IndexBuffer.h"
 #include "Utils.h"
+#include "Timer.h"
 
 #include <filesystem>
 #include <vector>
@@ -142,6 +143,8 @@ int main()
 
     while (!window.ShouldClose())
     {
+        ScopedTimer timer("main loop");
+
         GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
 
         GL_CHECK(glActiveTexture(GL_TEXTURE0));
