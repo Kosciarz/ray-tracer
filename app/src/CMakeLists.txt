@@ -1,23 +1,26 @@
 set(SOURCES
 	"Main.cpp"
-    "Window.h"
     "Window.cpp"
-    "Shader.h"
     "Shader.cpp"
-    "VertexBuffer.h"
     "VertexBuffer.cpp"
-    "VAO.h"
     "VAO.cpp"
-    "IndexBuffer.h"
     "IndexBuffer.cpp"
-    "Utils.h"
-    "Vec3.h"
     "Vec3.cpp"
     "StbImageImpl.cpp"
+)
+
+set(HEADERS
+    "Window.h"
+    "Shader.h"
+    "VertexBuffer.h"
+    "VAO.h"
+    "IndexBuffer.h"
+    "Utils.h"
+    "Vec3.h"
     "Timer.h"
 )
 
-add_executable("RayTracer" ${SOURCES})
+add_executable("RayTracer" ${SOURCES} ${HEADERS})
 target_link_libraries(
     "RayTracer" PRIVATE glfw glm glad
 )
