@@ -31,9 +31,14 @@ void Shader::Unuse() const
     GL_CHECK(glUseProgram(0));
 }
 
-void Shader::SetUniform(const char* name, std::uint32_t number) const
+void Shader::SetUniformInt(const char* name, std::uint32_t value) const
 {
-    GL_CHECK(glUniform1i(glGetUniformLocation(m_ProgramID, name), number));
+    GL_CHECK(glUniform1i(glGetUniformLocation(m_ProgramID, name), value));
+}
+
+void Shader::SetUniformFloat(const char* name, float value) const
+{
+    GL_CHECK(glUniform1f(glGetUniformLocation(m_ProgramID, name), value));
 }
 
 std::uint32_t Shader::GetProgramID() const

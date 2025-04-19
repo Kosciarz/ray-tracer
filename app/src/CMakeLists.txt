@@ -21,8 +21,6 @@ set(HEADERS
 )
 
 add_executable("RayTracer" ${SOURCES} ${HEADERS})
-target_link_libraries(
-    "RayTracer" PRIVATE glfw glm glad
-)
+target_link_libraries("RayTracer" PRIVATE glfw glm glad)
 target_include_directories("RayTracer" PRIVATE ${STB_IMAGE_DIR})
 target_compile_definitions("RayTracer" PRIVATE ASSETS_DIR="${CMAKE_SOURCE_DIR}/app/assets")

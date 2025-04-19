@@ -20,10 +20,20 @@ namespace fs = std::filesystem;
 constexpr auto WIDTH = 1080;
 constexpr auto HEIGHT = 720;
 
+static float s_MixVisibility = 0.2f;
+
 static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
         glfwSetWindowShouldClose(window, true);
+
+    if (key == GLFW_KEY_UP && action == GLFW_RELEASE)
+        if (s_MixVisibility < 1)
+            s_MixVisibility += 0.1f;
+
+    if (key == GLFW_KEY_DOWN && action == GLFW_RELEASE)
+        if (s_MixVisibility > 0)
+            s_MixVisibility -= 0.1f;
 }
 
 int main()
@@ -85,8 +95,8 @@ int main()
 
     GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
     GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
-    GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-    GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+    GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+    GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
 
     const std::string texturePath1 = (texturesPath / "wooden_container.jpg").string();
 
@@ -138,8 +148,7 @@ int main()
     // set the texture uniforms
     shader.Use();
     GL_CHECK(glUniform1i(glGetUniformLocation(shader.GetProgramID(), "texture1"), 0));
-    shader.SetUniform("texture2", 1);
-
+    shader.SetUniformInt("texture2", 1);
 
     while (!window.ShouldClose())
     {
@@ -149,13 +158,15 @@ int main()
 
         GL_CHECK(glActiveTexture(GL_TEXTURE0));
         GL_CHECK(glBindTexture(GL_TEXTURE_2D, texture1));
-
         GL_CHECK(glActiveTexture(GL_TEXTURE1));
         GL_CHECK(glBindTexture(GL_TEXTURE_2D, texture2));
+
+        shader.SetUniformFloat("visibility", s_MixVisibility);
 
         shader.Use();
         vao.Bind();
         GL_CHECK(glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0));
+
 
         window.SwapBuffers();
         window.PollEvents();
