@@ -20,28 +20,28 @@ public:
         m_Start = Clock::now();
     }
 
-    double ElapsedSeconds() const
+    constexpr double ElapsedSeconds() const
     {
         return std::chrono::duration_cast<std::chrono::seconds>(ElapsedTime()).count();
     }
 
-    long long ElapsedMilliseconds() const
+    constexpr long long ElapsedMilliseconds() const
     {
         return std::chrono::duration_cast<std::chrono::milliseconds>(ElapsedTime()).count();
     }
 
-    long long ElapsedMicroseconds() const
+    constexpr long long ElapsedMicroseconds() const
     {
         return std::chrono::duration_cast<std::chrono::microseconds>(ElapsedTime()).count();
     }
 
-    long long ElapsedNanoseconds() const
+    constexpr long long ElapsedNanoseconds() const
     {
         return std::chrono::duration_cast<std::chrono::nanoseconds>(ElapsedTime()).count();
     }
 
 private:
-    Clock::duration ElapsedTime() const
+    inline constexpr Clock::duration ElapsedTime() const
     {
         return Clock::now() - m_Start;
     }
