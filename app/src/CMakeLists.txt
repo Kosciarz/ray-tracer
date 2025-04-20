@@ -18,6 +18,7 @@ set(HEADERS
     "Utils.h"
     "Vec3.h"
     "Timer.h"
+    "Random.h"
 )
 
 add_executable("RayTracer" ${SOURCES} ${HEADERS})

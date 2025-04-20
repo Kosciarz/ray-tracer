@@ -9,6 +9,7 @@
 #include "IndexBuffer.h"
 #include "Utils.h"
 #include "Timer.h"
+#include "Random.h"
 
 #include <filesystem>
 #include <vector>
@@ -26,14 +27,6 @@ static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, i
 {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
         glfwSetWindowShouldClose(window, true);
-
-    if (key == GLFW_KEY_UP && action == GLFW_RELEASE)
-        if (s_MixVisibility < 1)
-            s_MixVisibility += 0.1f;
-
-    if (key == GLFW_KEY_DOWN && action == GLFW_RELEASE)
-        if (s_MixVisibility > 0)
-            s_MixVisibility -= 0.1f;
 }
 
 int main()
@@ -51,7 +44,7 @@ int main()
         -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
     };
 
-    const std::vector<std::uint32_t> indices = {
+    const std::vector<std::uint16_t> indices = {
         0, 1, 2,
         2, 3, 0
     };
@@ -63,7 +56,7 @@ int main()
 //
 //    VertexBuffer buffer(vertices.data(), vertices.size() * sizeof(float));
 //
-//    IndexBuffer indexBuffer(indices.size() * sizeof(uint32_t), indices.data(), GL_STATIC_DRAW);
+//    IndexBuffer indexBuffer(indices.size() * sizeof(uint16_t), indices.data(), GL_STATIC_DRAW);
 //
 //    vao.AddVertexBuffer(buffer, 0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 //    vao.EnableVertexAttribArray(0);
@@ -94,7 +87,7 @@ int main()
     // element buffer object (EBO) - holds indices of selected vertices
     GL_CHECK(glGenBuffers(1, &ebo));
     GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo));
-    GL_CHECK(glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(float), indices.data(), GL_STATIC_DRAW));
+    GL_CHECK(glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(std::uint16_t), indices.data(), GL_STATIC_DRAW));
 
     // bind data into VAO
     GL_CHECK(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0));
@@ -182,6 +175,7 @@ int main()
     shader.Use();
     GL_CHECK(glUniform1i(glGetUniformLocation(shader.GetProgramID(), "texture1"), 0));
     shader.SetUniformInt("texture2", 1);
+    shader.SetUniformFloat("visibility", 0.5);
 
     while (!window.ShouldClose())
     {
@@ -194,11 +188,9 @@ int main()
         GL_CHECK(glActiveTexture(GL_TEXTURE1));
         GL_CHECK(glBindTexture(GL_TEXTURE_2D, texture2));
 
-        shader.SetUniformFloat("visibility", s_MixVisibility);
-
         shader.Use();
         GL_CHECK(glBindVertexArray(vao));
-        GL_CHECK(glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0));
+        GL_CHECK(glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, 0));
 
         window.SwapBuffers();
         window.PollEvents();
