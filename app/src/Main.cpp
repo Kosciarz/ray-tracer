@@ -42,9 +42,8 @@ int main()
     glfwSetKeyCallback(window.GetWindow(), KeyCallback);
 
 
-#pragma region buffers
 
-    std::vector<float> vertices = {
+    const std::vector<float> vertices = {
         // positions          // colors           // texture coords
          0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
          0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
@@ -52,28 +51,62 @@ int main()
         -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
     };
 
-    std::vector<std::uint32_t> indices = {
+    const std::vector<std::uint32_t> indices = {
         0, 1, 2,
         2, 3, 0
     };
 
-    VAO vao;
-    vao.Bind();
+//#pragma region buffers classes
+//
+//    VAO vao;
+//    vao.Bind();
+//
+//    VertexBuffer buffer(vertices.data(), vertices.size() * sizeof(float));
+//
+//    IndexBuffer indexBuffer(indices.size() * sizeof(uint32_t), indices.data(), GL_STATIC_DRAW);
+//
+//    vao.AddVertexBuffer(buffer, 0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+//    vao.EnableVertexAttribArray(0);
+//
+//    vao.AddVertexBuffer(buffer, 1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+//    vao.EnableVertexAttribArray(1);
+//
+//    vao.AddVertexBuffer(buffer, 2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+//    vao.EnableVertexAttribArray(2);
+//
+//    vao.Unbind();
+//
+//#pragma endregion
 
-    VertexBuffer buffer(vertices.data(), vertices.size() * sizeof(float));
+#pragma region buffers raw
 
-    IndexBuffer indexBuffer(indices.size() * sizeof(uint32_t), indices.data(), GL_STATIC_DRAW);
+    GLuint vbo, vao, ebo;
 
-    vao.AddVertexBuffer(buffer, 0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-    vao.EnableVertexAttribArray(0);
+    // vertex array object (VAO) - holds information about multiple VBOs and can switch between them
+    GL_CHECK(glGenVertexArrays(1, &vao));
+    GL_CHECK(glBindVertexArray(vao));
 
-    vao.AddVertexBuffer(buffer, 1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-    vao.EnableVertexAttribArray(1);
+    // vertex buffer object (VBO) - holds vertices
+    GL_CHECK(glGenBuffers(1, &vbo));
+    GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, vbo));
+    GL_CHECK(glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW));
 
-    vao.AddVertexBuffer(buffer, 2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-    vao.EnableVertexAttribArray(2);
+    // element buffer object (EBO) - holds indices of selected vertices
+    GL_CHECK(glGenBuffers(1, &ebo));
+    GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo));
+    GL_CHECK(glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(float), indices.data(), GL_STATIC_DRAW));
 
-    vao.Unbind();
+    // bind data into VAO
+    GL_CHECK(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0));
+    GL_CHECK(glEnableVertexAttribArray(0));
+
+    GL_CHECK(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float))));
+    GL_CHECK(glEnableVertexAttribArray(1));
+
+    GL_CHECK(glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float))));
+    GL_CHECK(glEnableVertexAttribArray(2));
+
+    GL_CHECK(glBindVertexArray(0));
 
 #pragma endregion
 
@@ -164,9 +197,8 @@ int main()
         shader.SetUniformFloat("visibility", s_MixVisibility);
 
         shader.Use();
-        vao.Bind();
+        GL_CHECK(glBindVertexArray(vao));
         GL_CHECK(glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0));
-
 
         window.SwapBuffers();
         window.PollEvents();
