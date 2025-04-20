@@ -31,9 +31,8 @@ static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, i
 
 int main()
 {
-    Window window(WIDTH, HEIGHT, "window");
+    Window window{WIDTH, HEIGHT, "window"};
     glfwSetKeyCallback(window.GetWindow(), KeyCallback);
-
 
 
     const std::vector<float> vertices = {
@@ -49,7 +48,7 @@ int main()
         2, 3, 0
     };
 
-//#pragma region buffers classes
+#pragma region buffers classes
 //
 //    VAO vao;
 //    vao.Bind();
@@ -69,7 +68,7 @@ int main()
 //
 //    vao.Unbind();
 //
-//#pragma endregion
+#pragma endregion
 
 #pragma region buffers raw
 
@@ -104,11 +103,11 @@ int main()
 #pragma endregion
 
 #ifndef NDEBUG
-    const auto shadersPath = fs::path(ASSETS_DIR) / "shaders";
-    const auto texturesPath = fs::path(ASSETS_DIR) / "textures";
+    const auto shadersPath = fs::path{ASSETS_DIR} / "shaders";
+    const auto texturesPath = fs::path{ASSETS_DIR} / "textures";
 #endif
 
-    Shader shader(shadersPath / "vs.glsl", shadersPath / "fs.glsl");
+    Shader shader{shadersPath / "vs.glsl", shadersPath / "fs.glsl"};
 
     stbi_set_flip_vertically_on_load(true);
 
@@ -175,11 +174,23 @@ int main()
     shader.Use();
     GL_CHECK(glUniform1i(glGetUniformLocation(shader.GetProgramID(), "texture1"), 0));
     shader.SetUniformInt("texture2", 1);
-    shader.SetUniformFloat("visibility", Random::RandomDouble(0, 1));
+    shader.SetUniformFloat("visibility", 0.5);
+
+    // calculating delta time for changing mixture of textures
+    double previousTime = glfwGetTime();
+    double deltaTime = 0.0;
 
     while (!window.ShouldClose())
     {
         ScopedTimer timer("main loop");
+
+        double currentTime = glfwGetTime();
+        deltaTime = currentTime - previousTime;
+        if (deltaTime > 2.0)
+        {
+            shader.SetUniformFloat("visibility", Random::RandomDouble(0, 1));
+            previousTime = glfwGetTime();
+        }
 
         GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
 
