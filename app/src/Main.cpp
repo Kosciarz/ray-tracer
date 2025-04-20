@@ -175,7 +175,7 @@ int main()
     shader.Use();
     GL_CHECK(glUniform1i(glGetUniformLocation(shader.GetProgramID(), "texture1"), 0));
     shader.SetUniformInt("texture2", 1);
-    shader.SetUniformFloat("visibility", 0.5);
+    shader.SetUniformFloat("visibility", Random::RandomDouble(0, 1));
 
     while (!window.ShouldClose())
     {
