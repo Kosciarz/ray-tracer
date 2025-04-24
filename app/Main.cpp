@@ -177,25 +177,14 @@ int main()
 
     // set the texture uniforms
     shader.Use();
-    GL_CHECK(glUniform1i(glGetUniformLocation(shader.GetID(), "texture1"), 0));
+    shader.SetUniformInt("texture1", 0);
     shader.SetUniformInt("texture2", 1);
     shader.SetUniformFloat("visibility", 0.5);
 
-    // calculating delta time for changing mixture of textures
-    double previousTime = glfwGetTime();
-    double deltaTime = 0.0;
 
     while (!window.ShouldClose())
     {
         ScopedTimer timer("main loop");
-
-        double currentTime = glfwGetTime();
-        deltaTime = currentTime - previousTime;
-        if (deltaTime > 2.0)
-        {
-            shader.SetUniformFloat("visibility", Random::RandomDouble(0, 1));
-            previousTime = glfwGetTime();
-        }
 
         GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
 
