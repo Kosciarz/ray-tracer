@@ -98,28 +98,13 @@ int main()
 #ifndef NDEBUG
     const auto shadersPath = fs::path{ASSETS_DIR} / "shaders";
     const auto texturesPath = fs::path{ASSETS_DIR} / "textures";
-#endif
-
-    const auto vertexShader = shadersPath / "vs.glsl";
-    const auto fragmentShader = shadersPath / "fs.glsl";
-
-    auto shaderSource = ShaderSource::Load(vertexShader, fragmentShader);
-    if (!shaderSource.IsValid())
-    {
-        std::cerr << "Error: Failed to load shader sources" << '\n'
-            << "Vertex Shader: " << vertexShader << '\n'
-            << "Fragment Shader: " << fragmentShader << '\n';
-        return -1;
-    }
-
-    Shader shader{shaderSource};
-
-    stbi_set_flip_vertically_on_load(true);
+#endif  
 
 #pragma region texture1
 
+    stbi_set_flip_vertically_on_load(true);
 
-    std::uint32_t texture1;
+    GLuint texture1;
     GL_CHECK(glGenTextures(1, &texture1));
     GL_CHECK(glBindTexture(GL_TEXTURE_2D, texture1));
 
@@ -148,7 +133,7 @@ int main()
 
 #pragma region texture2
 
-    std::uint32_t texture2;
+    GLuint texture2;
     GL_CHECK(glGenTextures(1, &texture2));
     GL_CHECK(glBindTexture(GL_TEXTURE_2D, texture2));
 
@@ -174,6 +159,20 @@ int main()
     stbi_image_free(textureData2);
 
 #pragma endregion
+
+    const auto vertexShader = shadersPath / "vs.glsl";
+    const auto fragmentShader = shadersPath / "fs.glsl";
+
+    auto shaderSource = ShaderSource::Load(vertexShader, fragmentShader);
+    if (!shaderSource.IsValid())
+    {
+        std::cerr << "Error: Failed to load shader sources" << '\n'
+            << "Vertex Shader: " << vertexShader << '\n'
+            << "Fragment Shader: " << fragmentShader << '\n';
+        return -1;
+    }
+
+    Shader shader{shaderSource};
 
     // set the texture uniforms
     shader.Use();
