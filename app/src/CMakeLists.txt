@@ -1,3 +1,5 @@
+set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
 set(SOURCES
 	"Main.cpp"
     "Window.cpp"
@@ -7,6 +9,7 @@ set(SOURCES
     "IndexBuffer.cpp"
     "Vec3.cpp"
     "StbImageImpl.cpp"
+    "ShaderSource.cpp"
 )
 
 set(HEADERS
@@ -19,6 +22,7 @@ set(HEADERS
     "Vec3.h"
     "Timer.h"
     "Random.h"
+    "ShaderSource.h"
 )
 
 add_executable("RayTracer" ${SOURCES} ${HEADERS})

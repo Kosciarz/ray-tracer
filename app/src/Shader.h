@@ -3,20 +3,18 @@
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
 
-#include <filesystem>
-#include <cstdint>
-#include <string>
+#include "ShaderSource.h"
 
-struct ShaderSource
-{
-    std::string vertex;
-    std::string fragment;
-};
+#include <filesystem>
+#include <string>
+#include <optional>
 
 class Shader
 {
 public:
-    Shader(const std::filesystem::path& vertexShaderPath, const std::filesystem::path& fragmentShaderPath);
+    explicit Shader(const ShaderSource& source);
+
+    Shader(const std::string& vertexSource, const std::string& fragmentSource);
 
     ~Shader();
 
@@ -24,24 +22,19 @@ public:
 
     void Unuse() const;
 
+    GLuint GetID() const;
+
     void SetUniformBool(const std::string& name, bool value) const;
 
     void SetUniformInt(const std::string& name, std::int32_t value) const;
 
     void SetUniformFloat(const std::string& name, float value) const;
 
-    std::uint32_t GetProgramID() const;
+private:
+    void CreateShader(const ShaderSource& source);
+
+    GLuint CompileShader(const GLenum shaderType, const std::string& source);
 
 private:
-    static std::string ReadFile(const std::filesystem::path& path);
-
-    void LoadSources(const std::filesystem::path& vertexPath, const std::filesystem::path& fragmentPath);
-
-    void CreateShader();
-
-    std::uint32_t CompileShader(const GLenum shaderType, const std::string& source);
-
-private:
-    ShaderSource m_Sources;
-    std::uint32_t m_ProgramID;
+    GLuint m_ID;
 };

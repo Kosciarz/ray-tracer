@@ -2,11 +2,12 @@
 #include <GLFW/glfw3.h>
 #include <stb_image.h>
 
-#include "Shader.h"
-#include "VAO.h"
-#include "VertexBuffer.h"
 #include "Window.h"
+#include "VertexBuffer.h"
+#include "VAO.h"
 #include "IndexBuffer.h"
+#include "Shader.h"
+#include "ShaderSource.h"
 #include "Utils.h"
 #include "Timer.h"
 #include "Random.h"
@@ -49,25 +50,25 @@ int main()
     };
 
 #pragma region buffers classes
-//
-//    VAO vao;
-//    vao.Bind();
-//
-//    VertexBuffer buffer(vertices.data(), vertices.size() * sizeof(float));
-//
-//    IndexBuffer indexBuffer(indices.size() * sizeof(uint16_t), indices.data(), GL_STATIC_DRAW);
-//
-//    vao.AddVertexBuffer(buffer, 0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-//    vao.EnableVertexAttribArray(0);
-//
-//    vao.AddVertexBuffer(buffer, 1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-//    vao.EnableVertexAttribArray(1);
-//
-//    vao.AddVertexBuffer(buffer, 2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-//    vao.EnableVertexAttribArray(2);
-//
-//    vao.Unbind();
-//
+    //
+    //    VAO vao;
+    //    vao.Bind();
+    //
+    //    VertexBuffer buffer(vertices.data(), vertices.size() * sizeof(float));
+    //
+    //    IndexBuffer indexBuffer(indices.size() * sizeof(uint16_t), indices.data(), GL_STATIC_DRAW);
+    //
+    //    vao.AddVertexBuffer(buffer, 0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    //    vao.EnableVertexAttribArray(0);
+    //
+    //    vao.AddVertexBuffer(buffer, 1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    //    vao.EnableVertexAttribArray(1);
+    //
+    //    vao.AddVertexBuffer(buffer, 2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    //    vao.EnableVertexAttribArray(2);
+    //
+    //    vao.Unbind();
+    //
 #pragma endregion
 
 #pragma region buffers raw
@@ -107,7 +108,19 @@ int main()
     const auto texturesPath = fs::path{ASSETS_DIR} / "textures";
 #endif
 
-    Shader shader{shadersPath / "vs.glsl", shadersPath / "fs.glsl"};
+    const auto vertexShader = shadersPath / "vs.glsl";
+    const auto fragmentShader = shadersPath / "fs.glsl";
+
+    auto shaderSource = ShaderSource::Load(vertexShader, fragmentShader);
+    if (!shaderSource.IsValid())
+    {
+        std::cerr << "Error: Failed to load shader sources" << '\n'
+            << "Vertex Shader: " << vertexShader << '\n'
+            << "Fragment Shader: " << fragmentShader << '\n';
+        return -1;
+    }
+
+    Shader shader{shaderSource};
 
     stbi_set_flip_vertically_on_load(true);
 
@@ -172,7 +185,7 @@ int main()
 
     // set the texture uniforms
     shader.Use();
-    GL_CHECK(glUniform1i(glGetUniformLocation(shader.GetProgramID(), "texture1"), 0));
+    GL_CHECK(glUniform1i(glGetUniformLocation(shader.GetID(), "texture1"), 0));
     shader.SetUniformInt("texture2", 1);
     shader.SetUniformFloat("visibility", 0.5);
 

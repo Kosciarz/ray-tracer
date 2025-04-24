@@ -3,27 +3,40 @@
 
 #include "Shader.h"
 #include "Utils.h"
+#include "ShaderSource.h"
 
 #include <filesystem>
 #include <iostream>
 #include <string>
 #include <fstream>
-#include <cstdint>
+#include <optional>
+#include <cassert>
 
-Shader::Shader(const std::filesystem::path& vertexPath, const std::filesystem::path& fragmentPath)
+namespace fs = std::filesystem;
+
+Shader::Shader(const ShaderSource& source)
 {
-    LoadSources(vertexPath, fragmentPath);
-    CreateShader();
+    CreateShader(source);
+}
+
+Shader::Shader(const std::string& vertexSource, const std::string& fragmentSource)
+{
+    CreateShader(ShaderSource{vertexSource, fragmentSource});
 }
 
 Shader::~Shader()
 {
-    GL_CHECK(glDeleteProgram(m_ProgramID));
+    GL_CHECK(glDeleteProgram(m_ID));
+}
+
+GLuint Shader::GetID() const
+{
+    return m_ID;
 }
 
 void Shader::Use() const
 {
-    GL_CHECK(glUseProgram(m_ProgramID));
+    GL_CHECK(glUseProgram(m_ID));
 }
 
 void Shader::Unuse() const
@@ -33,47 +46,27 @@ void Shader::Unuse() const
 
 void Shader::SetUniformBool(const std::string& name, bool value) const
 {
-    GL_CHECK(glUniform1i(glGetUniformLocation(m_ProgramID, name.c_str()), static_cast<int>(value)));
+    GL_CHECK(glUniform1i(glGetUniformLocation(m_ID, name.c_str()), static_cast<int>(value)));
 }
 
 void Shader::SetUniformInt(const std::string& name, std::int32_t value) const
 {
-    GL_CHECK(glUniform1i(glGetUniformLocation(m_ProgramID, name.c_str()), value));
+    GL_CHECK(glUniform1i(glGetUniformLocation(m_ID, name.c_str()), value));
 }
 
 void Shader::SetUniformFloat(const std::string& name, float value) const
 {
-    GL_CHECK(glUniform1f(glGetUniformLocation(m_ProgramID, name.c_str()), value));
+    GL_CHECK(glUniform1f(glGetUniformLocation(m_ID, name.c_str()), value));
 }
 
-std::uint32_t Shader::GetProgramID() const
-{
-    return m_ProgramID;
-}
-
-std::string Shader::ReadFile(const std::filesystem::path& path)
-{
-    std::ifstream file(path);
-    if (!file)
-        std::cerr << "failed to open shader file: " << path << '\n';
-
-    return std::string(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
-}
-
-void Shader::LoadSources(const std::filesystem::path& vertexPath, const std::filesystem::path& fragmentPath)
-{
-    m_Sources.vertex = ReadFile(vertexPath);
-    m_Sources.fragment = ReadFile(fragmentPath);
-}
-
-std::uint32_t Shader::CompileShader(const GLenum shaderType, const std::string& source)
+GLuint Shader::CompileShader(const GLenum shaderType, const std::string& source)
 {
     const char* sourcePtr = source.c_str();
-    std::uint32_t shader = glCreateShader(shaderType);
+    GLuint shader = glCreateShader(shaderType);
     GL_CHECK(glShaderSource(shader, 1, &sourcePtr, nullptr));
     GL_CHECK(glCompileShader(shader));
 
-    std::int32_t success;
+    GLint success;
     GL_CHECK(glGetShaderiv(shader, GL_COMPILE_STATUS, &success));
     if (success != GL_TRUE)
     {
@@ -87,28 +80,28 @@ std::uint32_t Shader::CompileShader(const GLenum shaderType, const std::string& 
     return shader;
 }
 
-
-void Shader::CreateShader()
+void Shader::CreateShader(const ShaderSource& source)
 {
-   std::uint32_t vertexShader = CompileShader(GL_VERTEX_SHADER, m_Sources.vertex);
-   std::uint32_t fragmentShader = CompileShader(GL_FRAGMENT_SHADER, m_Sources.fragment);
+    assert(source.IsValid());
 
-   m_ProgramID = glCreateProgram();
-   GL_CHECK(glAttachShader(m_ProgramID, vertexShader));
-   GL_CHECK(glAttachShader(m_ProgramID, fragmentShader));
-   GL_CHECK(glLinkProgram(m_ProgramID));
-   GL_CHECK(glValidateProgram(m_ProgramID));
+    GLuint vertexShader = CompileShader(GL_VERTEX_SHADER, source.vertex.value());
+    GLuint fragmentShader = CompileShader(GL_FRAGMENT_SHADER, source.fragment.value());
 
-   std::int32_t success;
-   GL_CHECK(glGetProgramiv(m_ProgramID, GL_LINK_STATUS, &success));
-   if (success != GL_TRUE)
-   {
-       char message[512];
-       GL_CHECK(glGetProgramInfoLog(m_ProgramID, sizeof(message), nullptr, message));
-       std::cerr << "Error: failed to link program: " << message << '\n';
-   }
+    m_ID = glCreateProgram();
+    GL_CHECK(glAttachShader(m_ID, vertexShader));
+    GL_CHECK(glAttachShader(m_ID, fragmentShader));
+    GL_CHECK(glLinkProgram(m_ID));
+    GL_CHECK(glValidateProgram(m_ID));
 
-   GL_CHECK(glDeleteShader(vertexShader));
-   GL_CHECK(glDeleteShader(fragmentShader));
+    GLint success;
+    GL_CHECK(glGetProgramiv(m_ID, GL_LINK_STATUS, &success));
+    if (success != GL_TRUE)
+    {
+        char message[512];
+        GL_CHECK(glGetProgramInfoLog(m_ID, sizeof(message), nullptr, message));
+        std::cerr << "Error: failed to link program: " << message << '\n';
+    }
+
+    GL_CHECK(glDeleteShader(vertexShader));
+    GL_CHECK(glDeleteShader(fragmentShader));
 }
-
