@@ -2,15 +2,7 @@
 #include <GLFW/glfw3.h>
 #include <stb_image.h>
 
-#include "Window.h"
-#include "VertexBuffer.h"
-#include "VAO.h"
-#include "IndexBuffer.h"
-#include "Shader.h"
-#include "ShaderSource.h"
-#include "Utils.h"
-#include "Timer.h"
-#include "Random.h"
+#include "Ray.h"
 
 #include <filesystem>
 #include <vector>

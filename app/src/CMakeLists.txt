@@ -10,6 +10,7 @@ set(SOURCES
 )
 
 set(HEADERS
+    "Ray.h"
     "Window.h"
     "Shader.h"
     "VertexBuffer.h"
