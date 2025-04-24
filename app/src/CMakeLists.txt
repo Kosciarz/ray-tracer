@@ -1,7 +1,4 @@
-set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
-
 set(SOURCES
-	"Main.cpp"
     "Window.cpp"
     "Shader.cpp"
     "VertexBuffer.cpp"
@@ -25,7 +22,10 @@ set(HEADERS
     "ShaderSource.h"
 )
 
-add_executable("RayTracer" ${SOURCES} ${HEADERS})
-target_link_libraries("RayTracer" PRIVATE glfw glm glad)
-target_include_directories("RayTracer" PRIVATE ${STB_IMAGE_DIR})
-target_compile_definitions("RayTracer" PRIVATE ASSETS_DIR="${CMAKE_SOURCE_DIR}/app/assets")
+foreach(SOURCE IN LISTS SOURCES HEADERS)
+    message(STATUS "Adding file ${SOURCE}")
+endforeach()
+
+add_library("RayCore" STATIC ${SOURCES} ${HEADERS})
+target_link_libraries("RayCore" PUBLIC glfw glm glad)
+target_include_directories("RayCore" PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${STB_IMAGE_DIR})
