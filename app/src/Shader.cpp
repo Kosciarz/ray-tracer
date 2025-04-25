@@ -108,18 +108,18 @@ void Shader::CreateShader(const ShaderSource& source)
     GLuint vertexShader = CompileShader(GL_VERTEX_SHADER, source.vertex.value());
     GLuint fragmentShader = CompileShader(GL_FRAGMENT_SHADER, source.fragment.value());
 
-    m_ID = glCreateProgram();
-    GL_CHECK(glAttachShader(m_ID, vertexShader));
-    GL_CHECK(glAttachShader(m_ID, fragmentShader));
-    GL_CHECK(glLinkProgram(m_ID));
-    GL_CHECK(glValidateProgram(m_ID));
+    m_ProgramID = glCreateProgram();
+    GL_CHECK(glAttachShader(m_ProgramID, vertexShader));
+    GL_CHECK(glAttachShader(m_ProgramID, fragmentShader));
+    GL_CHECK(glLinkProgram(m_ProgramID));
+    GL_CHECK(glValidateProgram(m_ProgramID));
 
     GLint success;
-    GL_CHECK(glGetProgramiv(m_ID, GL_LINK_STATUS, &success));
+    GL_CHECK(glGetProgramiv(m_ProgramID, GL_LINK_STATUS, &success));
     if (success != GL_TRUE)
     {
         char message[512];
-        GL_CHECK(glGetProgramInfoLog(m_ID, sizeof(message), nullptr, message));
+        GL_CHECK(glGetProgramInfoLog(m_ProgramID, sizeof(message), nullptr, message));
         std::cerr << "Error: failed to link program: " << message << '\n';
     }
 
