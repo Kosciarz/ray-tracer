@@ -1,5 +1,6 @@
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
 
 #include "Shader.h"
 #include "Utils.h"
@@ -26,17 +27,17 @@ Shader::Shader(const std::string& vertexSource, const std::string& fragmentSourc
 
 Shader::~Shader()
 {
-    GL_CHECK(glDeleteProgram(m_ID));
+    GL_CHECK(glDeleteProgram(m_ProgramID));
 }
 
 GLuint Shader::GetID() const
 {
-    return m_ID;
+    return m_ProgramID;
 }
 
 void Shader::Use() const
 {
-    GL_CHECK(glUseProgram(m_ID));
+    GL_CHECK(glUseProgram(m_ProgramID));
 }
 
 void Shader::Unuse() const
@@ -46,17 +47,37 @@ void Shader::Unuse() const
 
 void Shader::SetUniformBool(const std::string& name, bool value) const
 {
-    GL_CHECK(glUniform1i(glGetUniformLocation(m_ID, name.c_str()), static_cast<int>(value)));
+    GL_CHECK(glUniform1i(glGetUniformLocation(m_ProgramID, name.c_str()), static_cast<int>(value)));
 }
 
 void Shader::SetUniformInt(const std::string& name, std::int32_t value) const
 {
-    GL_CHECK(glUniform1i(glGetUniformLocation(m_ID, name.c_str()), value));
+    GL_CHECK(glUniform1i(glGetUniformLocation(m_ProgramID, name.c_str()), value));
 }
 
 void Shader::SetUniformFloat(const std::string& name, float value) const
 {
-    GL_CHECK(glUniform1f(glGetUniformLocation(m_ID, name.c_str()), value));
+    GL_CHECK(glUniform1f(glGetUniformLocation(m_ProgramID, name.c_str()), value));
+}
+
+void Shader::SetUniformVec3(const std::string& name, const GLfloat* value) const
+{
+    GL_CHECK(glUniform3fv(glGetUniformLocation(m_ProgramID, name.c_str()), 1, value));
+}
+
+void Shader::SetUniformVec4(const std::string& name, const GLfloat* value) const
+{
+    GL_CHECK(glUniform4fv(glGetUniformLocation(m_ProgramID, name.c_str()), 1, value));
+}
+
+void Shader::SetUniformMat3(const std::string& name, const GLfloat* value) const
+{
+    GL_CHECK(glUniformMatrix3fv(glGetUniformLocation(m_ProgramID, name.c_str()), 1, GL_FALSE, value));
+}
+
+void Shader::SetUniformMat4(const std::string& name, const GLfloat* value) const
+{
+    GL_CHECK(glUniformMatrix4fv(glGetUniformLocation(m_ProgramID, name.c_str()), 1, GL_FALSE, value));
 }
 
 GLuint Shader::CompileShader(const GLenum shaderType, const std::string& source)

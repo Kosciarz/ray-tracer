@@ -7,14 +7,13 @@
 #include <filesystem>
 #include <vector>
 #include <cstdint>
-#include <cstdlib>
 
 namespace fs = std::filesystem;
 
 constexpr auto WIDTH = 1080;
 constexpr auto HEIGHT = 720;
 
-static float s_MixVisibility = 0.2f;
+static float s_MixVisibility = 0.5f;
 
 static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -178,7 +177,7 @@ int main()
     shader.Use();
     shader.SetUniformInt("texture1", 0);
     shader.SetUniformInt("texture2", 1);
-    shader.SetUniformFloat("visibility", 0.5);
+    shader.SetUniformFloat("visibility", s_MixVisibility);
 
 
     while (!window.ShouldClose())

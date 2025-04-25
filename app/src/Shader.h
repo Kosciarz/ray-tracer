@@ -2,6 +2,7 @@
 
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
 
 #include "ShaderSource.h"
 
@@ -30,11 +31,19 @@ public:
 
     void SetUniformFloat(const std::string& name, float value) const;
 
+    void SetUniformVec3(const std::string& name, const GLfloat* value) const;
+
+    void SetUniformVec4(const std::string& name, const GLfloat* value) const;
+
+    void SetUniformMat3(const std::string& name, const GLfloat* value) const;
+
+    void SetUniformMat4(const std::string& name, const GLfloat* value) const;
+
 private:
     void CreateShader(const ShaderSource& source);
 
     GLuint CompileShader(const GLenum shaderType, const std::string& source);
 
 private:
-    GLuint m_ID;
+    GLuint m_ProgramID;
 };
