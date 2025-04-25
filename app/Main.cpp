@@ -178,31 +178,55 @@ int main()
     shader.SetUniformInt("texture1", 0);
     shader.SetUniformInt("texture2", 1);
     shader.SetUniformFloat("visibility", s_MixVisibility);
-
-
-    glm::vec4 vec{1.0f, 0.0f, 0.0f, 1.0f};
-    glm::mat4 trans = glm::mat4{1.0f};
-    trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3{0.0, 0.0, 1.0});
-    trans = glm::scale(trans, glm::vec3{0.5, 0.5, 0.5});
-
-    shader.SetUniformMat4("transform", glm::value_ptr(trans));
+    shader.Unuse();
 
 
     while (!window.ShouldClose())
     {
-        //ScopedTimer timer("main loop");
+        ScopedTimer timer("main loop");
 
         GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
+
+        // transform the object
+        glm::mat4 transform1{1.0f};
+        transform1 = glm::translate(transform1, glm::vec3{0.5, -0.5, 0.0});
+        transform1 = glm::rotate(transform1, static_cast<float>(glfwGetTime()), glm::vec3{0.0, 0.0, 1.0});
+
+        shader.Use();
+        shader.SetUniformMat4("transform", glm::value_ptr(transform1));
+        shader.Unuse();
 
         GL_CHECK(glActiveTexture(GL_TEXTURE0));
         GL_CHECK(glBindTexture(GL_TEXTURE_2D, texture1));
         GL_CHECK(glActiveTexture(GL_TEXTURE1));
         GL_CHECK(glBindTexture(GL_TEXTURE_2D, texture2));
 
+        // bind before draw
         shader.Use();
         GL_CHECK(glBindVertexArray(vao));
         GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo));
+        
+        // draw
         GL_CHECK(glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, 0));
+
+        glm::mat4 transform2{1.0f};
+        transform2 = glm::translate(transform2, glm::vec3{glm::sin(glfwGetTime()), glm::cos(glfwGetTime()), 0.0});
+        transform2 = glm::rotate(transform2, static_cast<float>(glfwGetTime() * -1), glm::vec3{0.0, 0.0, 1.0});
+        transform2 = glm::scale(transform2, glm::vec3{glm::sin(glfwGetTime()), glm::sin(glfwGetTime()), 0.0});
+
+        shader.Use();
+        shader.SetUniformMat4("transform", glm::value_ptr(transform2));
+        shader.Unuse();
+
+        shader.Use();
+        GL_CHECK(glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, 0));
+
+        // unbind after draw
+        shader.Unuse();
+        GL_CHECK(glBindVertexArray(0));
+        GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+        GL_CHECK(glDisableVertexAttribArray(0));
+        GL_CHECK(glDisableVertexAttribArray(1));
 
         window.SwapBuffers();
         window.PollEvents();
