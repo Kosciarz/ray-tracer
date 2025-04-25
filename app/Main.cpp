@@ -22,6 +22,19 @@ constexpr auto HEIGHT = 720;
 
 static float s_MixVisibility = 0.5f;
 
+static void InitImGui(GLFWwindow* window)
+{
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init();
+}
+
 static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
@@ -32,7 +45,7 @@ int main()
 {
     Window window{WIDTH, HEIGHT, "window"};
     glfwSetKeyCallback(window.GetWindow(), KeyCallback);
-
+    InitImGui(window.GetWindow());
 
     const std::vector<float> vertices = {
         // positions         // texture coords
@@ -189,6 +202,13 @@ int main()
     {
         ScopedTimer timer("main loop");
 
+        window.PollEvents();
+
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+        ImGui::ShowDemoWindow();
+
         GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
 
         // transform the object
@@ -205,13 +225,16 @@ int main()
         GL_CHECK(glActiveTexture(GL_TEXTURE1));
         GL_CHECK(glBindTexture(GL_TEXTURE_2D, texture2));
 
-        // bind before draw
         shader.Use();
         GL_CHECK(glBindVertexArray(vao));
         GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo));
         
-        // draw
+        // draw 1st cube
         GL_CHECK(glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, 0));
+        
+        shader.Unuse();
+        GL_CHECK(glBindVertexArray(0));
+        GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 
         glm::mat4 transform2{1.0f};
         transform2 = glm::translate(transform2, glm::vec3{glm::sin(glfwGetTime()), glm::cos(glfwGetTime()), 0.0});
@@ -223,16 +246,23 @@ int main()
         shader.Unuse();
 
         shader.Use();
+        GL_CHECK(glBindVertexArray(vao));
+        GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo));
+
+        // draw 2nd cube
         GL_CHECK(glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, 0));
 
-        // unbind after draw
         shader.Unuse();
         GL_CHECK(glBindVertexArray(0));
         GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
-        GL_CHECK(glDisableVertexAttribArray(0));
-        GL_CHECK(glDisableVertexAttribArray(1));
+
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         window.SwapBuffers();
-        window.PollEvents();
     }
+
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 }
