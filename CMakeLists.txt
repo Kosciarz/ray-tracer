@@ -42,11 +42,18 @@ if(NOT EXISTS ${STB_IMAGE_DIR}/stb_image.h)
 	)
 endif()
 
+FetchContent_Declare(
+	imgui
+	GIT_REPOSITORY https://github.com/ocornut/imgui
+	GIT_TAG docking
+	GIT_SHALLOW TRUE
+)
+
 find_package(OpenGL REQUIRED)
 
-FetchContent_MakeAvailable(glfw3 glm glad)
+FetchContent_MakeAvailable(glfw3 glm glad imgui)
 
 add_subdirectory("${glad_SOURCE_DIR}/cmake" glad_cmake)
 glad_add_library(glad REPRODUCIBLE EXCLUDE_FROM_ALL LOADER API gl:core=4.6)
 
-add_subdirectory(app)
+add_subdirectory("app")

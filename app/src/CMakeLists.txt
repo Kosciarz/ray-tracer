@@ -29,4 +29,7 @@ endforeach()
 
 add_library("RayCore" STATIC ${SOURCES} ${HEADERS})
 target_link_libraries("RayCore" PUBLIC glfw glm glad)
-target_include_directories("RayCore" PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${STB_IMAGE_DIR})
+target_include_directories("RayCore" PUBLIC 
+    ${CMAKE_CURRENT_SOURCE_DIR} 
+    ${STB_IMAGE_DIR}
+)
