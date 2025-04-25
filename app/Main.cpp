@@ -1,6 +1,9 @@
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
 #include <stb_image.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "Ray.h"
 
@@ -28,11 +31,11 @@ int main()
 
 
     const std::vector<float> vertices = {
-        // positions          // colors           // texture coords
-         0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
-         0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
-        -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
-        -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
+        // positions         // texture coords
+        0.5f,  0.5f, 0.0f,   1.0f, 1.0f,   // top right
+        0.5f, -0.5f, 0.0f,   1.0f, 0.0f,   // bottom right
+       -0.5f, -0.5f, 0.0f,   0.0f, 0.0f,   // bottom left
+       -0.5f,  0.5f, 0.0f,   0.0f, 1.0f    // top left 
     };
 
     const std::vector<std::uint16_t> indices = {
@@ -81,14 +84,11 @@ int main()
     GL_CHECK(glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(std::uint16_t), indices.data(), GL_STATIC_DRAW));
 
     // bind data into VAO
-    GL_CHECK(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0));
+    GL_CHECK(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0));
     GL_CHECK(glEnableVertexAttribArray(0));
 
-    GL_CHECK(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float))));
+    GL_CHECK(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float))));
     GL_CHECK(glEnableVertexAttribArray(1));
-
-    GL_CHECK(glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float))));
-    GL_CHECK(glEnableVertexAttribArray(2));
 
     GL_CHECK(glBindVertexArray(0));
 
@@ -162,7 +162,7 @@ int main()
     const auto vertexShader = shadersPath / "vs.glsl";
     const auto fragmentShader = shadersPath / "fs.glsl";
 
-    auto shaderSource = ShaderSource::Load(vertexShader, fragmentShader);
+    const auto shaderSource = ShaderSource::Load(vertexShader, fragmentShader);
     if (!shaderSource.IsValid())
     {
         std::cerr << "Error: Failed to load shader sources" << '\n'
@@ -180,9 +180,17 @@ int main()
     shader.SetUniformFloat("visibility", s_MixVisibility);
 
 
+    glm::vec4 vec{1.0f, 0.0f, 0.0f, 1.0f};
+    glm::mat4 trans = glm::mat4{1.0f};
+    trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3{0.0, 0.0, 1.0});
+    trans = glm::scale(trans, glm::vec3{0.5, 0.5, 0.5});
+
+    shader.SetUniformMat4("transform", glm::value_ptr(trans));
+
+
     while (!window.ShouldClose())
     {
-        ScopedTimer timer("main loop");
+        //ScopedTimer timer("main loop");
 
         GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
 
@@ -193,6 +201,7 @@ int main()
 
         shader.Use();
         GL_CHECK(glBindVertexArray(vao));
+        GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo));
         GL_CHECK(glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, 0));
 
         window.SwapBuffers();
