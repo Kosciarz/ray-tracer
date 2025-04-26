@@ -32,6 +32,8 @@ FetchContent_Declare(
 	GIT_SHALLOW TRUE
 )
 
+find_package(OpenGL REQUIRED)
+
 set(STB_IMAGE_DIR ${CMAKE_BINARY_DIR}/external/stb)
 if(NOT EXISTS ${STB_IMAGE_DIR}/stb_image.h)
 	file(
@@ -49,9 +51,15 @@ FetchContent_Declare(
 	GIT_SHALLOW TRUE
 )
 
-find_package(OpenGL REQUIRED)
+FetchContent_Declare(
+	gtest
+	GIT_REPOSITORY https://github.com/google/googletest
+	GIT_TAG v1.16.0
+	GIT_SHALLOW TRUE
+)
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
-FetchContent_MakeAvailable(glfw3 glm glad imgui)
+FetchContent_MakeAvailable(glfw3 glm glad imgui gtest)
 
 add_subdirectory("${glad_SOURCE_DIR}/cmake" glad_cmake)
 glad_add_library(glad REPRODUCIBLE EXCLUDE_FROM_ALL LOADER API gl:core=4.6)

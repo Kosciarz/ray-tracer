@@ -236,10 +236,10 @@ int main()
         GL_CHECK(glBindVertexArray(0));
         GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 
-        glm::mat4 transform2{1.0f};
-        transform2 = glm::translate(transform2, glm::vec3{glm::sin(glfwGetTime()), glm::cos(glfwGetTime()), 0.0});
+        auto transform2 = glm::translate(glm::mat4{1.0f}, glm::vec3{glm::sin(glfwGetTime()), glm::cos(glfwGetTime()), 0.0});
         transform2 = glm::rotate(transform2, static_cast<float>(glfwGetTime() * -1), glm::vec3{0.0, 0.0, 1.0});
-        transform2 = glm::scale(transform2, glm::vec3{glm::sin(glfwGetTime()), glm::sin(glfwGetTime()), 0.0});
+        auto scale = glm::sin(glfwGetTime());
+        transform2 = glm::scale(transform2, glm::vec3{scale, scale, 0.0});
 
         shader.Use();
         shader.SetUniformMat4("transform", glm::value_ptr(transform2));
