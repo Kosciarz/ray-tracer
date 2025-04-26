@@ -7,6 +7,7 @@ set(SOURCES
     "Vec3.cpp"
     "StbImageImpl.cpp"
     "ShaderSource.cpp"
+    "GlfwContext.cpp"
 )
 
 set(HEADERS
@@ -22,6 +23,7 @@ set(HEADERS
     "Random.h"
     "ShaderSource.h"
     "Result.h"
+    "GlfwContext.h"
 )
 
 foreach(SOURCE IN LISTS SOURCES HEADERS)

@@ -44,6 +44,13 @@ static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, i
 
 int main()
 {
+    auto context = GlfwContext::Create();
+    if (context.IsErr())
+    {
+        std::cerr << "Error: " << context.Error() << '\n';
+        return EXIT_FAILURE;
+    }
+
     Window window{WIDTH, HEIGHT, "window"};
     glfwSetKeyCallback(window.GetWindow(), KeyCallback);
     InitImGui(window.GetWindow());

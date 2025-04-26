@@ -20,19 +20,13 @@ Window::Window(const std::uint16_t width, const std::uint16_t height, const char
 
     m_Window = glfwCreateWindow(width, height, title, nullptr, nullptr);
     if (!m_Window)
-    {
-        glfwTerminate();
         throw std::runtime_error{"failed to create GLFW window"};
-    }
 
     glfwMakeContextCurrent(m_Window);
     glfwSetFramebufferSizeCallback(m_Window, Resize);
 
     if (!gladLoadGL(glfwGetProcAddress))
-    {
-        glfwTerminate();
         throw std::runtime_error{"failed to initialize GLAD"};
-    }
 }
 
 Window::~Window()
