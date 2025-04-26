@@ -1,18 +1,20 @@
 #pragma once
 
+#include "Result.h"
+
 #include <string>
-#include <optional>
 #include <filesystem>
+
+struct ShaderPaths
+{
+    std::filesystem::path vertex;
+    std::filesystem::path fragment;
+};
 
 struct ShaderSource
 {
-    std::optional<std::string> vertex;
-    std::optional<std::string> fragment;
+    std::string vertex;
+    std::string fragment;
 
-    bool IsValid() const;
-
-    operator bool() const;
-
-    static ShaderSource Load(const std::filesystem::path& vertexPath,
-        const std::filesystem::path& fragmentPath);
+    static Result<ShaderSource> Load(const ShaderPaths& paths);
 };

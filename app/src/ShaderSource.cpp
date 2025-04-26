@@ -1,38 +1,37 @@
 #include "ShaderSource.h"
+#include "Result.h"
 
 #include <string>
-#include <optional>
 #include <filesystem>
 #include <fstream>
 
 namespace fs = std::filesystem;
 
-static std::optional<std::string> ReadFile(const fs::path& path);
-
-bool ShaderSource::IsValid() const
+static Result<std::string> ReadFile(const fs::path& path)
 {
-    return vertex.has_value() && !vertex->empty()
-        && fragment.has_value() && !fragment->empty();
-}
+    if (path.empty())
+        return Result<std::string>::Err("Shader path is empty");
 
-ShaderSource::operator bool() const
-{
-    return IsValid();
-}
-
-ShaderSource ShaderSource::Load(const fs::path& vertexPath, const fs::path& fragmentPath)
-{
-    return ShaderSource{ReadFile(vertexPath), ReadFile(fragmentPath)};
-}
-
-static std::optional<std::string> ReadFile(const fs::path& path)
-{
     std::ifstream file(path, std::ios::in);
     if (!file)
-        return std::nullopt;
+        return Result<std::string>::Err("Cannot open shader file: " + path.string());
 
     const auto fileSize = fs::file_size(path);
     std::string contents(fileSize, 0);
     file.read(contents.data(), fileSize);
-    return contents;
+    return Result<std::string>::Ok(contents);
+}
+
+Result<ShaderSource> ShaderSource::Load(const ShaderPaths& paths)
+{
+    auto vertex = ReadFile(paths.vertex);
+    if (!vertex)
+        return Result<ShaderSource>::Err("Failed to load vertex shader: " + vertex.Error());
+    
+    auto fragment = ReadFile(paths.fragment);
+    if (!fragment)
+        return Result<ShaderSource>::Err("Failed to load vertex shader: " + fragment.Error());
+
+    ShaderSource source{vertex.Value(), fragment.Value()};
+    return Result<ShaderSource>::Ok(source);
 }

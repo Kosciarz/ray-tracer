@@ -179,16 +179,16 @@ int main()
     const auto vertexShader = shadersPath / "vs.glsl";
     const auto fragmentShader = shadersPath / "fs.glsl";
 
-    const auto shaderSource = ShaderSource::Load(vertexShader, fragmentShader);
-    if (!shaderSource.IsValid())
+    const ShaderPaths paths{vertexShader, fragmentShader};
+
+    const auto shaderSource = ShaderSource::Load(paths);
+    if (shaderSource.IsErr())
     {
-        std::cerr << "Error: Failed to load shader sources" << '\n'
-            << "Vertex Shader: " << vertexShader << '\n'
-            << "Fragment Shader: " << fragmentShader << '\n';
+        std::cerr << "Error: " << shaderSource.Error() << '\n';
         return -1;
     }
 
-    Shader shader{shaderSource};
+    Shader shader{shaderSource.Value()};
 
     // set the texture uniforms
     shader.Use();

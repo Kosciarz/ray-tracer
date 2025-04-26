@@ -103,10 +103,8 @@ GLuint Shader::CompileShader(const GLenum shaderType, const std::string& source)
 
 void Shader::CreateShader(const ShaderSource& source)
 {
-    assert(source.IsValid());
-
-    GLuint vertexShader = CompileShader(GL_VERTEX_SHADER, source.vertex.value());
-    GLuint fragmentShader = CompileShader(GL_FRAGMENT_SHADER, source.fragment.value());
+    GLuint vertexShader = CompileShader(GL_VERTEX_SHADER, source.vertex);
+    GLuint fragmentShader = CompileShader(GL_FRAGMENT_SHADER, source.fragment);
 
     m_ProgramID = glCreateProgram();
     GL_CHECK(glAttachShader(m_ProgramID, vertexShader));
