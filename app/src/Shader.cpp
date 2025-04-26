@@ -10,19 +10,25 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-#include <optional>
-#include <cassert>
+#include <vector>
 
 namespace fs = std::filesystem;
 
-Shader::Shader(const ShaderSource& source)
+Result<Shader> Shader::Create(const ShaderSources& source)
 {
-    CreateShader(source);
-}
+    auto vertexShader = CompileShader(GL_VERTEX_SHADER, source.vertex);
+    if (vertexShader.IsErr())
+        return Result<Shader>::Err(vertexShader.Error());
 
-Shader::Shader(const std::string& vertexSource, const std::string& fragmentSource)
-{
-    CreateShader(ShaderSource{vertexSource, fragmentSource});
+    auto fragmentShader = CompileShader(GL_FRAGMENT_SHADER, source.fragment);
+    if (fragmentShader.IsErr())
+        return Result<Shader>::Err(fragmentShader.Error());
+
+    auto program = LinkProgram(vertexShader.Value(), fragmentShader.Value());
+    if (program.IsErr())
+        return Result<Shader>::Err(program.Error());
+
+    return Result<Shader>::Ok(Shader{program.Value()});
 }
 
 Shader::~Shader()
@@ -80,7 +86,7 @@ void Shader::SetUniformMat4(const std::string& name, const GLfloat* value) const
     GL_CHECK(glUniformMatrix4fv(glGetUniformLocation(m_ProgramID, name.c_str()), 1, GL_FALSE, value));
 }
 
-GLuint Shader::CompileShader(const GLenum shaderType, const std::string& source)
+Result<GLuint> Shader::CompileShader(const GLenum shaderType, const std::string& source)
 {
     const char* sourcePtr = source.c_str();
     GLuint shader = glCreateShader(shaderType);
@@ -91,36 +97,44 @@ GLuint Shader::CompileShader(const GLenum shaderType, const std::string& source)
     GL_CHECK(glGetShaderiv(shader, GL_COMPILE_STATUS, &success));
     if (success != GL_TRUE)
     {
-        char message[512];
-        GL_CHECK(glGetShaderInfoLog(shader, 512, NULL, message));
-        std::cerr << "Error: failed to compile "
-            << (shaderType == GL_VERTEX_SHADER ? "vertex" : "fragment")
-            << " shader" << '\n'
-            << message << '\n';
+        GLint logLength{0};
+        GL_CHECK(glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength));
+        std::vector<char> log(logLength);
+        GL_CHECK(glGetShaderInfoLog(shader, logLength, &logLength, log.data()));
+
+        return Result<GLuint>::Err("Failed to compile "
+            + std::string(shaderType == GL_VERTEX_SHADER ? "vertex" : "fragment")
+            + " shader: " + std::string{log.data()});
     }
-    return shader;
+
+    return Result<GLuint>::Ok(shader);
 }
 
-void Shader::CreateShader(const ShaderSource& source)
+Result<GLuint> Shader::LinkProgram(const GLuint vertexShader, const GLuint fragmentShader)
 {
-    GLuint vertexShader = CompileShader(GL_VERTEX_SHADER, source.vertex);
-    GLuint fragmentShader = CompileShader(GL_FRAGMENT_SHADER, source.fragment);
-
-    m_ProgramID = glCreateProgram();
-    GL_CHECK(glAttachShader(m_ProgramID, vertexShader));
-    GL_CHECK(glAttachShader(m_ProgramID, fragmentShader));
-    GL_CHECK(glLinkProgram(m_ProgramID));
-    GL_CHECK(glValidateProgram(m_ProgramID));
+    auto program = glCreateProgram();
+    GL_CHECK(glAttachShader(program, vertexShader));
+    GL_CHECK(glAttachShader(program, fragmentShader));
+    GL_CHECK(glLinkProgram(program));
+    GL_CHECK(glValidateProgram(program));
 
     GLint success;
-    GL_CHECK(glGetProgramiv(m_ProgramID, GL_LINK_STATUS, &success));
-    if (success != GL_TRUE)
+    GL_CHECK(glGetProgramiv(program, GL_LINK_STATUS, &success));
+    if (success == GL_TRUE)
     {
-        char message[512];
-        GL_CHECK(glGetProgramInfoLog(m_ProgramID, sizeof(message), nullptr, message));
-        std::cerr << "Error: failed to link program: " << message << '\n';
+        GLint logLength{0};
+        GL_CHECK(glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLength));
+        std::vector<char> log(logLength);
+        GL_CHECK(glGetProgramInfoLog(program, logLength, &logLength, log.data()));
+
+        GL_CHECK(glDeleteShader(vertexShader));
+        GL_CHECK(glDeleteShader(fragmentShader));
+
+        return Result<GLuint>::Err("Failed to link shader program: " + std::string{log.data()});
     }
 
     GL_CHECK(glDeleteShader(vertexShader));
     GL_CHECK(glDeleteShader(fragmentShader));
+
+    return Result<GLuint>::Ok(program);
 }

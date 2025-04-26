@@ -22,16 +22,16 @@ static Result<std::string> ReadFile(const fs::path& path)
     return Result<std::string>::Ok(contents);
 }
 
-Result<ShaderSource> ShaderSource::Load(const ShaderPaths& paths)
+Result<ShaderSources> ShaderSources::Load(const ShaderPaths& paths)
 {
     auto vertex = ReadFile(paths.vertex);
     if (!vertex)
-        return Result<ShaderSource>::Err("Failed to load vertex shader: " + vertex.Error());
+        return Result<ShaderSources>::Err("Failed to load vertex shader: " + vertex.Error());
     
     auto fragment = ReadFile(paths.fragment);
     if (!fragment)
-        return Result<ShaderSource>::Err("Failed to load vertex shader: " + fragment.Error());
+        return Result<ShaderSources>::Err("Failed to load vertex shader: " + fragment.Error());
 
-    ShaderSource source{vertex.Value(), fragment.Value()};
-    return Result<ShaderSource>::Ok(source);
+    ShaderSources source{vertex.Value(), fragment.Value()};
+    return Result<ShaderSources>::Ok(source);
 }

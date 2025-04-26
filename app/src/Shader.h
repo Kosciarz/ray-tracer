@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
+#include "Result.h"
 #include "ShaderSource.h"
 
 #include <filesystem>
@@ -13,9 +14,9 @@
 class Shader
 {
 public:
-    explicit Shader(const ShaderSource& source);
+    Shader() = default;
 
-    Shader(const std::string& vertexSource, const std::string& fragmentSource);
+    static Result<Shader> Create(const ShaderSources& source);
 
     ~Shader();
 
@@ -40,9 +41,11 @@ public:
     void SetUniformMat4(const std::string& name, const GLfloat* value) const;
 
 private:
-    void CreateShader(const ShaderSource& source);
+    explicit Shader(const GLuint programID);
 
-    GLuint CompileShader(const GLenum shaderType, const std::string& source);
+    static Result<GLuint> CompileShader(const GLenum shaderType, const std::string& source);
+
+    static Result<GLuint> LinkProgram(const GLuint vertexShader, const GLuint fragmentShader);
 
 private:
     GLuint m_ProgramID;
