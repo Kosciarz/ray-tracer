@@ -11,29 +11,39 @@
 #include <string>
 #include <fstream>
 #include <vector>
+#include <memory>
 
 namespace fs = std::filesystem;
 
-Result<Shader> Shader::Create(const ShaderSources& source)
+Result<Shader::ShaderPtr> Shader::Create(const ShaderSources& sources)
 {
-    auto vertexShader = CompileShader(GL_VERTEX_SHADER, source.vertex);
+    auto vertexShader = CompileShader(GL_VERTEX_SHADER, sources.vertex);
     if (vertexShader.IsErr())
-        return Result<Shader>::Err(vertexShader.Error());
+        return Result<ShaderPtr>::Err(vertexShader.Error());
 
-    auto fragmentShader = CompileShader(GL_FRAGMENT_SHADER, source.fragment);
+    auto fragmentShader = CompileShader(GL_FRAGMENT_SHADER, sources.fragment);
     if (fragmentShader.IsErr())
-        return Result<Shader>::Err(fragmentShader.Error());
+        return Result<ShaderPtr>::Err(fragmentShader.Error());
 
     auto program = LinkProgram(vertexShader.Value(), fragmentShader.Value());
     if (program.IsErr())
-        return Result<Shader>::Err(program.Error());
+        return Result<ShaderPtr>::Err(program.Error());
 
-    return Result<Shader>::Ok(Shader{program.Value()});
+    auto shader = std::make_shared<Shader>(program.Value());
+    return Result<ShaderPtr>::Ok(shader);
+}
+
+Shader::Shader(const GLuint program)
+    : m_ProgramID{program}
+{
 }
 
 Shader::~Shader()
 {
-    GL_CHECK(glDeleteProgram(m_ProgramID));
+    if (m_ProgramID != 0)
+    {
+        GL_CHECK(glDeleteProgram(m_ProgramID));
+    }
 }
 
 GLuint Shader::GetID() const
@@ -120,7 +130,7 @@ Result<GLuint> Shader::LinkProgram(const GLuint vertexShader, const GLuint fragm
 
     GLint success;
     GL_CHECK(glGetProgramiv(program, GL_LINK_STATUS, &success));
-    if (success == GL_TRUE)
+    if (success != GL_TRUE)
     {
         GLint logLength{0};
         GL_CHECK(glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLength));
@@ -130,7 +140,7 @@ Result<GLuint> Shader::LinkProgram(const GLuint vertexShader, const GLuint fragm
         GL_CHECK(glDeleteShader(vertexShader));
         GL_CHECK(glDeleteShader(fragmentShader));
 
-        return Result<GLuint>::Err("Failed to link shader program: " + std::string{log.data()});
+        return Result<GLuint>::Err("FFailed to link program: " + std::string{log.data()});
     }
 
     GL_CHECK(glDeleteShader(vertexShader));
