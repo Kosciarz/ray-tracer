@@ -11,10 +11,10 @@ struct ShaderPaths
     std::filesystem::path fragment;
 };
 
-struct ShaderSource
+struct ShaderSources
 {
     std::string vertex;
     std::string fragment;
 
-    static Result<ShaderSource> Load(const ShaderPaths& paths);
+    static Result<ShaderSources> Load(const ShaderPaths& paths);
 };

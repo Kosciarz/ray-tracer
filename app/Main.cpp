@@ -14,6 +14,7 @@
 #include <filesystem>
 #include <vector>
 #include <cstdint>
+#include <cstdlib>
 
 namespace fs = std::filesystem;
 
@@ -181,33 +182,39 @@ int main()
 
     const ShaderPaths paths{vertexShader, fragmentShader};
 
-    const auto shaderSource = ShaderSource::Load(paths);
+    const auto& shaderSource = ShaderSources::Load(paths);
     if (shaderSource.IsErr())
     {
         std::cerr << "Error: " << shaderSource.Error() << '\n';
-        return -1;
+        return EXIT_FAILURE;
     }
 
-    Shader shader{shaderSource.Value()};
+    const auto& shaderResult = Shader::Create(shaderSource.Value());
+    if (shaderResult.IsErr())
+    {
+        std::cerr << "Error: " << shaderResult.Error() << '\n';
+        return EXIT_FAILURE;
+    }
+
+    const auto& shader = shaderResult.Value();
 
     // set the texture uniforms
-    shader.Use();
-    shader.SetUniformInt("texture1", 0);
-    shader.SetUniformInt("texture2", 1);
-    shader.SetUniformFloat("visibility", s_MixVisibility);
-    shader.Unuse();
+    shader->Use();
+    shader->SetUniformInt("texture1", 0);
+    shader->SetUniformInt("texture2", 1);
+    shader->SetUniformFloat("visibility", s_MixVisibility);
 
 
     while (!window.ShouldClose())
     {
-        ScopedTimer timer("main loop");
+        //ScopedTimer timer("main loop");
 
         window.PollEvents();
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-        ImGui::ShowDemoWindow();
+        //ImGui::ShowDemoWindow();
 
         GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
 
@@ -216,23 +223,23 @@ int main()
         transform1 = glm::translate(transform1, glm::vec3{0.5, -0.5, 0.0});
         transform1 = glm::rotate(transform1, static_cast<float>(glfwGetTime()), glm::vec3{0.0, 0.0, 1.0});
 
-        shader.Use();
-        shader.SetUniformMat4("transform", glm::value_ptr(transform1));
-        shader.Unuse();
+        shader->Use();
+        shader->SetUniformMat4("transform", glm::value_ptr(transform1));
+        shader->Unuse();
 
         GL_CHECK(glActiveTexture(GL_TEXTURE0));
         GL_CHECK(glBindTexture(GL_TEXTURE_2D, texture1));
         GL_CHECK(glActiveTexture(GL_TEXTURE1));
         GL_CHECK(glBindTexture(GL_TEXTURE_2D, texture2));
 
-        shader.Use();
+        shader->Use();
         GL_CHECK(glBindVertexArray(vao));
         GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo));
         
         // draw 1st cube
         GL_CHECK(glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, 0));
         
-        shader.Unuse();
+        shader->Unuse();
         GL_CHECK(glBindVertexArray(0));
         GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 
@@ -241,18 +248,18 @@ int main()
         auto scale = glm::sin(glfwGetTime());
         transform2 = glm::scale(transform2, glm::vec3{scale, scale, 0.0});
 
-        shader.Use();
-        shader.SetUniformMat4("transform", glm::value_ptr(transform2));
-        shader.Unuse();
+        shader->Use();
+        shader->SetUniformMat4("transform", glm::value_ptr(transform2));
+        shader->Unuse();
 
-        shader.Use();
+        shader->Use();
         GL_CHECK(glBindVertexArray(vao));
         GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo));
 
         // draw 2nd cube
         GL_CHECK(glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, 0));
 
-        shader.Unuse();
+        shader->Unuse();
         GL_CHECK(glBindVertexArray(0));
         GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 

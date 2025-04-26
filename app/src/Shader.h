@@ -5,25 +5,31 @@
 #include <glm/glm.hpp>
 
 #include "ShaderSource.h"
+#include "Result.h"
 
 #include <filesystem>
 #include <string>
 #include <optional>
+#include <memory>
 
 class Shader
 {
 public:
-    explicit Shader(const ShaderSource& source);
+    using ShaderPtr = std::shared_ptr<Shader>;
 
-    Shader(const std::string& vertexSource, const std::string& fragmentSource);
+    static Result<ShaderPtr> Create(const ShaderSources& sources);
+
+    Shader() = default;
+
+    explicit Shader(const GLuint program);
 
     ~Shader();
+    
+    GLuint GetID() const;
 
     void Use() const;
 
     void Unuse() const;
-
-    GLuint GetID() const;
 
     void SetUniformBool(const std::string& name, bool value) const;
 
@@ -40,9 +46,9 @@ public:
     void SetUniformMat4(const std::string& name, const GLfloat* value) const;
 
 private:
-    void CreateShader(const ShaderSource& source);
+    static Result<GLuint> CompileShader(const GLenum shaderType, const std::string& source);
 
-    GLuint CompileShader(const GLenum shaderType, const std::string& source);
+    static Result<GLuint> LinkProgram(const GLuint vertexShader, const GLuint fragmentShader);
 
 private:
     GLuint m_ProgramID;

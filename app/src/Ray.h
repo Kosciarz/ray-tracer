@@ -12,3 +12,4 @@
 #include "Timer.h"
 #include "Random.h"
 #include "ShaderSource.h"
+#include "Result.h"

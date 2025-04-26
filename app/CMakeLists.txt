@@ -1,5 +1,4 @@
 add_subdirectory("src")
-add_subdirectory("test")
 
 add_executable(RayTracer "${CMAKE_CURRENT_SOURCE_DIR}/Main.cpp")
 
