@@ -225,7 +225,6 @@ int main()
 
         shader->Use();
         shader->SetUniformMat4("transform", glm::value_ptr(transform1));
-        shader->Unuse();
 
         GL_CHECK(glActiveTexture(GL_TEXTURE0));
         GL_CHECK(glBindTexture(GL_TEXTURE_2D, texture1));
@@ -238,23 +237,14 @@ int main()
         
         // draw 1st cube
         GL_CHECK(glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, 0));
-        
-        shader->Unuse();
-        GL_CHECK(glBindVertexArray(0));
-        GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 
-        auto transform2 = glm::translate(glm::mat4{1.0f}, glm::vec3{glm::sin(glfwGetTime()), glm::cos(glfwGetTime()), 0.0});
+        glm::mat4 transform2{1.0f};
+        transform2 = glm::translate(transform2, glm::vec3{glm::sin(glfwGetTime()), glm::cos(glfwGetTime()), 0.0});
         transform2 = glm::rotate(transform2, static_cast<float>(glfwGetTime() * -1), glm::vec3{0.0, 0.0, 1.0});
         auto scale = glm::sin(glfwGetTime());
         transform2 = glm::scale(transform2, glm::vec3{scale, scale, 0.0});
 
-        shader->Use();
         shader->SetUniformMat4("transform", glm::value_ptr(transform2));
-        shader->Unuse();
-
-        shader->Use();
-        GL_CHECK(glBindVertexArray(vao));
-        GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo));
 
         // draw 2nd cube
         GL_CHECK(glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, 0));
