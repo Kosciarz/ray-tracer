@@ -23,24 +23,9 @@ constexpr auto HEIGHT = 720;
 
 static float s_MixVisibility = 0.5f;
 
-static void InitImGui(GLFWwindow* window)
-{
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init();
-}
-
-static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
-        glfwSetWindowShouldClose(window, true);
-}
+static void InitImGui(GLFWwindow* window);
+static void ShutdownImGui();
+static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 int main()
 {
@@ -51,9 +36,17 @@ int main()
         return EXIT_FAILURE;
     }
 
-    Window window{WIDTH, HEIGHT, "window"};
-    glfwSetKeyCallback(window.GetWindow(), KeyCallback);
-    InitImGui(window.GetWindow());
+    auto windowResult = Window::Create(WIDTH, HEIGHT, "window");
+    if (windowResult.IsErr())
+    {
+        std::cerr << "Error: " << windowResult.Error() << '\n';
+        return EXIT_FAILURE;
+    }
+
+    const auto& window = windowResult.Value();
+
+    glfwSetKeyCallback(window->GetWindow(), KeyCallback);
+    InitImGui(window->GetWindow());
 
     const std::vector<float> vertices = {
         // positions         // texture coords
@@ -68,54 +61,21 @@ int main()
         2, 3, 0
     };
 
-#pragma region buffers classes
-    //
-    //    VAO vao;
-    //    vao.Bind();
-    //
-    //    VertexBuffer buffer(vertices.data(), vertices.size() * sizeof(float));
-    //
-    //    IndexBuffer indexBuffer(indices.size() * sizeof(uint16_t), indices.data(), GL_STATIC_DRAW);
-    //
-    //    vao.AddVertexBuffer(buffer, 0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-    //    vao.EnableVertexAttribArray(0);
-    //
-    //    vao.AddVertexBuffer(buffer, 1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-    //    vao.EnableVertexAttribArray(1);
-    //
-    //    vao.AddVertexBuffer(buffer, 2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-    //    vao.EnableVertexAttribArray(2);
-    //
-    //    vao.Unbind();
-    //
-#pragma endregion
+#pragma region buffers
 
-#pragma region buffers raw
+    VAO vertexArray;
+    vertexArray.Bind();
 
-    GLuint vbo, vao, ebo;
+    VertexBuffer vertexBuffer(vertices.data(), vertices.size() * sizeof(float));
+    IndexBuffer indexBuffer(indices.size() * sizeof(std::uint16_t), indices.data(), GL_STATIC_DRAW);
 
-    // vertex array object (VAO) - holds information about multiple VBOs and can switch between them
-    GL_CHECK(glGenVertexArrays(1, &vao));
-    GL_CHECK(glBindVertexArray(vao));
+    vertexArray.AddVertexBuffer(vertexBuffer, 0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    vertexArray.EnableVertexAttribArray(0);
 
-    // vertex buffer object (VBO) - holds vertices
-    GL_CHECK(glGenBuffers(1, &vbo));
-    GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, vbo));
-    GL_CHECK(glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW));
+    vertexArray.AddVertexBuffer(vertexBuffer, 1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    vertexArray.EnableVertexAttribArray(1);
 
-    // element buffer object (EBO) - holds indices of selected vertices
-    GL_CHECK(glGenBuffers(1, &ebo));
-    GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo));
-    GL_CHECK(glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(std::uint16_t), indices.data(), GL_STATIC_DRAW));
-
-    // bind data into VAO
-    GL_CHECK(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0));
-    GL_CHECK(glEnableVertexAttribArray(0));
-
-    GL_CHECK(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float))));
-    GL_CHECK(glEnableVertexAttribArray(1));
-
-    GL_CHECK(glBindVertexArray(0));
+    vertexArray.Unbind();
 
 #pragma endregion
 
@@ -184,6 +144,8 @@ int main()
 
 #pragma endregion
 
+#pragma region shaders
+
     const auto vertexShader = shadersPath / "vs.glsl";
     const auto fragmentShader = shadersPath / "fs.glsl";
 
@@ -211,12 +173,13 @@ int main()
     shader->SetUniformInt("texture2", 1);
     shader->SetUniformFloat("visibility", s_MixVisibility);
 
+#pragma endregion
 
-    while (!window.ShouldClose())
+    while (!window->ShouldClose())
     {
-        //ScopedTimer timer("main loop");
+        ScopedTimer timer("main loop");
 
-        window.PollEvents();
+        window->PollEvents();
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -239,8 +202,8 @@ int main()
         GL_CHECK(glBindTexture(GL_TEXTURE_2D, texture2));
 
         shader->Use();
-        GL_CHECK(glBindVertexArray(vao));
-        GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo));
+        vertexArray.Bind();
+        indexBuffer.Bind();
 
         // draw 1st cube
         GL_CHECK(glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, 0));
@@ -257,16 +220,40 @@ int main()
         GL_CHECK(glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, 0));
 
         shader->Unuse();
-        GL_CHECK(glBindVertexArray(0));
-        GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+        vertexArray.Unbind();
+        indexBuffer.Unbind();
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-        window.SwapBuffers();
+        window->SwapBuffers();
     }
 
+    ShutdownImGui();
+}
+
+static void InitImGui(GLFWwindow* window)
+{
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init();
+}
+
+static void ShutdownImGui()
+{
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
+}
+
+static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
+        glfwSetWindowShouldClose(window, true);
 }
