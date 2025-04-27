@@ -86,12 +86,7 @@ int main()
 
 #pragma region shaders
 
-    const auto vertexShader = shadersPath / "vs.glsl";
-    const auto fragmentShader = shadersPath / "fs.glsl";
-
-    const ShaderPaths paths{vertexShader, fragmentShader};
-
-    const auto& shaderSource = ShaderSources::Load(paths);
+    const auto& shaderSource = ShaderSources::Load({shadersPath / "vs.glsl", shadersPath / "fs.glsl"});
     if (shaderSource.IsErr())
     {
         std::cerr << "Error: " << shaderSource.Error() << '\n';

@@ -22,6 +22,15 @@ WindowConfig::WindowConfig(const std::uint16_t width, const std::uint16_t height
 
 Result<Window::WindowPtr> Window::Create(const WindowConfig& config)
 {
+    auto window = std::make_unique<Window>();
+    auto initResult = window->Init(config);
+    if (initResult.IsErr())
+        return Result<WindowPtr>::Err(initResult.Error());
+    return Result<WindowPtr>::Ok(std::move(window));
+}
+
+Result<void> Window::Init(const WindowConfig& config)
+{
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -30,19 +39,20 @@ Result<Window::WindowPtr> Window::Create(const WindowConfig& config)
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPACT, GL_TRUE);
 #endif
 
-    auto window = std::make_unique<Window>();
-    window->m_Window = glfwCreateWindow(config.width, config.height, config.title.c_str(), nullptr, nullptr);
-    if (!window->m_Window)
-        return Result<WindowPtr>::Err("Failed to create GLFW window");
+    m_Window = glfwCreateWindow(config.width, config.height, config.title.c_str(), nullptr, nullptr);
+    if (!m_Window)
+        return Result<void>::Err("Failed to create GLFW window");
 
-    glfwMakeContextCurrent(window->m_Window);
+    glfwMakeContextCurrent(m_Window);
 
     if (!gladLoadGL(glfwGetProcAddress))
-        return Result<WindowPtr>::Err("Failed to initialize GLAD");
+        return Result<void>::Err("Failed to initialize GLAD");
 
-    glfwSetFramebufferSizeCallback(window->m_Window, Resize);
+    glfwSetFramebufferSizeCallback(m_Window, [](GLFWwindow* window, const int width, const int height) {
+        GL_CHECK(glViewport(0, 0, width, height));
+    });
 
-    return Result<WindowPtr>::Ok(std::move(window));
+    return Result<void>::Ok();
 }
 
 Window::Window(GLFWwindow* window)
@@ -73,9 +83,4 @@ void Window::SwapBuffers() const
 GLFWwindow* Window::GetWindow()
 {
     return m_Window;
-}
-
-void Window::Resize(GLFWwindow* window, const int width, const int height)
-{
-    GL_CHECK(glViewport(0, 0, width, height));
 }
