@@ -4,7 +4,7 @@
 #include <utility>
 
 template <typename T, typename E = std::string>
-class [[nodiscard]] Result
+class Result
 {
 public:
     Result() = delete;
@@ -49,14 +49,9 @@ public:
         return m_Error;
     }
 
-    T ValueOr(T defaultValue) const
-    {
-        return m_Success ? m_Value : std::move(defaultValue);
-    }
-
     explicit operator bool() const
     {
-        return IsOk();
+        return m_Success;
     }
 
 private:
@@ -67,5 +62,57 @@ private:
 
     bool m_Success;
     T m_Value;
+    E m_Error;
+};
+
+
+template <typename E>
+class Result<void, E>
+{
+public:
+    Result() = delete;
+
+    static Result Ok()
+    {
+        return Result{true, std::string{}};
+    }
+
+    static Result Err(std::string error)
+    {
+        return {false, std::move(error)};
+    }
+
+    bool IsOk() const
+    {
+        return m_Success;
+    }
+
+    bool IsErr() const
+    {
+        return !m_Success;
+    }
+
+    E& Error()
+    {
+        return m_Error;
+    }
+
+    const E& Error() const
+    {
+        return m_Error;
+    }
+
+    explicit operator bool() const
+    {
+        return m_Success;
+    }
+
+private:
+    Result(bool success, E error)
+        : m_Success{success}, m_Error{std::move(error)}
+    {
+    }
+
+    bool m_Success;
     E m_Error;
 };
