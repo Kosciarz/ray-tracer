@@ -17,8 +17,7 @@ namespace fs = std::filesystem;
 
 static Result<std::string> ReadFile(const fs::path& path)
 {
-    if (path.empty())
-        return Result<std::string>::Err("Shader path is empty");
+    RAY_ASSERT(!path.empty(), "Shader path is empty");
 
     std::ifstream file(path, std::ios::in);
     if (!file)

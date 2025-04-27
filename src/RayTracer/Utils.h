@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glad/gl.h>
+
 #include <iostream>
 #include <string>
 
@@ -37,4 +38,22 @@ inline const char* GetGLErrorString(GLenum error)
 
 #else
 #define GLCALL(x) x;
+#endif
+
+#ifndef NDEBUG
+#include <cassert>
+
+#define RAY_ASSERT(x, msg)                         \
+        do {                                            \
+            if (!(x)) {                                 \
+                std::cerr << "Assertion failed: "       \
+                          << #x << "\nMessage: "        \
+                          << msg << "\nFile: "          \
+                          << __FILE__ << "\nLine: "     \
+                          << __LINE__ << std::endl;     \
+                assert(x);                              \
+            }                                           \
+        } while (0)
+#else
+#define RAY_ASSERT(x, msg) ((void)0)
 #endif

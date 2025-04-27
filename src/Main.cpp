@@ -27,22 +27,26 @@ constexpr auto HEIGHT = 720;
 
 static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
+template <typename T>
+bool CheckError(const Result<T>& result)
+{
+    if (result.IsErr())
+    {
+        std::cerr << "Error: " << result.Error() << '\n';
+        return true;
+    }
+    return false;
+}
 
 int main()
 {
     auto context = GlfwContext::Create();
-    if (context.IsErr())
-    {
-        std::cerr << "Error: " << context.Error() << '\n';
+    if (CheckError(context))
         return EXIT_FAILURE;
-    }
 
     auto windowResult = Window::Create();
-    if (windowResult.IsErr())
-    {
-        std::cerr << "Error: " << windowResult.Error() << '\n';
+    if (CheckError(windowResult))
         return EXIT_FAILURE;
-    }
 
     const auto& window = windowResult.Value();
     glfwSetKeyCallback(window->GetWindow(), KeyCallback);
@@ -87,18 +91,12 @@ int main()
 #pragma region shaders
 
     const auto& shaderSource = ShaderSources::Load({shadersPath / "vs.glsl", shadersPath / "fs.glsl"});
-    if (shaderSource.IsErr())
-    {
-        std::cerr << "Error: " << shaderSource.Error() << '\n';
+    if (CheckError(shaderSource))
         return EXIT_FAILURE;
-    }
 
     const auto& shaderResult = Shader::Create(shaderSource.Value());
-    if (shaderResult.IsErr())
-    {
-        std::cerr << "Error: " << shaderResult.Error() << '\n';
+    if (CheckError(shaderResult))
         return EXIT_FAILURE;
-    }
 
     const auto& shader = shaderResult.Value();
 

@@ -11,7 +11,7 @@ public:
 
     static Result<T> Ok(T value)
     {
-        return Result{true, std::move(value), std::string{}};
+        return Result{true, std::move(value), E{}};
     }
 
     static Result<T> Err(std::string error)
@@ -74,7 +74,7 @@ public:
 
     static Result Ok()
     {
-        return Result{true, std::string{}};
+        return Result{true, E{}};
     }
 
     static Result Err(std::string error)
