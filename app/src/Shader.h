@@ -17,6 +17,7 @@ class Shader
 public:
     using ShaderPtr = std::shared_ptr<Shader>;
 
+public:
     static Result<ShaderPtr> Create(const ShaderSources& sources);
 
     Shader() = default;

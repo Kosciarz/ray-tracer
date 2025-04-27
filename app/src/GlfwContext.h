@@ -11,6 +11,7 @@ class GlfwContext
 public:
     using GlfwContextPtr = std::unique_ptr<GlfwContext>;
 
+public:
     static Result<GlfwContextPtr> Create();
 
     GlfwContext() = default;

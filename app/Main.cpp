@@ -241,7 +241,7 @@ int main()
         shader->Use();
         GL_CHECK(glBindVertexArray(vao));
         GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo));
-        
+
         // draw 1st cube
         GL_CHECK(glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, 0));
 

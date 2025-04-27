@@ -2,14 +2,15 @@
 #include <GLFW/glfw3.h>
 
 #include "Window.h"
+#include "Result.h"
 #include "Utils.h"
 
 #include <iostream>
 #include <cstdint>
+#include <memory>
 
-Window::Window(const std::uint16_t width, const std::uint16_t height, const char* title)
+Result<Window::WindowPtr> Window::Create(const std::uint16_t width, const std::uint16_t height, const char * title)
 {
-    glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -18,21 +19,29 @@ Window::Window(const std::uint16_t width, const std::uint16_t height, const char
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPACT, GL_TRUE);
 #endif
 
-    m_Window = glfwCreateWindow(width, height, title, nullptr, nullptr);
-    if (!m_Window)
-        throw std::runtime_error{"failed to create GLFW window"};
+    auto window = std::make_unique<Window>();
+    window->m_Window = glfwCreateWindow(width, height, title, nullptr, nullptr);
+    if (!window->m_Window)
+        return Result<WindowPtr>::Err("Failed to create GLFW window");
 
-    glfwMakeContextCurrent(m_Window);
-    glfwSetFramebufferSizeCallback(m_Window, Resize);
+    glfwMakeContextCurrent(window->m_Window);
 
     if (!gladLoadGL(glfwGetProcAddress))
-        throw std::runtime_error{"failed to initialize GLAD"};
+        return Result<WindowPtr>::Err("Failed to initialize GLAD");
+    
+    glfwSetFramebufferSizeCallback(window->m_Window, Resize);
+
+    return Result<WindowPtr>::Ok(std::move(window));
+}
+
+Window::Window(GLFWwindow* window)
+    : m_Window{window}
+{
 }
 
 Window::~Window()
 {
     glfwDestroyWindow(m_Window);
-    glfwTerminate();
 }
 
 bool Window::ShouldClose() const

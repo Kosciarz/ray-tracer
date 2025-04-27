@@ -2,12 +2,22 @@
 
 #include <GLFW/glfw3.h>
 
+#include "Result.h"
+
 #include <cstdint>
+#include <memory>
 
 class Window
 {
 public:
-    Window(const std::uint16_t width, const std::uint16_t height, const char* title);
+    using WindowPtr = std::unique_ptr<Window>;
+
+public:
+    static Result<WindowPtr> Create(const std::uint16_t width, const std::uint16_t height, const char* title);
+
+    Window() = default;
+
+    explicit Window(GLFWwindow* window);
 
     ~Window();
 
@@ -23,5 +33,5 @@ private:
     static void Resize(GLFWwindow* window, const int width, const int height);
 
 private:
-    GLFWwindow* m_Window = nullptr;
+    GLFWwindow* m_Window;
 };
