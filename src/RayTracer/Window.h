@@ -19,7 +19,6 @@ struct WindowConfig
     WindowConfig(const std::uint16_t width, const std::uint16_t height, std::string title);
 };
 
-
 class Window
 {
 public:
@@ -43,7 +42,7 @@ public:
     GLFWwindow* GetWindow();
 
 private:
-    static void Resize(GLFWwindow* window, const int width, const int height);
+    Result<void> Init(const WindowConfig& config);
 
 private:
     GLFWwindow* m_Window;
