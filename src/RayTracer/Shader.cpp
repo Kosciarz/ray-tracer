@@ -4,7 +4,6 @@
 
 #include "Shader.h"
 #include "Utils.h"
-#include "ShaderSource.h"
 
 #include <filesystem>
 #include <iostream>
@@ -14,6 +13,37 @@
 #include <memory>
 
 namespace fs = std::filesystem;
+
+
+static Result<std::string> ReadFile(const fs::path& path)
+{
+    if (path.empty())
+        return Result<std::string>::Err("Shader path is empty");
+
+    std::ifstream file(path, std::ios::in);
+    if (!file)
+        return Result<std::string>::Err("Cannot open shader file: " + path.string());
+
+    const auto fileSize = fs::file_size(path);
+    std::string contents(fileSize, 0);
+    file.read(contents.data(), fileSize);
+    return Result<std::string>::Ok(contents);
+}
+
+Result<ShaderSources> ShaderSources::Load(const ShaderPaths& paths)
+{
+    auto vertex = ReadFile(paths.vertex);
+    if (!vertex)
+        return Result<ShaderSources>::Err("Failed to load vertex shader: " + vertex.Error());
+
+    auto fragment = ReadFile(paths.fragment);
+    if (!fragment)
+        return Result<ShaderSources>::Err("Failed to load vertex shader: " + fragment.Error());
+
+    ShaderSources source{vertex.Value(), fragment.Value()};
+    return Result<ShaderSources>::Ok(source);
+}
+
 
 Result<Shader::ShaderPtr> Shader::Create(const ShaderSources& sources)
 {

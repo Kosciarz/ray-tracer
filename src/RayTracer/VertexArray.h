@@ -1,17 +1,17 @@
 #pragma once
 
-#include <glad/gl.h>
-
 #include "VertexBuffer.h"
+
+#include <glad/gl.h>
 
 #include <cstdint>
 
-class VAO
+class VertexArray
 {
 public:
-    VAO();
+    VertexArray();
 
-    ~VAO();
+    ~VertexArray();
 
     void Bind() const;
 

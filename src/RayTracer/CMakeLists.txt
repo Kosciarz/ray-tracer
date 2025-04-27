@@ -1,27 +1,22 @@
 set(SOURCES
     "Window.cpp"
     "Shader.cpp"
+    "Texture.cpp"
     "VertexBuffer.cpp"
-    "VAO.cpp"
+    "VertexArray.cpp"
     "IndexBuffer.cpp"
-    "Vec3.cpp"
     "StbImageImpl.cpp"
-    "ShaderSource.cpp"
     "GlfwContext.cpp"
 )
 
 set(HEADERS
-    "Ray.h"
     "Window.h"
     "Shader.h"
+    "Texture.h"
     "VertexBuffer.h"
-    "VAO.h"
+    "VertexArray.h"
     "IndexBuffer.h"
     "Utils.h"
-    "Vec3.h"
-    "Timer.h"
-    "Random.h"
-    "ShaderSource.h"
     "Result.h"
     "GlfwContext.h"
 )

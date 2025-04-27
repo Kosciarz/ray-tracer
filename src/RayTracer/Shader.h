@@ -4,13 +4,27 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
-#include "ShaderSource.h"
 #include "Result.h"
 
 #include <filesystem>
 #include <string>
 #include <optional>
 #include <memory>
+
+
+struct ShaderPaths
+{
+    std::filesystem::path vertex;
+    std::filesystem::path fragment;
+};
+
+struct ShaderSources
+{
+    std::string vertex;
+    std::string fragment;
+
+    static Result<ShaderSources> Load(const ShaderPaths& paths);
+};
 
 class Shader
 {

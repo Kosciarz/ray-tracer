@@ -44,24 +44,9 @@ if(NOT EXISTS ${STB_IMAGE_DIR}/stb_image.h)
 	)
 endif()
 
-FetchContent_Declare(
-	imgui
-	GIT_REPOSITORY https://github.com/ocornut/imgui
-	GIT_TAG docking
-	GIT_SHALLOW TRUE
-)
-
-FetchContent_Declare(
-	gtest
-	GIT_REPOSITORY https://github.com/google/googletest
-	GIT_TAG v1.16.0
-	GIT_SHALLOW TRUE
-)
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-
-FetchContent_MakeAvailable(glfw3 glm glad imgui gtest)
+FetchContent_MakeAvailable(glfw3 glm glad)
 
 add_subdirectory("${glad_SOURCE_DIR}/cmake" glad_cmake)
 glad_add_library(glad REPRODUCIBLE EXCLUDE_FROM_ALL LOADER API gl:core=4.6)
 
-add_subdirectory("app")
+add_subdirectory(src)
