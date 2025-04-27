@@ -7,13 +7,26 @@
 #include <cstdint>
 #include <memory>
 
+
+struct WindowConfig
+{
+    std::uint16_t width;
+    std::uint16_t height;
+    std::string title;
+
+    WindowConfig();
+
+    WindowConfig(const std::uint16_t width, const std::uint16_t height, std::string title);
+};
+
+
 class Window
 {
 public:
     using WindowPtr = std::unique_ptr<Window>;
 
 public:
-    static Result<WindowPtr> Create(const std::uint16_t width, const std::uint16_t height, const char* title);
+    static Result<WindowPtr> Create(const WindowConfig& config = WindowConfig());
 
     Window() = default;
 

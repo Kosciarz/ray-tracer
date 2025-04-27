@@ -37,7 +37,7 @@ int main()
         return EXIT_FAILURE;
     }
 
-    auto windowResult = Window::Create(WIDTH, HEIGHT, "window");
+    auto windowResult = Window::Create();
     if (windowResult.IsErr())
     {
         std::cerr << "Error: " << windowResult.Error() << '\n';

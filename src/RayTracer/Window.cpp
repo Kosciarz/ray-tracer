@@ -9,7 +9,18 @@
 #include <cstdint>
 #include <memory>
 
-Result<Window::WindowPtr> Window::Create(const std::uint16_t width, const std::uint16_t height, const char * title)
+
+WindowConfig::WindowConfig()
+    : width{1280}, height{720}, title{"RayTracer"}
+{
+}
+
+WindowConfig::WindowConfig(const std::uint16_t width, const std::uint16_t height, std::string title)
+    : width{width}, height{height}, title{title}
+{
+}
+
+Result<Window::WindowPtr> Window::Create(const WindowConfig& config)
 {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -20,7 +31,7 @@ Result<Window::WindowPtr> Window::Create(const std::uint16_t width, const std::u
 #endif
 
     auto window = std::make_unique<Window>();
-    window->m_Window = glfwCreateWindow(width, height, title, nullptr, nullptr);
+    window->m_Window = glfwCreateWindow(config.width, config.height, config.title.c_str(), nullptr, nullptr);
     if (!window->m_Window)
         return Result<WindowPtr>::Err("Failed to create GLFW window");
 
@@ -28,7 +39,7 @@ Result<Window::WindowPtr> Window::Create(const std::uint16_t width, const std::u
 
     if (!gladLoadGL(glfwGetProcAddress))
         return Result<WindowPtr>::Err("Failed to initialize GLAD");
-    
+
     glfwSetFramebufferSizeCallback(window->m_Window, Resize);
 
     return Result<WindowPtr>::Ok(std::move(window));
