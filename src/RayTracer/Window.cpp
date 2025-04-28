@@ -80,6 +80,22 @@ void Window::SwapBuffers() const
     glfwSwapBuffers(m_Window);
 }
 
+void Window::SetUserPointer(void* ptr) const
+{
+    glfwSetWindowUserPointer(m_Window, ptr);
+}
+
+void* Window::GetUserPointer()
+{
+    return glfwGetWindowUserPointer(m_Window);
+}
+
+template <typename T>
+T* Window::GetUserPointerAs() const
+{
+    return static_cast<T*>(GetUserPointer());
+}
+
 GLFWwindow* Window::GetWindow()
 {
     return m_Window;

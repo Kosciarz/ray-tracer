@@ -39,6 +39,13 @@ public:
 
     void SwapBuffers() const;
 
+    void SetUserPointer(void* userPtr) const;
+
+    void* GetUserPointer();
+
+    template <typename T>
+    T* GetUserPointerAs() const;
+
     GLFWwindow* GetWindow();
 
 private:
@@ -46,4 +53,5 @@ private:
 
 private:
     GLFWwindow* m_Window;
+    void* m_UserPointer;
 };
