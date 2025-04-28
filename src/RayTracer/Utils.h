@@ -37,7 +37,7 @@ inline const char* GetGLErrorString(GLenum error)
     } \
 
 #else
-#define GLCALL(x) x;
+#define GL_CHECK(x) x;
 #endif
 
 #ifndef NDEBUG
