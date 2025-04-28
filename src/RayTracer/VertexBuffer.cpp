@@ -3,6 +3,14 @@
 #include "VertexBuffer.h"
 #include "Utils.h"
 
+#include <memory>
+
+
+std::shared_ptr<VertexBuffer> VertexBuffer::Create(const void* data, const std::size_t size)
+{
+    return std::make_shared<VertexBuffer>(data, size);
+}
+
 VertexBuffer::VertexBuffer(const void* data, const std::size_t size)
 {
     GL_CHECK(glGenBuffers(1, &m_BufferID));

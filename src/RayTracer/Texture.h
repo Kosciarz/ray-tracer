@@ -3,11 +3,16 @@
 #include <glad/gl.h>
 
 #include <filesystem>
+#include <memory>
 
 class Texture
 {
 public:
+    static std::shared_ptr<Texture> Create(const GLenum type, const GLenum number, const std::filesystem::path& path);
+
     Texture(const GLenum type, const GLenum number, const std::filesystem::path& path);
+
+    Texture() = default;
 
     ~Texture();
 

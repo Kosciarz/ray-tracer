@@ -4,8 +4,16 @@
 #include "Utils.h"
 
 #include <cstddef>
+#include <memory>
 
-IndexBuffer::IndexBuffer(std::size_t size, const void* data, GLenum usage)
+
+std::shared_ptr<IndexBuffer> IndexBuffer::Create(const GLenum indexType, const std::size_t size, const void* data, const GLenum usage)
+{
+    return std::make_shared<IndexBuffer>(indexType, size, data, usage);
+}
+
+IndexBuffer::IndexBuffer(const GLenum indexType, const std::size_t size, const void* data, const GLenum usage)
+    : m_Size{size}, m_IndexType{indexType}
 {
     GL_CHECK(glGenBuffers(1, &m_BufferID));
     GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_BufferID));
@@ -15,6 +23,16 @@ IndexBuffer::IndexBuffer(std::size_t size, const void* data, GLenum usage)
 IndexBuffer::~IndexBuffer()
 {
     GL_CHECK(glDeleteBuffers(1, &m_BufferID));
+}
+
+std::size_t IndexBuffer::Size() const
+{
+    return m_Size;
+}
+
+GLenum IndexBuffer::IndexType() const
+{
+    return m_IndexType;
 }
 
 void IndexBuffer::Bind() const

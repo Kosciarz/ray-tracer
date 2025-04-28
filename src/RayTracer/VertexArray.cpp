@@ -4,6 +4,13 @@
 
 #include <glad/gl.h>
 
+#include <memory>
+
+
+std::shared_ptr<VertexArray> VertexArray::Create()
+{
+    return std::make_shared<VertexArray>();
+}
 
 VertexArray::VertexArray()
 {
@@ -25,10 +32,10 @@ void VertexArray::Unbind() const
     GL_CHECK(glBindVertexArray(0));
 }
 
-void VertexArray::AddVertexBuffer(const VertexBuffer& buffer, GLuint index, GLint size, GLenum type,
+void VertexArray::AddVertexBuffer(const std::shared_ptr<VertexBuffer>& vertexBuffer, GLuint index, GLint size, GLenum type,
     GLboolean normalized, GLsizei stride, const void* offset) const
 {
-    buffer.Bind();
+    vertexBuffer->Bind();
     GL_CHECK(glVertexAttribPointer(index, size, type, normalized, stride, offset));
 }
 

@@ -5,6 +5,13 @@
 #include <stb_image.h>
 
 #include <filesystem>
+#include <memory>
+
+
+std::shared_ptr<Texture> Texture::Create(const GLenum type, const GLenum number, const std::filesystem::path& path)
+{
+    return std::make_shared<Texture>(type, number, path);
+}
 
 Texture::Texture(const GLenum type, const GLenum number, const std::filesystem::path& path)
     : m_Type{type}, m_Number{number}

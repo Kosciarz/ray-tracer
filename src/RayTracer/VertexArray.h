@@ -5,10 +5,14 @@
 #include <glad/gl.h>
 
 #include <cstdint>
+#include <memory>
+
 
 class VertexArray
 {
 public:
+    static std::shared_ptr<VertexArray> Create();
+
     VertexArray();
 
     ~VertexArray();
@@ -17,7 +21,7 @@ public:
 
     void Unbind() const;
 
-    void AddVertexBuffer(const VertexBuffer& buffer, GLuint index, GLint size, GLenum type,
+    void AddVertexBuffer(const std::shared_ptr<VertexBuffer>& buffer, GLuint index, GLint size, GLenum type,
         GLboolean normalized, GLsizei stride, const void* offset) const;
 
     void EnableVertexAttribArray(GLuint enableArray) const;
