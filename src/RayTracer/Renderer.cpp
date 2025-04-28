@@ -71,5 +71,5 @@ Result<std::shared_ptr<Texture>> Renderer::GetTexture(const std::string& name)
 {
     if (!m_Textures.contains(name))
         return Result<std::shared_ptr<Texture>>::Err("No texture with name: " + name);
-    return Result<std::shared_ptr<Texture>>::Ok(std::make_shared<Texture>(m_Textures[name]));
+    return Result<std::shared_ptr<Texture>>::Ok(m_Textures[name]);
 }

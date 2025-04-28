@@ -1,5 +1,7 @@
 set(SOURCES
+    "Application.cpp"
     "Window.cpp"
+    "Renderer.cpp"
     "Shader.cpp"
     "Texture.cpp"
     "VertexBuffer.cpp"
@@ -10,7 +12,9 @@ set(SOURCES
 )
 
 set(HEADERS
+    "Application.h"
     "Window.h"
+    "Renderer.h"
     "Shader.h"
     "Texture.h"
     "VertexBuffer.h"
@@ -31,3 +35,4 @@ target_include_directories(RayCore PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR} 
     ${STB_IMAGE_DIR}
 )
+target_compile_definitions(RayCore PRIVATE ASSETS_DIR="${CMAKE_SOURCE_DIR}/assets")
