@@ -1,26 +1,29 @@
 #pragma once
 
-#include <glad/gl.h>
-
 #include <cstddef>
 #include <memory>
 
+#include "RayTracerGL.h"
 
-class VertexBuffer
-{
-public:
-    static std::shared_ptr<VertexBuffer> Create(const void* data, const std::size_t size);
+namespace raytracer {
 
-    VertexBuffer(const void* data, const std::size_t size);
-    
-    ~VertexBuffer();
+    class VertexBuffer
+    {
+    public:
+        static std::shared_ptr<VertexBuffer> Create(const void* data, const std::size_t size);
 
-    void Bind() const;
+        VertexBuffer(const void* data, const std::size_t size);
 
-    void Unbind() const;
+        ~VertexBuffer();
 
-    void UpdateData(const void* data, const std::size_t size) const;
+        void Bind() const;
 
-private:
-    GLuint m_BufferID;
-};
+        void Unbind() const;
+
+        void UpdateData(const void* data, const std::size_t size) const;
+
+    private:
+        GLuint m_BufferID;
+    };
+
+}

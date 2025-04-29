@@ -1,25 +1,28 @@
 #pragma once
 
-#include <glad/gl.h>
-
 #include <iostream>
 #include <string>
 
-// Helper function to convert OpenGL error codes to human-readable strings
-inline const char* GetGLErrorString(GLenum error)
-{
-    switch (error)
+#include "RayTracerGL.h"
+
+namespace raytracer {
+
+    inline const char* GetGLErrorString(GLenum error)
     {
-    case GL_NO_ERROR: return "No error";
-    case GL_INVALID_ENUM: return "Invalid enum";
-    case GL_INVALID_VALUE: return "Invalid value";
-    case GL_INVALID_OPERATION: return "Invalid operation";
-    case GL_STACK_OVERFLOW: return "Stack overflow";
-    case GL_STACK_UNDERFLOW: return "Stack underflow";
-    case GL_OUT_OF_MEMORY: return "Out of memory";
-    case GL_INVALID_FRAMEBUFFER_OPERATION: return "Invalid framebuffer operation";
-    default: return "Unknown error";
+        switch (error)
+        {
+        case GL_NO_ERROR: return "No error";
+        case GL_INVALID_ENUM: return "Invalid enum";
+        case GL_INVALID_VALUE: return "Invalid value";
+        case GL_INVALID_OPERATION: return "Invalid operation";
+        case GL_STACK_OVERFLOW: return "Stack overflow";
+        case GL_STACK_UNDERFLOW: return "Stack underflow";
+        case GL_OUT_OF_MEMORY: return "Out of memory";
+        case GL_INVALID_FRAMEBUFFER_OPERATION: return "Invalid framebuffer operation";
+        default: return "Unknown error";
+        }
     }
+
 }
 
 #ifndef NDEBUG
@@ -28,11 +31,12 @@ inline const char* GetGLErrorString(GLenum error)
     { \
         GLenum error = glGetError(); \
         if (error != GL_NO_ERROR) { \
-            std::cerr << "OpenGL error in file " << __FILE__ \
+            ::std::cerr << "OpenGL error in file " << __FILE__ \
                       << " at line " << __LINE__ \
                       << " after calling " #x ": " \
-                      << GetGLErrorString(error) << " (" << error << ")" \
-                      << std::endl; \
+                      << raytracer::GetGLErrorString(error)  \
+                      << " (" << error << ")" \
+                      << ::std::endl; \
         } \
     } \
 
@@ -43,7 +47,7 @@ inline const char* GetGLErrorString(GLenum error)
 #ifndef NDEBUG
 #include <cassert>
 
-#define RAY_ASSERT(x, msg)                         \
+#define RAYTRACER_ASSERT(x, msg)                         \
         do {                                            \
             if (!(x)) {                                 \
                 std::cerr << "Assertion failed: "       \
@@ -55,5 +59,5 @@ inline const char* GetGLErrorString(GLenum error)
             }                                           \
         } while (0)
 #else
-#define RAY_ASSERT(x, msg) ((void)0)
+#define RAYTRACER_ASSERT(x, msg) ((void)0)
 #endif

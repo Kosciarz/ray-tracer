@@ -1,33 +1,36 @@
 #pragma once
 
-#include <glad/gl.h>
-
 #include <cstdint>
 #include <cstddef>
 #include <memory>
 
+#include "RayTracerGL.h"
 
-class IndexBuffer
-{
-public:
-    static std::shared_ptr<IndexBuffer> Create(const GLenum indexType, const std::size_t size, const void* data, const GLenum usage);
+namespace raytracer {
 
-    IndexBuffer() = default;
+    class IndexBuffer
+    {
+    public:
+        static std::shared_ptr<IndexBuffer> Create(const GLenum indexType, const std::size_t size, const void* data, const GLenum usage);
 
-    IndexBuffer(const GLenum indexType, const std::size_t size, const void* data, const GLenum usage);
+        IndexBuffer() = default;
 
-    ~IndexBuffer();
+        IndexBuffer(const GLenum indexType, const std::size_t size, const void* data, const GLenum usage);
 
-    std::size_t Size() const;
+        ~IndexBuffer();
 
-    GLenum IndexType() const;
+        std::size_t Size() const;
 
-    void Bind() const;
+        GLenum IndexType() const;
 
-    void Unbind() const;
+        void Bind() const;
 
-private:
-    GLuint m_BufferID;
-    std::size_t m_Size;
-    GLenum m_IndexType;
-};
+        void Unbind() const;
+
+    private:
+        GLuint m_BufferID;
+        std::size_t m_Size;
+        GLenum m_IndexType;
+    };
+
+}

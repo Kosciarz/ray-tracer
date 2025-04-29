@@ -4,132 +4,135 @@
 #include <utility>
 #include <stdexcept>
 
+namespace raytracer {
 
-template <typename T, typename E = std::string>
-class Result
-{
-public:
-    Result() = delete;
-
-    static Result<T> Ok(T value)
+    template <typename T, typename E = std::string>
+    class Result
     {
-        return Result{true, std::move(value), E{}};
-    }
+    public:
+        Result() = delete;
 
-    static Result<T> Err(E error)
+        static Result<T> Ok(T value)
+        {
+            return Result{true, std::move(value), E{}};
+        }
+
+        static Result<T> Err(E error)
+        {
+            return {false, T{}, std::move(error)};
+        }
+
+        bool IsOk() const
+        {
+            return m_Success;
+        }
+
+        bool IsErr() const
+        {
+            return !m_Success;
+        }
+
+        T& Value()
+        {
+            if (!m_Success)
+                throw std::runtime_error{"Attempted to access value in an Err result"};
+            return m_Value;
+        }
+
+        const T& Value() const
+        {
+            if (!m_Success)
+                throw std::runtime_error{"Attempted to access value in an Err result"};
+            return m_Value;
+        }
+
+        T&& ValueMove()
+        {
+            if (!m_Success)
+                throw std::runtime_error{"Attempted to access value in an Err result"};
+            return std::move(m_Value);
+        }
+
+        E& Error()
+        {
+            if (m_Success)
+                throw std::runtime_error{"Attempted to access error in an Ok result"};
+            return m_Error;
+        }
+
+        const E& Error() const
+        {
+            if (m_Success)
+                throw std::runtime_error{"Attempted to access error in an Ok result"};
+            return m_Error;
+        }
+
+        explicit operator bool() const
+        {
+            return m_Success;
+        }
+
+    private:
+        Result(bool success, T value, E error)
+            : m_Success{success}, m_Value{std::move(value)}, m_Error{std::move(error)}
+        {
+        }
+
+        bool m_Success;
+        T m_Value;
+        E m_Error;
+    };
+
+
+    template <typename E>
+    class Result<void, E>
     {
-        return {false, T{}, std::move(error)};
-    }
+    public:
+        Result() = delete;
 
-    bool IsOk() const
-    {
-        return m_Success;
-    }
+        static Result Ok()
+        {
+            return Result{true, E{}};
+        }
 
-    bool IsErr() const
-    {
-        return !m_Success;
-    }
+        static Result Err(std::string error)
+        {
+            return {false, std::move(error)};
+        }
 
-    T& Value()
-    {
-        if (!m_Success)
-            throw std::runtime_error{"Attempted to access value in an Err result"};
-        return m_Value;
-    }
+        bool IsOk() const
+        {
+            return m_Success;
+        }
 
-    const T& Value() const
-    {
-        if (!m_Success)
-            throw std::runtime_error{"Attempted to access value in an Err result"};
-        return m_Value;
-    }
+        bool IsErr() const
+        {
+            return !m_Success;
+        }
 
-    T&& ValueMove()
-    {
-        if (!m_Success)
-            throw std::runtime_error{"Attempted to access value in an Err result"};
-        return std::move(m_Value);
-    }
+        E& Error()
+        {
+            return m_Error;
+        }
 
-    E& Error()
-    {
-        if (m_Success)
-            throw std::runtime_error{"Attempted to access error in an Ok result"};
-        return m_Error;
-    }
+        const E& Error() const
+        {
+            return m_Error;
+        }
 
-    const E& Error() const
-    {
-        if (m_Success)
-            throw std::runtime_error{"Attempted to access error in an Ok result"};
-        return m_Error;
-    }
+        explicit operator bool() const
+        {
+            return m_Success;
+        }
 
-    explicit operator bool() const
-    {
-        return m_Success;
-    }
+    private:
+        Result(bool success, E error)
+            : m_Success{success}, m_Error{std::move(error)}
+        {
+        }
 
-private:
-    Result(bool success, T value, E error)
-        : m_Success{success}, m_Value{std::move(value)}, m_Error{std::move(error)}
-    {
-    }
+        bool m_Success;
+        E m_Error;
+    };
 
-    bool m_Success;
-    T m_Value;
-    E m_Error;
-};
-
-
-template <typename E>
-class Result<void, E>
-{
-public:
-    Result() = delete;
-
-    static Result Ok()
-    {
-        return Result{true, E{}};
-    }
-
-    static Result Err(std::string error)
-    {
-        return {false, std::move(error)};
-    }
-
-    bool IsOk() const
-    {
-        return m_Success;
-    }
-
-    bool IsErr() const
-    {
-        return !m_Success;
-    }
-
-    E& Error()
-    {
-        return m_Error;
-    }
-
-    const E& Error() const
-    {
-        return m_Error;
-    }
-
-    explicit operator bool() const
-    {
-        return m_Success;
-    }
-
-private:
-    Result(bool success, E error)
-        : m_Success{success}, m_Error{std::move(error)}
-    {
-    }
-
-    bool m_Success;
-    E m_Error;
-};
+}

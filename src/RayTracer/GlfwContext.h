@@ -1,26 +1,30 @@
 #pragma once
 
-#include <GLFW/glfw3.h>
+#include <memory>
+
+#include "RayTracerGL.h"
 
 #include "Result.h"
 
-#include <memory>
+namespace raytracer {
 
-class GlfwContext
-{
-public:
-    using GlfwContextPtr = std::unique_ptr<GlfwContext>;
+    class GlfwContext
+    {
+    public:
+        using GlfwContextPtr = std::unique_ptr<GlfwContext>;
 
-public:
-    static Result<GlfwContextPtr> Create();
+    public:
+        static Result<GlfwContextPtr> Create();
 
-    GlfwContext() = default;
+        GlfwContext() = default;
 
-    ~GlfwContext();
+        ~GlfwContext();
 
-    GlfwContext(const GlfwContext&) = delete;
-    GlfwContext& operator=(const GlfwContext&) = delete;
+        GlfwContext(const GlfwContext&) = delete;
+        GlfwContext& operator=(const GlfwContext&) = delete;
 
-    GlfwContext(GlfwContext&&) = default;
-    GlfwContext& operator=(GlfwContext&&) = default;
-};
+        GlfwContext(GlfwContext&&) = default;
+        GlfwContext& operator=(GlfwContext&&) = default;
+    };
+
+}

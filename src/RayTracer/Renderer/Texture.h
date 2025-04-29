@@ -1,31 +1,35 @@
 #pragma once
 
-#include <glad/gl.h>
-
 #include <filesystem>
 #include <memory>
 
-class Texture
-{
-public:
-    static std::shared_ptr<Texture> Create(const GLenum type, const GLenum number, const std::filesystem::path& path);
+#include "RayTracerGL.h"
 
-    Texture(const GLenum type, const GLenum number, const std::filesystem::path& path);
+namespace raytracer {
 
-    Texture() = default;
+    class Texture
+    {
+    public:
+        static std::shared_ptr<Texture> Create(const GLenum type, const GLenum number, const std::filesystem::path& path);
 
-    ~Texture();
+        Texture(const GLenum type, const GLenum number, const std::filesystem::path& path);
 
-    GLuint GetID() const;
+        Texture() = default;
 
-    void Bind() const;
+        ~Texture();
 
-    void Unbind() const;
+        GLuint GetID() const;
 
-    void SetParameter(const GLenum pname, const GLint param) const;
+        void Bind() const;
 
-private:
-    GLuint m_TextureID;
-    GLenum m_Type;
-    GLenum m_Number;
-};
+        void Unbind() const;
+
+        void SetParameter(const GLenum pname, const GLint param) const;
+
+    private:
+        GLuint m_TextureID;
+        GLenum m_Type;
+        GLenum m_Number;
+    };
+
+}

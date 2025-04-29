@@ -13,6 +13,7 @@ set(SOURCES
 )
 
 set(HEADERS
+    "RayTracerGL.h"
     "Application.h"
     "Window.h"
     "Utils.h"

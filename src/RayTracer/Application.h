@@ -1,7 +1,6 @@
 #pragma once
 
-#include <glad/gl.h>
-#include <GLFW/glfw3.h>
+#include "RayTracerGL.h"
 
 #include "Result.h"
 #include "Window.h"
@@ -10,31 +9,34 @@
 
 #include <memory>
 
+namespace raytracer {
 
-class Application
-{
-public:
-    Application();
+    class Application
+    {
+    public:
+        Application();
 
-    ~Application();
+        ~Application();
 
-    static Result<Application> Init();
- 
-    void Run();
+        static Result<Application> Init();
 
-    Application(const Application&) = delete;
-    Application& operator=(const Application&) = delete;
+        void Run();
 
-    Application(Application&&) = default;
-    Application& operator=(Application&&) = default;
+        Application(const Application&) = delete;
+        Application& operator=(const Application&) = delete;
 
-private:
-    void Shutdown();
+        Application(Application&&) = default;
+        Application& operator=(Application&&) = default;
 
-private:
-    bool m_Running;
-    std::unique_ptr<GlfwContext> m_GlfwContext;
-    std::unique_ptr<Window> m_Window;
-    std::shared_ptr<VertexArray> m_VertexArray;
-    Renderer m_Renderer;
-};
+    private:
+        void Shutdown();
+
+    private:
+        bool m_Running;
+        std::unique_ptr<GlfwContext> m_GlfwContext;
+        std::unique_ptr<Window> m_Window;
+        std::shared_ptr<VertexArray> m_VertexArray;
+        Renderer m_Renderer;
+    };
+
+}

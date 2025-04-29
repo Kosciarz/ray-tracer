@@ -1,57 +1,60 @@
 #pragma once
 
-#include <GLFW/glfw3.h>
-
-#include "Result.h"
-
 #include <cstdint>
 #include <memory>
 
+#include "RayTracerGL.h"
 
-struct WindowConfig
-{
-    std::uint16_t width;
-    std::uint16_t height;
-    std::string title;
+#include "Result.h"
 
-    WindowConfig();
+namespace raytracer {
 
-    WindowConfig(const std::uint16_t width, const std::uint16_t height, std::string title);
-};
+    struct WindowConfig
+    {
+        std::uint16_t width;
+        std::uint16_t height;
+        std::string title;
 
-class Window
-{
-public:
-    using WindowPtr = std::unique_ptr<Window>;
+        WindowConfig();
 
-public:
-    static Result<WindowPtr> Create(const WindowConfig& config = WindowConfig());
+        WindowConfig(const std::uint16_t width, const std::uint16_t height, std::string title);
+    };
 
-    Window() = default;
+    class Window
+    {
+    public:
+        using WindowPtr = std::unique_ptr<Window>;
 
-    explicit Window(GLFWwindow* window);
+    public:
+        static Result<WindowPtr> Create(const WindowConfig& config = WindowConfig());
 
-    ~Window();
+        Window() = default;
 
-    bool ShouldClose() const;
+        explicit Window(GLFWwindow* window);
 
-    void PollEvents() const;
+        ~Window();
 
-    void SwapBuffers() const;
+        bool ShouldClose() const;
 
-    void SetUserPointer(void* userPtr) const;
+        void PollEvents() const;
 
-    void* GetUserPointer();
+        void SwapBuffers() const;
 
-    template <typename T>
-    T* GetUserPointerAs() const;
+        void SetUserPointer(void* userPtr) const;
 
-    GLFWwindow* GetWindow();
+        void* GetUserPointer();
 
-private:
-    Result<void> Init(const WindowConfig& config);
+        template <typename T>
+        T* GetUserPointerAs() const;
 
-private:
-    GLFWwindow* m_Window;
-    void* m_UserPointer;
-};
+        GLFWwindow* GetWindow();
+
+    private:
+        Result<void> Init(const WindowConfig& config);
+
+    private:
+        GLFWwindow* m_Window;
+        void* m_UserPointer;
+    };
+
+}

@@ -1,70 +1,71 @@
 #pragma once
 
-#include <glad/gl.h>
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-
-#include "Result.h"
-
 #include <filesystem>
 #include <string>
 #include <optional>
 #include <memory>
 
+#include "RayTracerGL.h"
 
-struct ShaderPaths
-{
-    std::filesystem::path vertex;
-    std::filesystem::path fragment;
-};
+#include "Result.h"
 
-struct ShaderSources
-{
-    std::string vertex;
-    std::string fragment;
+namespace raytracer {
 
-    static Result<ShaderSources> Load(const ShaderPaths& paths);
-};
+    struct ShaderPaths
+    {
+        std::filesystem::path vertex;
+        std::filesystem::path fragment;
+    };
 
-class Shader
-{
-public:
-    using ShaderPtr = std::shared_ptr<Shader>;
+    struct ShaderSources
+    {
+        std::string vertex;
+        std::string fragment;
 
-public:
-    static Result<ShaderPtr> Create(const ShaderSources& sources);
+        static Result<ShaderSources> Load(const ShaderPaths& paths);
+    };
 
-    Shader() = default;
+    class Shader
+    {
+    public:
+        using ShaderPtr = std::shared_ptr<Shader>;
 
-    explicit Shader(const GLuint program);
+    public:
+        static Result<ShaderPtr> Create(const ShaderSources& sources);
 
-    ~Shader();
-    
-    GLuint GetID() const;
+        Shader() = default;
 
-    void Use() const;
+        explicit Shader(const GLuint program);
 
-    void Unuse() const;
+        ~Shader();
 
-    void SetUniformBool(const std::string& name, bool value) const;
+        GLuint GetID() const;
 
-    void SetUniformInt(const std::string& name, std::int32_t value) const;
+        void Use() const;
 
-    void SetUniformFloat(const std::string& name, float value) const;
+        void Unuse() const;
 
-    void SetUniformVec3(const std::string& name, const GLfloat* value) const;
+        void SetUniformBool(const std::string& name, bool value) const;
 
-    void SetUniformVec4(const std::string& name, const GLfloat* value) const;
+        void SetUniformInt(const std::string& name, std::int32_t value) const;
 
-    void SetUniformMat3(const std::string& name, const GLfloat* value) const;
+        void SetUniformFloat(const std::string& name, float value) const;
 
-    void SetUniformMat4(const std::string& name, const GLfloat* value) const;
+        void SetUniformVec3(const std::string& name, const GLfloat* value) const;
 
-private:
-    static Result<GLuint> CompileShader(const GLenum shaderType, const std::string& source);
+        void SetUniformVec4(const std::string& name, const GLfloat* value) const;
 
-    static Result<GLuint> LinkProgram(const GLuint vertexShader, const GLuint fragmentShader);
+        void SetUniformMat3(const std::string& name, const GLfloat* value) const;
 
-private:
-    GLuint m_ProgramID;
-};
+        void SetUniformMat4(const std::string& name, const GLfloat* value) const;
+
+    private:
+        static Result<GLuint> CompileShader(const GLenum shaderType, const std::string& source);
+
+        static Result<GLuint> LinkProgram(const GLuint vertexShader, const GLuint fragmentShader);
+
+    private:
+        GLuint m_ProgramID;
+    };
+
+}

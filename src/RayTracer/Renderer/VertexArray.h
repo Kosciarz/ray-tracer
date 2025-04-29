@@ -1,31 +1,34 @@
 #pragma once
 
-#include "VertexBuffer.h"
-
-#include <glad/gl.h>
-
 #include <cstdint>
 #include <memory>
 
+#include "RayTracerGL.h"
 
-class VertexArray
-{
-public:
-    static std::shared_ptr<VertexArray> Create();
+#include "VertexBuffer.h"
 
-    VertexArray();
+namespace raytracer {
 
-    ~VertexArray();
+    class VertexArray
+    {
+    public:
+        static std::shared_ptr<VertexArray> Create();
 
-    void Bind() const;
+        VertexArray();
 
-    void Unbind() const;
+        ~VertexArray();
 
-    void AddVertexBuffer(const std::shared_ptr<VertexBuffer>& buffer, GLuint index, GLint size, GLenum type,
-        GLboolean normalized, GLsizei stride, const void* offset) const;
+        void Bind() const;
 
-    void EnableVertexAttribArray(GLuint enableArray) const;
+        void Unbind() const;
 
-private:
-    std::uint32_t m_VAO;
-};
+        void AddVertexBuffer(const std::shared_ptr<VertexBuffer>& buffer, GLuint index, GLint size, GLenum type,
+            GLboolean normalized, GLsizei stride, const void* offset) const;
+
+        void EnableVertexAttribArray(GLuint enableArray) const;
+
+    private:
+        std::uint32_t m_VAO;
+    };
+
+}

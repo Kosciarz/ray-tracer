@@ -3,7 +3,7 @@
 
 int main()
 {
-    auto appResult = Application::Init();
+    auto appResult = raytracer::Application::Init();
     if (appResult.IsErr())
         return EXIT_FAILURE;
 
