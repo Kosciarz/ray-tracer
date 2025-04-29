@@ -5,7 +5,7 @@
 
 #include "Result.h"
 #include "Window.h"
-#include "Renderer.h"
+#include "Renderer/Renderer.h"
 #include "GlfwContext.h"
 
 #include <memory>
@@ -31,8 +31,10 @@ public:
 private:
     void Shutdown();
 
+private:
     bool m_Running;
     std::unique_ptr<GlfwContext> m_GlfwContext;
     std::unique_ptr<Window> m_Window;
+    std::shared_ptr<VertexArray> m_VertexArray;
     Renderer m_Renderer;
 };

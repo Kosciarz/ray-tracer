@@ -1,28 +1,30 @@
 set(SOURCES
     "Application.cpp"
     "Window.cpp"
-    "Renderer.cpp"
-    "Shader.cpp"
-    "Texture.cpp"
-    "VertexBuffer.cpp"
-    "VertexArray.cpp"
-    "IndexBuffer.cpp"
     "StbImageImpl.cpp"
     "GlfwContext.cpp"
+
+    "Renderer/Texture.cpp"
+    "Renderer/Renderer.cpp"
+    "Renderer/Shader.cpp"
+    "Renderer/VertexBuffer.cpp"
+    "Renderer/VertexArray.cpp"
+    "Renderer/IndexBuffer.cpp"
 )
 
 set(HEADERS
     "Application.h"
     "Window.h"
-    "Renderer.h"
-    "Shader.h"
-    "Texture.h"
-    "VertexBuffer.h"
-    "VertexArray.h"
-    "IndexBuffer.h"
     "Utils.h"
     "Result.h"
     "GlfwContext.h"
+
+    "Renderer/Texture.h"
+    "Renderer/Renderer.h"
+    "Renderer/Shader.h"
+    "Renderer/VertexBuffer.h"
+    "Renderer/VertexArray.h"
+    "Renderer/IndexBuffer.h"
 )
 
 foreach(SOURCE IN LISTS SOURCES HEADERS)

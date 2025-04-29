@@ -3,14 +3,14 @@
 
 #include "Application.h"
 #include "Window.h"
-#include "Shader.h"
-#include "VertexBuffer.h"
-#include "VertexArray.h"
-#include "IndexBuffer.h"
-#include "Utils.h"
-#include "Result.h"
 #include "GlfwContext.h"
-#include "Texture.h"
+#include "Result.h"
+#include "Utils.h"
+#include "Renderer/Shader.h"
+#include "Renderer/VertexBuffer.h"
+#include "Renderer/VertexArray.h"
+#include "Renderer/IndexBuffer.h"
+#include "Renderer/Texture.h"
 
 #include <filesystem>
 #include <vector>

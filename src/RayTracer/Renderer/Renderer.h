@@ -1,11 +1,11 @@
 #pragma once
 
 #include "Result.h"
-#include "Shader.h"
-#include "VertexArray.h"
-#include <VertexBuffer.h>
-#include "IndexBuffer.h"
-#include "Texture.h"
+#include "Renderer/Shader.h"
+#include "Renderer/VertexArray.h"
+#include "Renderer/VertexBuffer.h"
+#include "Renderer/IndexBuffer.h"
+#include "Renderer/Texture.h"
 
 #include <string>
 #include <unordered_map>
