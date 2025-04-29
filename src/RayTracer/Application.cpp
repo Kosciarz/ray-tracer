@@ -1,7 +1,13 @@
-#include <glad/gl.h>
-#include <GLFW/glfw3.h>
-
 #include "Application.h"
+
+#include "RayTracerGL.h"
+
+#include <filesystem>
+#include <vector>
+#include <cstdint>
+#include <cstdlib>
+#include <memory>
+
 #include "Window.h"
 #include "GlfwContext.h"
 #include "Result.h"
@@ -10,12 +16,6 @@
 #include "Renderer/VertexArray.h"
 #include "Renderer/Buffer.h"
 #include "Renderer/Texture.h"
-
-#include <filesystem>
-#include <vector>
-#include <cstdint>
-#include <cstdlib>
-#include <memory>
 
 namespace fs = std::filesystem;
 
@@ -47,8 +47,8 @@ namespace raytracer {
         if (shader.IsErr())
             return Result<Application>::Err(shader.Error());
 
-        auto texture1 = Texture::Create(GL_TEXTURE_2D, GL_TEXTURE0, texturesPath / "wooden_container.jpg");
-        auto texture2 = Texture::Create(GL_TEXTURE_2D, GL_TEXTURE1, texturesPath / "awesome_face.png");
+        auto texture1 = Texture::Create(GL_TEXTURE_2D, 0, texturesPath / "wooden_container.jpg");
+        auto texture2 = Texture::Create(GL_TEXTURE_2D, 1, texturesPath / "awesome_face.png");
 
 #pragma region buffers
 
@@ -72,11 +72,7 @@ namespace raytracer {
         auto indexBuffer = IndexBuffer::Create(GL_UNSIGNED_SHORT, indices.size() * sizeof(std::uint16_t), indices.data(), GL_STATIC_DRAW);
 
         vertexArray->AddVertexBuffer(vertexBuffer, 0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-        vertexArray->EnableVertexAttribArray(0);
-
         vertexArray->AddVertexBuffer(vertexBuffer, 1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-        vertexArray->EnableVertexAttribArray(1);
-
         vertexArray->Unbind();
 
 #pragma endregion
@@ -89,15 +85,15 @@ namespace raytracer {
                 glfwSetWindowShouldClose(window, true);
         });
 
-        app.m_Renderer.AddVertexArray(vertexArray);
-        app.m_Renderer.AddIndexBuffer(indexBuffer);
-        app.m_Renderer.AddShader(shader.Value());
-        app.m_Renderer.AddTexture("texture1", texture1);
-        app.m_Renderer.AddTexture("texture2", texture2);
+        app.m_VertexArray = vertexArray;
+        app.m_VertexArray->AddIndexBuffer(indexBuffer);
+        app.m_Shaders["shader1"] = shader.Value();
+        app.m_Textures["texture1"] = texture1;
+        app.m_Textures["texture2"] = texture2;
 
-        app.m_Renderer.GetShader()->Use();
-        app.m_Renderer.GetShader()->SetUniformInt("texture1", 0);
-        app.m_Renderer.GetShader()->SetUniformInt("texture2", 1);
+        app.m_Shaders["shader1"]->Use();
+        app.m_Shaders["shader1"]->SetUniformInt("texture1", 0);
+        app.m_Shaders["shader1"]->SetUniformInt("texture2", 1);
 
         app.m_GlfwContext = glfwContext.ValueMove();
         app.m_Running = true;
@@ -113,9 +109,9 @@ namespace raytracer {
     {
         while (!m_Window->ShouldClose())
         {
-            GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
-
-            m_Renderer.Draw();
+            Renderer::Clear();
+            Renderer::Draw(m_VertexArray, m_Shaders["shader1"], 
+                std::vector{m_Textures["texture1"], m_Textures["texture2"]});
 
             m_Window->PollEvents();
             m_Window->SwapBuffers();

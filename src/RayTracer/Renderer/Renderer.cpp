@@ -2,6 +2,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 #include "RayTracerGL.h"
 
@@ -9,66 +10,35 @@
 #include "VertexArray.h"
 #include "Buffer.h"
 #include "Texture.h"
+#include "Utils.h"
 
 namespace raytracer {
 
-    void Renderer::Draw()
+    void Renderer::Clear(const glm::vec4& color)
     {
-        m_VertexArray->Bind();
-        m_VertexArray->GetIndexBuffer()->Bind();
-        glDrawElements(GL_TRIANGLES, m_VertexArray->GetIndexBuffer()->Size(), m_VertexArray->GetIndexBuffer()->IndexType(), 0);
+        GL_CHECK(glClearColor(color.x, color.y, color.z, color.w));
+        GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
     }
 
-    void Renderer::AddVertexArray(std::shared_ptr<VertexArray> vertexArray)
+    void Renderer::Draw(const std::shared_ptr<VertexArray>& vertexArray, 
+        const std::shared_ptr<Shader>& shader,
+        const std::vector<std::shared_ptr<Texture>>& textures,
+        const GLenum drawMode)
     {
-        m_VertexArray = vertexArray;
-    }
+        RAYTRACER_ASSERT(vertexArray, "Vertex Array is a nullptr");
+        auto indexBuffer = vertexArray->GetIndexBuffer();
+        RAYTRACER_ASSERT(indexBuffer, "Index Buffer is a nullptr");
+        RAYTRACER_ASSERT(shader, "Shader is a nullptr");
 
-    void Renderer::AddVertexBuffer(std::shared_ptr<VertexBuffer> vertexBuffer)
-    {
-        m_VertexBuffer = vertexBuffer;
-    }
+        shader->Use();
+        for (const auto& texture : textures)
+            if (texture)
+                texture->Bind();
 
-    void Renderer::AddIndexBuffer(std::shared_ptr<IndexBuffer> indexBuffer)
-    {
-        m_IndexBuffer = indexBuffer;
-    }
+        vertexArray->Bind();
+        indexBuffer->Bind();
 
-    void Renderer::AddShader(std::shared_ptr<Shader> shader)
-    {
-        m_Shader = shader;
-    }
-
-    void Renderer::AddTexture(const std::string& name, std::shared_ptr<Texture> texture)
-    {
-        m_Textures[name] = texture;
-    }
-
-    std::shared_ptr<VertexArray> Renderer::GetVertexArray()
-    {
-        return m_VertexArray;
-    }
-
-    std::shared_ptr<VertexBuffer> Renderer::GetVertexBuffer()
-    {
-        return m_VertexBuffer;
-    }
-
-    std::shared_ptr<IndexBuffer> Renderer::GetIndexBuffer()
-    {
-        return m_IndexBuffer;
-    }
-
-    std::shared_ptr<Shader> Renderer::GetShader()
-    {
-        return m_Shader;
-    }
-
-    Result<std::shared_ptr<Texture>> Renderer::GetTexture(const std::string& name)
-    {
-        if (!m_Textures.contains(name))
-            return Result<std::shared_ptr<Texture>>::Err("No texture with name: " + name);
-        return Result<std::shared_ptr<Texture>>::Ok(m_Textures[name]);
+        glDrawElements(drawMode, indexBuffer->Size(), indexBuffer->IndexType(), nullptr);
     }
 
 }

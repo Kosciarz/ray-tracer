@@ -2,6 +2,7 @@
 
 #include <filesystem>
 #include <memory>
+#include <cstdint>
 
 #include "RayTracerGL.h"
 
@@ -10,9 +11,9 @@ namespace raytracer {
     class Texture
     {
     public:
-        static std::shared_ptr<Texture> Create(const GLenum type, const GLenum number, const std::filesystem::path& path);
+        static std::shared_ptr<Texture> Create(const GLenum type, const std::uint32_t unitIndex, const std::filesystem::path& path);
 
-        Texture(const GLenum type, const GLenum number, const std::filesystem::path& path);
+        Texture(const GLenum type, const std::uint32_t unitIndex, const std::filesystem::path& path);
 
         Texture() = default;
 
@@ -29,7 +30,7 @@ namespace raytracer {
     private:
         GLuint m_TextureID;
         GLenum m_Type;
-        GLenum m_Number;
+        std::uint32_t m_UnitIndex;
     };
 
 }

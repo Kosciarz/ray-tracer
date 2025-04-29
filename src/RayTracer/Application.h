@@ -36,7 +36,8 @@ namespace raytracer {
         std::unique_ptr<GlfwContext> m_GlfwContext;
         std::unique_ptr<Window> m_Window;
         std::shared_ptr<VertexArray> m_VertexArray;
-        Renderer m_Renderer;
+        std::unordered_map<std::string, std::shared_ptr<Shader>> m_Shaders;
+        std::unordered_map<std::string, std::shared_ptr<Texture>> m_Textures;
     };
-
+    
 }

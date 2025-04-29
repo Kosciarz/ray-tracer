@@ -1,24 +1,25 @@
 #include "Texture.h"
-#include "Utils.h"
-
-#include "RayTracerGL.h"
-#include <stb_image.h>
 
 #include <filesystem>
 #include <memory>
 
+#include "RayTracerGL.h"
+#include <stb_image.h>
+
+#include "Utils.h"
+
 namespace raytracer {
 
-    std::shared_ptr<Texture> Texture::Create(const GLenum type, const GLenum number, const std::filesystem::path& path)
+    std::shared_ptr<Texture> Texture::Create(const GLenum type, const std::uint32_t number, const std::filesystem::path& path)
     {
         return std::make_shared<Texture>(type, number, path);
     }
 
-    Texture::Texture(const GLenum type, const GLenum number, const std::filesystem::path& path)
-        : m_Type{type}, m_Number{number}
+    Texture::Texture(const GLenum type, const std::uint32_t number, const std::filesystem::path& path)
+        : m_Type{type}, m_UnitIndex{number}
     {
         GL_CHECK(glGenTextures(1, &m_TextureID));
-        GL_CHECK(glBindTexture(type, m_TextureID));
+        Bind();
 
         GL_CHECK(glTexParameteri(type, GL_TEXTURE_WRAP_S, GL_REPEAT));
         GL_CHECK(glTexParameteri(type, GL_TEXTURE_WRAP_T, GL_REPEAT));
@@ -64,13 +65,13 @@ namespace raytracer {
 
     void Texture::Bind() const
     {
-        GL_CHECK(glActiveTexture(m_Number));
+        GL_CHECK(glActiveTexture(GL_TEXTURE0 + m_UnitIndex));
         GL_CHECK(glBindTexture(m_Type, m_TextureID));
     }
 
     void Texture::Unbind() const
     {
-        GL_CHECK(glActiveTexture(m_Number));
+        GL_CHECK(glActiveTexture(m_UnitIndex));
         GL_CHECK(glBindTexture(m_Type, 0));
     }
 
