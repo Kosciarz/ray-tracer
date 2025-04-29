@@ -7,8 +7,7 @@
 
 #include "Shader.h"
 #include "VertexArray.h"
-#include "VertexBuffer.h"
-#include "IndexBuffer.h"
+#include "Buffer.h"
 #include "Texture.h"
 
 namespace raytracer {
@@ -16,12 +15,8 @@ namespace raytracer {
     void Renderer::Draw()
     {
         m_VertexArray->Bind();
-        m_IndexBuffer->Bind();
-        m_Shader->Use();
-        for (const auto& [_, texture] : m_Textures)
-            texture->Bind();
-
-        glDrawElements(GL_TRIANGLES, m_IndexBuffer->Size(), m_IndexBuffer->IndexType(), 0);
+        m_VertexArray->GetIndexBuffer()->Bind();
+        glDrawElements(GL_TRIANGLES, m_VertexArray->GetIndexBuffer()->Size(), m_VertexArray->GetIndexBuffer()->IndexType(), 0);
     }
 
     void Renderer::AddVertexArray(std::shared_ptr<VertexArray> vertexArray)

@@ -4,7 +4,7 @@
 
 #include "RayTracerGL.h"
 
-#include "VertexBuffer.h"
+#include "Buffer.h"
 #include "Utils.h"
 
 namespace raytracer {
@@ -34,16 +34,25 @@ namespace raytracer {
         GL_CHECK(glBindVertexArray(0));
     }
 
-    void VertexArray::AddVertexBuffer(const std::shared_ptr<VertexBuffer>& vertexBuffer, GLuint index, GLint size, GLenum type,
-        GLboolean normalized, GLsizei stride, const void* offset) const
+    void VertexArray::AddIndexBuffer(std::shared_ptr<IndexBuffer> indexBuffer)
     {
-        vertexBuffer->Bind();
-        GL_CHECK(glVertexAttribPointer(index, size, type, normalized, stride, offset));
+        m_IndexBuffer = indexBuffer;
     }
 
-    void VertexArray::EnableVertexAttribArray(GLuint enableArray) const
+    std::shared_ptr<IndexBuffer> VertexArray::GetIndexBuffer() const
     {
-        GL_CHECK(glEnableVertexAttribArray(enableArray));
+        return m_IndexBuffer;
+    }
+
+    void VertexArray::AddVertexBuffer(std::shared_ptr<VertexBuffer> vertexBuffer, GLuint index, GLint size, GLenum type,
+        GLboolean normalized, GLsizei stride, const void* offset)
+    {
+        Bind();
+        vertexBuffer->Bind();
+        GL_CHECK(glVertexAttribPointer(index, size, type, normalized, stride, offset));
+        GL_CHECK(glEnableVertexAttribArray(index));
+
+        m_VertexBuffers.push_back(vertexBuffer);
     }
 
 }

@@ -7,9 +7,8 @@ set(SOURCES
     "Renderer/Texture.cpp"
     "Renderer/Renderer.cpp"
     "Renderer/Shader.cpp"
-    "Renderer/VertexBuffer.cpp"
+    "Renderer/Buffer.cpp"
     "Renderer/VertexArray.cpp"
-    "Renderer/IndexBuffer.cpp"
 )
 
 set(HEADERS
@@ -23,9 +22,8 @@ set(HEADERS
     "Renderer/Texture.h"
     "Renderer/Renderer.h"
     "Renderer/Shader.h"
-    "Renderer/VertexBuffer.h"
+    "Renderer/Buffer.h"
     "Renderer/VertexArray.h"
-    "Renderer/IndexBuffer.h"
 )
 
 foreach(SOURCE IN LISTS SOURCES HEADERS)

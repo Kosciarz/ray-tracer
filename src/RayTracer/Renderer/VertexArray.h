@@ -2,10 +2,11 @@
 
 #include <cstdint>
 #include <memory>
+#include <vector>
 
 #include "RayTracerGL.h"
 
-#include "VertexBuffer.h"
+#include "Buffer.h"
 
 namespace raytracer {
 
@@ -22,13 +23,17 @@ namespace raytracer {
 
         void Unbind() const;
 
-        void AddVertexBuffer(const std::shared_ptr<VertexBuffer>& buffer, GLuint index, GLint size, GLenum type,
-            GLboolean normalized, GLsizei stride, const void* offset) const;
+        void AddIndexBuffer(std::shared_ptr<IndexBuffer> indexBuffer);
 
-        void EnableVertexAttribArray(GLuint enableArray) const;
+        std::shared_ptr<IndexBuffer> GetIndexBuffer() const;
+
+        void AddVertexBuffer(std::shared_ptr<VertexBuffer> buffer, GLuint index, GLint size, GLenum type,
+            GLboolean normalized, GLsizei stride, const void* offset);
 
     private:
-        std::uint32_t m_VAO;
+        GLuint m_VAO;
+        std::shared_ptr<IndexBuffer> m_IndexBuffer;
+        std::vector<std::shared_ptr<VertexBuffer>> m_VertexBuffers;
     };
 
 }
