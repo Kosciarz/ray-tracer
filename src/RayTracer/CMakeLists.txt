@@ -3,6 +3,7 @@ set(SOURCES
     "Window.cpp"
     "StbImageImpl.cpp"
     "GlfwContext.cpp"
+    "AssetManager.cpp"
 
     "Renderer/Texture.cpp"
     "Renderer/Renderer.cpp"
@@ -18,6 +19,7 @@ set(HEADERS
     "Utils.h"
     "Result.h"
     "GlfwContext.h"
+    "AssetManager.h"
 
     "Renderer/Texture.h"
     "Renderer/Renderer.h"

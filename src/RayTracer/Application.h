@@ -1,20 +1,20 @@
 #pragma once
 
+#include <memory>
+
 #include "RayTracerGL.h"
 
 #include "Result.h"
 #include "Window.h"
-#include "Renderer/Renderer.h"
 #include "GlfwContext.h"
-
-#include <memory>
+#include "AssetManager.h"
 
 namespace raytracer {
 
     class Application
     {
     public:
-        Application();
+        Application() = default;
 
         ~Application();
 
@@ -35,9 +35,10 @@ namespace raytracer {
         bool m_Running;
         std::unique_ptr<GlfwContext> m_GlfwContext;
         std::unique_ptr<Window> m_Window;
-        std::shared_ptr<VertexArray> m_VertexArray;
-        std::unordered_map<std::string, std::shared_ptr<Shader>> m_Shaders;
-        std::unordered_map<std::string, std::shared_ptr<Texture>> m_Textures;
+        AssetManager m_AssetManager;
+        //std::shared_ptr<VertexArray> m_VertexArray;
+        //std::unordered_map<std::string, std::shared_ptr<Shader>> m_Shaders;
+        //std::unordered_map<std::string, std::shared_ptr<Texture>> m_Textures;
     };
     
 }

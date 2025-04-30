@@ -10,8 +10,10 @@
 
 #include "Window.h"
 #include "GlfwContext.h"
+#include "AssetManager.h"
 #include "Result.h"
 #include "Utils.h"
+#include "Renderer/Renderer.h"
 #include "Renderer/Shader.h"
 #include "Renderer/VertexArray.h"
 #include "Renderer/Buffer.h"
@@ -70,6 +72,7 @@ namespace raytracer {
 
         auto vertexBuffer = VertexBuffer::Create(vertices.data(), vertices.size() * sizeof(float));
         auto indexBuffer = IndexBuffer::Create(GL_UNSIGNED_SHORT, indices.size() * sizeof(std::uint16_t), indices.data(), GL_STATIC_DRAW);
+        vertexArray->AddIndexBuffer(indexBuffer);
 
         vertexArray->AddVertexBuffer(vertexBuffer, 0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
         vertexArray->AddVertexBuffer(vertexBuffer, 1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
@@ -85,24 +88,18 @@ namespace raytracer {
                 glfwSetWindowShouldClose(window, true);
         });
 
-        app.m_VertexArray = vertexArray;
-        app.m_VertexArray->AddIndexBuffer(indexBuffer);
-        app.m_Shaders["shader1"] = shader.Value();
-        app.m_Textures["texture1"] = texture1;
-        app.m_Textures["texture2"] = texture2;
+        app.m_AssetManager.AddVertexArray("vertexArray1", vertexArray);
+        app.m_AssetManager.AddShader("shader1", shader.Value());
+        app.m_AssetManager.AddTexture("texture1", texture1);
+        app.m_AssetManager.AddTexture("texture2", texture2);
 
-        app.m_Shaders["shader1"]->Use();
-        app.m_Shaders["shader1"]->SetUniformInt("texture1", 0);
-        app.m_Shaders["shader1"]->SetUniformInt("texture2", 1);
+        app.m_AssetManager.GetShader("shader1")->Use();
+        app.m_AssetManager.GetShader("shader1")->SetUniformInt("texture1", 0);
+        app.m_AssetManager.GetShader("shader1")->SetUniformInt("texture2", 1);
 
         app.m_GlfwContext = glfwContext.ValueMove();
         app.m_Running = true;
         return Result<Application>::Ok(std::move(app));
-    }
-
-    Application::Application()
-        : m_Running{false}
-    {
     }
 
     void Application::Run()
@@ -110,8 +107,14 @@ namespace raytracer {
         while (!m_Window->ShouldClose())
         {
             Renderer::Clear();
-            Renderer::Draw(m_VertexArray, m_Shaders["shader1"], 
-                std::vector{m_Textures["texture1"], m_Textures["texture2"]});
+
+            const auto& vertexArray = m_AssetManager.GetVertexArray("vertexArray1");
+            const auto& shader = m_AssetManager.GetShader("shader1");
+            const auto& texture1 = m_AssetManager.GetTexture("texture1");
+            const auto& texture2 = m_AssetManager.GetTexture("texture2");
+
+            Renderer::Draw(vertexArray, shader, 
+                std::vector{texture1, texture2});
 
             m_Window->PollEvents();
             m_Window->SwapBuffers();
