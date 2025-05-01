@@ -29,12 +29,12 @@ namespace raytracer {
     class IndexBuffer
     {
     public:
-        static std::shared_ptr<IndexBuffer> Create(const GLenum indexType, const std::size_t size, 
+        static std::shared_ptr<IndexBuffer> Create(const std::size_t size, 
             const void* data, const GLenum usage);
 
         IndexBuffer() = default;
 
-        IndexBuffer(const GLenum indexType, const std::size_t size, const void* data, const GLenum usage);
+        IndexBuffer(const std::size_t size, const void* data, const GLenum usage);
 
         ~IndexBuffer();
 
@@ -49,6 +49,5 @@ namespace raytracer {
     private:
         GLuint m_BufferID;
         std::size_t m_Size;
-        GLenum m_IndexType;
     };
 }

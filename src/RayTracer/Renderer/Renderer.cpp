@@ -22,8 +22,7 @@ namespace raytracer {
 
     void Renderer::Draw(const std::shared_ptr<VertexArray>& vertexArray, 
         const std::shared_ptr<Shader>& shader,
-        const std::vector<std::shared_ptr<Texture>>& textures,
-        const GLenum drawMode)
+        const std::vector<std::shared_ptr<Texture>>& textures)
     {
         RAYTRACER_ASSERT(vertexArray, "Vertex Array is a nullptr");
         auto indexBuffer = vertexArray->GetIndexBuffer();
@@ -38,7 +37,7 @@ namespace raytracer {
         vertexArray->Bind();
         indexBuffer->Bind();
 
-        glDrawElements(drawMode, indexBuffer->Size(), indexBuffer->IndexType(), nullptr);
+        glDrawElements(GL_TRIANGLES, indexBuffer->Size(), GL_UNSIGNED_INT, nullptr);
     }
 
 }

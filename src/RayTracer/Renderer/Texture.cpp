@@ -71,7 +71,7 @@ namespace raytracer {
 
     void Texture::Unbind() const
     {
-        GL_CHECK(glActiveTexture(m_UnitIndex));
+        GL_CHECK(glActiveTexture(GL_TEXTURE0 + m_UnitIndex));
         GL_CHECK(glBindTexture(m_Type, 0));
     }
 

@@ -127,6 +127,8 @@ namespace raytracer {
 
     Result<GLuint> Shader::CompileShader(const GLenum shaderType, const std::string& source)
     {
+        RAYTRACER_ASSERT(!source.empty(), "Shader source is empty");
+
         const char* sourcePtr = source.c_str();
         GLuint shader = glCreateShader(shaderType);
         GL_CHECK(glShaderSource(shader, 1, &sourcePtr, nullptr));

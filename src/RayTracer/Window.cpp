@@ -16,7 +16,7 @@ namespace raytracer {
     {
     }
 
-    WindowConfig::WindowConfig(const std::uint16_t width, const std::uint16_t height, std::string title)
+    WindowConfig::WindowConfig(const std::uint32_t width, const std::uint32_t height, std::string title)
         : width{width}, height{height}, title{title}
     {
     }
@@ -53,11 +53,16 @@ namespace raytracer {
             GL_CHECK(glViewport(0, 0, width, height));
         });
 
+        glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
+            if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
+                glfwSetWindowShouldClose(window, true);
+        });
+
         return Result<void>::Ok();
     }
 
     Window::Window(GLFWwindow* window)
-        : m_Window{window}
+        : m_Window{window}, m_UserPointer{nullptr}
     {
     }
 

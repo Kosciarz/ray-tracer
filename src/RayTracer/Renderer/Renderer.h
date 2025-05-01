@@ -24,8 +24,7 @@ namespace raytracer {
 
         static void Draw(const std::shared_ptr<VertexArray>& vertexArray,
             const std::shared_ptr<Shader>& shader,
-            const std::vector<std::shared_ptr<Texture>>& textures = {},
-            const GLenum drawMode = GL_TRIANGLES);
+            const std::vector<std::shared_ptr<Texture>>& textures = {});
     };
 
 }

@@ -1,12 +1,16 @@
+#include <iostream>
+
 #include "Application.h"
 
-
-int main()
+int main(int argc, char* argv[])
 {
     auto appResult = raytracer::Application::Init();
     if (appResult.IsErr())
+    {
+        std::cerr << "Application failed to initialize: " << appResult.Error() << '\n';
         return EXIT_FAILURE;
+    }
 
-    auto app = appResult.ValueMove();
+    raytracer::Application app = appResult.ValueMove();
     app.Run();
 }

@@ -11,13 +11,13 @@ namespace raytracer {
 
     struct WindowConfig
     {
-        std::uint16_t width;
-        std::uint16_t height;
+        std::uint32_t width;
+        std::uint32_t height;
         std::string title;
 
         WindowConfig();
 
-        WindowConfig(const std::uint16_t width, const std::uint16_t height, std::string title);
+        WindowConfig(const std::uint32_t width, const std::uint32_t height, std::string title);
     };
 
     class Window
