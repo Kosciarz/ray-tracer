@@ -41,7 +41,7 @@ namespace raytracer {
 
     std::shared_ptr<Texture>& AssetManager::GetTexture(const std::string& name)
     {
-        RAYTRACER_ASSERT(m_Textures.contains(name), "Invalid textur name: " + name);
+        RAYTRACER_ASSERT(m_Textures.contains(name), "Invalid texture name: " + name);
         return m_Textures[name];
     }
 

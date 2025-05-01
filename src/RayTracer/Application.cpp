@@ -7,12 +7,14 @@
 #include <cstdint>
 #include <cstdlib>
 #include <memory>
+#include <iostream>
 
 #include "Window.h"
 #include "GlfwContext.h"
 #include "AssetManager.h"
 #include "Result.h"
 #include "Utils.h"
+
 #include "Renderer/Renderer.h"
 #include "Renderer/Shader.h"
 #include "Renderer/VertexArray.h"
@@ -21,10 +23,31 @@
 
 namespace fs = std::filesystem;
 
+static void FillFrameBuffer(std::vector<std::uint8_t>& framebuffer,
+    const std::int32_t width, const std::int32_t height)
+{
+    for (auto y = 0; y < height; y++)
+    {
+        for (auto x = 0; x < width; x++)
+        {
+            auto r = static_cast<double>(x) / (width - 1);
+            auto g = static_cast<double>(y) / (height - 1);
+            auto b = 0.0;
+
+            const auto i = (height - y - 1) * width + x;
+            framebuffer[i * 3 + 0] = static_cast<int>(255 * r);
+            framebuffer[i * 3 + 1] = static_cast<int>(255 * g);
+            framebuffer[i * 3 + 2] = static_cast<int>(255 * b);
+        }
+    }
+}
+
 namespace raytracer {
 
     Result<Application> Application::Init()
     {
+#pragma region setup
+
 #ifndef NDEBUG
         const auto shadersPath = fs::path{ASSETS_DIR} / "shaders";
         const auto texturesPath = fs::path{ASSETS_DIR} / "textures";
@@ -49,28 +72,22 @@ namespace raytracer {
         if (shader.IsErr())
             return Result<Application>::Err(shader.Error());
 
-        auto texture1 = Texture::Create(GL_TEXTURE_2D, 0, texturesPath / "wooden_container.jpg");
+#pragma endregion
 
 #pragma region buffers
 
         const std::vector<float> vertices = {
+            // Positions         // Texture Coordinates
             1.0f,  1.0f, 0.0f,   1.0f, 1.0f,   // top right
             1.0f, -1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
-           -1.0f, -1.0f, 0.0f,   0.0f, 0.0f,   // bottom left
-           -1.0f,  1.0f, 0.0f,   0.0f, 1.0f    // top left 
-        };
-
-        const std::vector<std::uint32_t> indices = {
-            0, 1, 2,
-            2, 3, 0
+           -1.0f,  1.0f, 0.0f,   0.0f, 1.0f,   // top left
+           -1.0f, -1.0f, 0.0f,   0.0f, 0.0f    // bottom left 
         };
 
         auto vertexArray = VertexArray::Create();
         vertexArray->Bind();
 
         auto vertexBuffer = VertexBuffer::Create(vertices.data(), vertices.size() * sizeof(float));
-        auto indexBuffer = IndexBuffer::Create(indices.size() * sizeof(std::uint32_t), indices.data(), GL_STATIC_DRAW);
-        vertexArray->AddIndexBuffer(indexBuffer);
 
         vertexArray->AddVertexBuffer(vertexBuffer, 0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
         vertexArray->AddVertexBuffer(vertexBuffer, 1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
@@ -78,22 +95,29 @@ namespace raytracer {
 #pragma endregion
 
         Application app;
-
+        app.m_GlfwContext = glfwContext.ValueMove();
         app.m_Window = window.ValueMove();
         glfwSetKeyCallback(app.m_Window->GetWindow(), [](GLFWwindow* window, int key, int scancode, int action, int mods) {
             if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
                 glfwSetWindowShouldClose(window, true);
         });
 
-        app.m_AssetManager.AddVertexArray("vertexArray1", vertexArray);
-        app.m_AssetManager.AddShader("shader1", shader.Value());
-        app.m_AssetManager.AddTexture("texture1", texture1);
+        app.m_AssetManager.AddVertexArray("vertexArray", vertexArray);
+        app.m_AssetManager.AddShader("shader", shader.Value());
 
-        app.m_AssetManager.GetShader("shader1")->Use();
-        app.m_AssetManager.GetShader("shader1")->SetUniformInt("texture1", 0);
 
-        app.m_GlfwContext = glfwContext.ValueMove();
-        app.m_Running = true;
+        std::int32_t imageWidth, imageHeight;
+        glfwGetWindowSize(app.m_Window->GetWindow(), &imageWidth, &imageHeight);
+
+        std::vector<std::uint8_t> framebuffer(imageWidth * imageHeight * 3, 0);
+        FillFrameBuffer(framebuffer, imageWidth, imageHeight);
+
+        auto raytracerTexture = Texture::Create(GL_TEXTURE_2D, 0, framebuffer.data(), imageWidth, imageHeight);
+        app.m_AssetManager.AddTexture("raytracedTexture", raytracerTexture);
+        app.m_AssetManager.GetShader("shader")->Use();
+        app.m_AssetManager.GetShader("shader")->SetUniformInt("raytracedTexture", 0);
+
+
         return Result<Application>::Ok(std::move(app));
     }
 
@@ -103,11 +127,15 @@ namespace raytracer {
         {
             Renderer::Clear();
 
-            const auto& vertexArray = m_AssetManager.GetVertexArray("vertexArray1");
-            const auto& shader = m_AssetManager.GetShader("shader1");
-            const auto& texture = m_AssetManager.GetTexture("texture1");
+            const auto& vertexArray = m_AssetManager.GetVertexArray("vertexArray");
+            const auto& shader = m_AssetManager.GetShader("shader");
+            const auto& texture = m_AssetManager.GetTexture("raytracedTexture");
 
-            Renderer::Draw(vertexArray, shader, std::vector{texture});
+            vertexArray->Bind();
+            shader->Use();
+            texture->Bind();
+
+            GL_CHECK(glDrawArrays(GL_TRIANGLE_STRIP, 0, 4));
 
             m_Window->PollEvents();
             m_Window->SwapBuffers();

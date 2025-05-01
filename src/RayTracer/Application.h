@@ -32,13 +32,9 @@ namespace raytracer {
         void Shutdown();
 
     private:
-        bool m_Running;
         std::unique_ptr<GlfwContext> m_GlfwContext;
         std::unique_ptr<Window> m_Window;
         AssetManager m_AssetManager;
-        //std::shared_ptr<VertexArray> m_VertexArray;
-        //std::unordered_map<std::string, std::shared_ptr<Shader>> m_Shaders;
-        //std::unordered_map<std::string, std::shared_ptr<Texture>> m_Textures;
     };
     
 }

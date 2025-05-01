@@ -16,8 +16,8 @@ namespace raytracer {
     {
     }
 
-    WindowConfig::WindowConfig(const std::uint32_t width, const std::uint32_t height, std::string title)
-        : width{width}, height{height}, title{title}
+    WindowConfig::WindowConfig(const std::uint32_t m_Width, const std::uint32_t height, std::string title)
+        : width{m_Width}, height{height}, title{title}
     {
     }
 
@@ -49,8 +49,8 @@ namespace raytracer {
         if (!gladLoadGL(glfwGetProcAddress))
             return Result<void>::Err("Failed to initialize GLAD");
 
-        glfwSetFramebufferSizeCallback(m_Window, [](GLFWwindow* window, const int width, const int height) {
-            GL_CHECK(glViewport(0, 0, width, height));
+        glfwSetFramebufferSizeCallback(m_Window, [](GLFWwindow* window, const int m_Width, const int height) {
+            GL_CHECK(glViewport(0, 0, m_Width, height));
         });
 
         glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
