@@ -1,4 +1,4 @@
-#include "Texture.h"
+#include "Image.h"
 
 #include <filesystem>
 #include <memory>
@@ -10,24 +10,24 @@
 
 namespace raytracer {
 
-    std::shared_ptr<Texture> Texture::Create(const GLenum type, const std::uint32_t unitIndex, const void* data, 
-        const std::int32_t m_Width, const std::int32_t height)
+    std::shared_ptr<Image> Image::Create(const GLenum type, const std::uint32_t unitIndex,
+        const std::int32_t m_Width, const std::int32_t height, const void* data)
     {
-        return std::make_shared<Texture>(type, unitIndex, data, m_Width, height);
+        return std::make_shared<Image>(type, unitIndex, m_Width, height, data);
     }
 
-    std::shared_ptr<Texture> Texture::Create(const GLenum type, const std::uint32_t number, const std::filesystem::path& path)
+    std::shared_ptr<Image> Image::Create(const GLenum type, const std::uint32_t number, const std::filesystem::path& path)
     {
-        return std::make_shared<Texture>(type, number, path);
+        return std::make_shared<Image>(type, number, path);
     }
 
-    void Texture::SetData(const void* data) const
+    void Image::SetData(const void* data) const
     {
         Bind();
         GL_CHECK(glTexImage2D(m_Target, 0, GL_RGB, m_Width, m_Height, 0, GL_RGB, GL_UNSIGNED_BYTE, data));
     }
 
-    Texture::Texture(const GLenum type, const std::uint32_t number, const std::filesystem::path& path)
+    Image::Image(const GLenum type, const std::uint32_t number, const std::filesystem::path& path)
         : m_Target{type}, m_UnitIndex{number}
     {
         GL_CHECK(glGenTextures(1, &m_Handle));
@@ -65,9 +65,9 @@ namespace raytracer {
         stbi_image_free(textureData);
     }
 
-    Texture::Texture(const GLenum type, const std::uint32_t unitIndex, const void* data, 
-        const std::int32_t m_Width, const std::int32_t height)
-        : m_Target{type}, m_Width{m_Width}, m_Height{height}, m_UnitIndex{unitIndex}
+    Image::Image(const GLenum type, const std::uint32_t unitIndex, 
+        const std::int32_t m_Width, const std::int32_t height, const void* data)
+        : m_Width{m_Width}, m_Height{height}, m_Target{type}, m_UnitIndex{unitIndex}
     {
         GL_CHECK(glGenTextures(1, &m_Handle));
         Bind();
@@ -77,41 +77,41 @@ namespace raytracer {
         GL_CHECK(glTexImage2D(m_Target, 0, GL_RGBA, m_Width, m_Height, 0, GL_RGB, GL_UNSIGNED_BYTE, data));
     }
 
-    Texture::~Texture()
+    Image::~Image()
     {
         GL_CHECK(glDeleteTextures(1, &m_Handle));
     }
 
-    std::uint32_t Texture::GetWidth() const
+    std::uint32_t Image::GetWidth() const
     {
         return m_Width;
     }
 
-    std::uint32_t Texture::GetHeight() const
+    std::uint32_t Image::GetHeight() const
     {
         return m_Height;
     }
 
-    GLuint Texture::GetHandle() const
+    GLuint Image::GetHandle() const
     {
         return m_Handle;
     }
 
-    void Texture::Bind() const
+    void Image::Bind() const
     {
         GL_CHECK(glActiveTexture(GL_TEXTURE0 + m_UnitIndex));
         GL_CHECK(glBindTexture(m_Target, m_Handle));
     }
 
-    void Texture::Unbind() const
+    void Image::Unbind() const
     {
         GL_CHECK(glActiveTexture(GL_TEXTURE0 + m_UnitIndex));
         GL_CHECK(glBindTexture(m_Target, 0));
     }
 
-    void Texture::SetParameter(const GLenum pname, const GLint param) const
+    void Image::SetParameter(const GLenum pname, const GLint param) const
     {
-        GL_CHECK(glBindTexture(m_Target, m_Handle));
+        Bind();
         GL_CHECK(glTexParameteri(m_Target, pname, param));
     }
 

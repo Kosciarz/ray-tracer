@@ -9,7 +9,7 @@
 #include "Shader.h"
 #include "VertexArray.h"
 #include "Buffer.h"
-#include "Texture.h"
+#include "Image.h"
 #include "Utils.h"
 
 namespace raytracer {
@@ -22,7 +22,7 @@ namespace raytracer {
 
     void Renderer::Draw(const std::shared_ptr<VertexArray>& vertexArray, 
         const std::shared_ptr<Shader>& shader,
-        const std::vector<std::shared_ptr<Texture>>& textures)
+        const std::vector<std::shared_ptr<Image>>& textures)
     {
         RAYTRACER_ASSERT(vertexArray, "Vertex Array is a nullptr");
         auto indexBuffer = vertexArray->GetIndexBuffer();
