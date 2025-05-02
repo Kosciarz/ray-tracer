@@ -7,7 +7,7 @@
 #include "Renderer/VertexArray.h"
 #include "Renderer/Buffer.h"
 #include "Renderer/Shader.h"
-#include "Renderer/Texture.h"
+#include "Renderer/Image.h"
 
 namespace raytracer {
 
@@ -20,18 +20,18 @@ namespace raytracer {
 
         void AddShader(const std::string& name, std::shared_ptr<Shader> shader);
 
-        void AddTexture(const std::string& name, std::shared_ptr<Texture> texture);
+        void AddImage(const std::string& name, std::shared_ptr<Image> texture);
 
         std::shared_ptr<VertexArray>& GetVertexArray(const std::string& name);
 
         std::shared_ptr<Shader>& GetShader(const std::string& name);
 
-        std::shared_ptr<Texture>& GetTexture(const std::string& name);
+        std::shared_ptr<Image>& GetImage(const std::string& name);
 
     private:
         std::unordered_map<std::string, std::shared_ptr<VertexArray>> m_VertexArrays;
         std::unordered_map<std::string, std::shared_ptr<Shader>> m_Shaders;
-        std::unordered_map<std::string, std::shared_ptr<Texture>> m_Textures;
+        std::unordered_map<std::string, std::shared_ptr<Image>> m_Images;
     };
 
 }

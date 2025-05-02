@@ -27,7 +27,6 @@ namespace raytracer {
     void VertexArray::Bind() const
     {
         GL_CHECK(glBindVertexArray(m_VAO));
-        m_IndexBuffer->Bind();
     }
 
     void VertexArray::Unbind() const

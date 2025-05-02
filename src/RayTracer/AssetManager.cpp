@@ -7,7 +7,7 @@
 #include "Renderer/VertexArray.h"
 #include "Renderer/Buffer.h"
 #include "Renderer/Shader.h"
-#include "Renderer/Texture.h"
+#include "Renderer/Image.h"
 #include "Utils.h"
 
 namespace raytracer {
@@ -22,9 +22,9 @@ namespace raytracer {
         m_Shaders[name] = shader;
     }
 
-    void AssetManager::AddTexture(const std::string& name, std::shared_ptr<Texture> texture)
+    void AssetManager::AddImage(const std::string& name, std::shared_ptr<Image> texture)
     {
-        m_Textures[name] = texture;
+        m_Images[name] = texture;
     }
 
     std::shared_ptr<VertexArray>& AssetManager::GetVertexArray(const std::string& name)
@@ -39,10 +39,10 @@ namespace raytracer {
         return m_Shaders[name];
     }
 
-    std::shared_ptr<Texture>& AssetManager::GetTexture(const std::string& name)
+    std::shared_ptr<Image>& AssetManager::GetImage(const std::string& name)
     {
-        RAYTRACER_ASSERT(m_Textures.contains(name), "Invalid texture name: " + name);
-        return m_Textures[name];
+        RAYTRACER_ASSERT(m_Images.contains(name), "Invalid texture name: " + name);
+        return m_Images[name];
     }
 
 }
