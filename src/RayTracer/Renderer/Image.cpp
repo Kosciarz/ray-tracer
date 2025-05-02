@@ -10,21 +10,15 @@
 
 namespace raytracer {
 
-    std::shared_ptr<Image> Image::Create(const GLenum type, const std::uint32_t unitIndex,
-        const std::int32_t m_Width, const std::int32_t height, const void* data)
+    std::shared_ptr<Image> Image::Create(const GLenum type, const std::uint32_t unitIndex, const ImageFormat format,
+        const std::int32_t width, const std::int32_t height, const void* data)
     {
-        return std::make_shared<Image>(type, unitIndex, m_Width, height, data);
+        return std::make_shared<Image>(type, unitIndex, format, width, height, data);
     }
 
     std::shared_ptr<Image> Image::Create(const GLenum type, const std::uint32_t number, const std::filesystem::path& path)
     {
         return std::make_shared<Image>(type, number, path);
-    }
-
-    void Image::SetData(const void* data) const
-    {
-        Bind();
-        GL_CHECK(glTexImage2D(m_Target, 0, GL_RGB, m_Width, m_Height, 0, GL_RGB, GL_UNSIGNED_BYTE, data));
     }
 
     Image::Image(const GLenum type, const std::uint32_t number, const std::filesystem::path& path)
@@ -43,18 +37,22 @@ namespace raytracer {
         std::int32_t nrChannels;
         std::uint8_t* textureData = stbi_load(path.string().c_str(), &m_Width, &m_Height, &nrChannels, 0);
 
-        GLenum format = GL_RGB;
-        if (nrChannels == 1)
-            format = GL_RED;
-        else if (nrChannels == 3)
-            format = GL_RGB;
+        if (nrChannels == 3)
+            m_Format = ImageFormat::RGB;
         else if (nrChannels == 4)
-            format = GL_RGBA;
+            m_Format = ImageFormat::RGBA;
 
 
         if (textureData)
         {
-            GL_CHECK(glTexImage2D(m_Target, 0, GL_RGBA, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, textureData));
+            GLenum imageFormat = static_cast<GLenum>(m_Format);
+            GLenum internalFormat = GL_NONE;
+            if (m_Format == ImageFormat::RGB)
+                internalFormat = GL_RGB8;
+            else if (m_Format == ImageFormat::RGBA)
+                internalFormat = GL_RGBA8;
+
+            GL_CHECK(glTexImage2D(m_Target, 0, internalFormat, m_Width, m_Height, 0, imageFormat, GL_UNSIGNED_BYTE, textureData));
             GL_CHECK(glGenerateMipmap(m_Target));
         }
         else
@@ -65,21 +63,35 @@ namespace raytracer {
         stbi_image_free(textureData);
     }
 
-    Image::Image(const GLenum type, const std::uint32_t unitIndex, 
+    Image::Image(const GLenum type, const std::uint32_t unitIndex, const ImageFormat format,
         const std::int32_t m_Width, const std::int32_t height, const void* data)
-        : m_Width{m_Width}, m_Height{height}, m_Target{type}, m_UnitIndex{unitIndex}
+        : m_Width{m_Width}, m_Height{height}, m_Target{type}, m_UnitIndex{unitIndex}, m_Format{format}
     {
         GL_CHECK(glGenTextures(1, &m_Handle));
         Bind();
 
         GL_CHECK(glTexParameteri(m_Target, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
         GL_CHECK(glTexParameteri(m_Target, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
-        GL_CHECK(glTexImage2D(m_Target, 0, GL_RGBA, m_Width, m_Height, 0, GL_RGB, GL_UNSIGNED_BYTE, data));
+
+        GLenum imageFormat = static_cast<GLenum>(m_Format);
+        GLenum internalFormat = GL_NONE;
+            if (m_Format == ImageFormat::RGB)
+                internalFormat = GL_RGB8;
+            else if (m_Format == ImageFormat::RGBA)
+                internalFormat = GL_RGBA8;
+
+        GL_CHECK(glTexImage2D(m_Target, 0, imageFormat, m_Width, m_Height, 0, imageFormat, GL_UNSIGNED_BYTE, data));
     }
 
     Image::~Image()
     {
         GL_CHECK(glDeleteTextures(1, &m_Handle));
+    }
+
+    void Image::SetData(const void* data) const
+    {
+        Bind();
+        GL_CHECK(glTexImage2D(m_Target, 0, GL_RGB, m_Width, m_Height, 0, GL_RGB, GL_UNSIGNED_BYTE, data));
     }
 
     std::uint32_t Image::GetWidth() const

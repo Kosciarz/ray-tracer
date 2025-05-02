@@ -8,17 +8,24 @@
 
 namespace raytracer {
 
+    enum class ImageFormat : GLenum
+    {
+        None = 0,
+        RGB = GL_RGB,
+        RGBA = GL_RGBA,
+    };
+
     class Image
     {
     public:
-        static std::shared_ptr<Image> Create(const GLenum target, const std::uint32_t unitIndex,
+        static std::shared_ptr<Image> Create(const GLenum target, const std::uint32_t unitIndex, const ImageFormat format,
             const std::int32_t m_Width, const std::int32_t height, const void* data);
 
         static std::shared_ptr<Image> Create(const GLenum target, const std::uint32_t unitIndex, const std::filesystem::path& path);
 
         Image(const GLenum type, const std::uint32_t unitIndex, const std::filesystem::path& path);
 
-        Image(const GLenum type, const std::uint32_t unitIndex,
+        Image(const GLenum type, const std::uint32_t unitIndex, const ImageFormat format,
             const std::int32_t m_Width, const std::int32_t height, const void* data);
 
         void SetData(const void* data) const;
@@ -42,9 +49,12 @@ namespace raytracer {
     private:
         std::int32_t m_Width;
         std::int32_t m_Height;
+
         GLuint m_Handle;
+
         GLenum m_Target;
         std::uint32_t m_UnitIndex;
+        ImageFormat m_Format;
     };
 
 }
