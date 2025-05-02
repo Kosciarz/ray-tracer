@@ -1,16 +1,21 @@
 #include <iostream>
 
 #include "Application.h"
+#include "RayTracerLayer.h"
+
+using namespace raytracer;
 
 int main(int argc, char* argv[])
 {
-    auto appResult = raytracer::Application::Init();
-    if (appResult.IsErr())
+    try
     {
-        std::cerr << "Application failed to initialize: " << appResult.Error() << '\n';
+        Application app = Application::Create();
+        app.PushLayer<RayTracerLayer>();
+        app.Run();
+    }
+    catch (const std::runtime_error& e)
+    {
+        std::cerr << "Error: " << e.what() << '\n';
         return EXIT_FAILURE;
     }
-
-    raytracer::Application app = appResult.ValueMove();
-    app.Run();
 }
