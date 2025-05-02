@@ -40,20 +40,20 @@ namespace raytracer {
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPACT, GL_TRUE);
 #endif
 
-        m_Window = glfwCreateWindow(config.width, config.height, config.title.c_str(), nullptr, nullptr);
-        if (!m_Window)
+        m_WindowHandle = glfwCreateWindow(config.width, config.height, config.title.c_str(), nullptr, nullptr);
+        if (!m_WindowHandle)
             return Result<void>::Err("Failed to create GLFW window");
 
-        glfwMakeContextCurrent(m_Window);
+        glfwMakeContextCurrent(m_WindowHandle);
 
         if (!gladLoadGL(glfwGetProcAddress))
             return Result<void>::Err("Failed to initialize GLAD");
 
-        glfwSetFramebufferSizeCallback(m_Window, [](GLFWwindow* window, const int m_Width, const int height) {
+        glfwSetFramebufferSizeCallback(m_WindowHandle, [](GLFWwindow* window, const int m_Width, const int height) {
             GL_CHECK(glViewport(0, 0, m_Width, height));
         });
 
-        glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
+        glfwSetKeyCallback(m_WindowHandle, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
             if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
                 glfwSetWindowShouldClose(window, true);
         });
@@ -62,18 +62,18 @@ namespace raytracer {
     }
 
     Window::Window(GLFWwindow* window)
-        : m_Window{window}, m_UserPointer{nullptr}
+        : m_WindowHandle{window}, m_UserPointer{nullptr}
     {
     }
 
     Window::~Window()
     {
-        glfwDestroyWindow(m_Window);
+        glfwDestroyWindow(m_WindowHandle);
     }
 
     bool Window::ShouldClose() const
     {
-        return glfwWindowShouldClose(m_Window);
+        return glfwWindowShouldClose(m_WindowHandle);
     }
 
     void Window::PollEvents() const
@@ -83,17 +83,17 @@ namespace raytracer {
 
     void Window::SwapBuffers() const
     {
-        glfwSwapBuffers(m_Window);
+        glfwSwapBuffers(m_WindowHandle);
     }
 
     void Window::SetUserPointer(void* ptr) const
     {
-        glfwSetWindowUserPointer(m_Window, ptr);
+        glfwSetWindowUserPointer(m_WindowHandle, ptr);
     }
 
     void* Window::GetUserPointer()
     {
-        return glfwGetWindowUserPointer(m_Window);
+        return glfwGetWindowUserPointer(m_WindowHandle);
     }
 
     template <typename T>
@@ -102,9 +102,9 @@ namespace raytracer {
         return static_cast<T*>(GetUserPointer());
     }
 
-    GLFWwindow* Window::GetWindow()
+    GLFWwindow* Window::GetWindowHandle()
     {
-        return m_Window;
+        return m_WindowHandle;
     }
 
 }

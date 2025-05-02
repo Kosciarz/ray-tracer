@@ -52,7 +52,6 @@ namespace raytracer {
 
         m_VertexArray = VertexArray::Create();
         m_VertexArray->Bind();
-
         auto vertexBuffer = VertexBuffer::Create(vertices.data(), vertices.size() * sizeof(float));
         m_VertexArray->AddVertexBuffer(vertexBuffer, 0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
         m_VertexArray->AddVertexBuffer(vertexBuffer, 1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
@@ -66,7 +65,7 @@ namespace raytracer {
     {
         m_ImageData = std::vector<std::uint8_t>(width * height * 4, 0);
         Render(m_ImageData, width, height);
-        m_Image = Image::Create(GL_TEXTURE_2D, 0, width, height, m_ImageData.data());
+        m_Image = Image::Create(GL_TEXTURE_2D, 0, ImageFormat::RGBA, width, height, m_ImageData.data());
 
         m_VertexArray->Bind();
         m_Shader->Use();

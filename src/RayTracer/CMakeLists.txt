@@ -4,8 +4,9 @@ set(SOURCES
     "StbImageImpl.cpp"
     "GlfwContext.cpp"
     "AssetManager.cpp"
+    "RayTracerLayer.cpp"
 
-    "Renderer/Texture.cpp"
+    "Renderer/Image.cpp"
     "Renderer/Renderer.cpp"
     "Renderer/Shader.cpp"
     "Renderer/Buffer.cpp"
@@ -13,15 +14,19 @@ set(SOURCES
 )
 
 set(HEADERS
+    "RayTracerCore.h"
     "RayTracerGL.h"
+
     "Application.h"
     "Window.h"
     "Utils.h"
     "Result.h"
     "GlfwContext.h"
     "AssetManager.h"
+    "Layer.h"
+    "RayTracerLayer.h"
 
-    "Renderer/Texture.h"
+    "Renderer/Image.h"
     "Renderer/Renderer.h"
     "Renderer/Shader.h"
     "Renderer/Buffer.h"

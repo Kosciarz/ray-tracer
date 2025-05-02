@@ -47,13 +47,13 @@ namespace raytracer {
         template <typename T>
         T* GetUserPointerAs() const;
 
-        GLFWwindow* GetWindow();
+        GLFWwindow* GetWindowHandle();
 
     private:
         Result<void> Init(const WindowConfig& config);
 
     private:
-        GLFWwindow* m_Window;
+        GLFWwindow* m_WindowHandle;
         void* m_UserPointer;
     };
 
