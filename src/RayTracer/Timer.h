@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <format>
+#include <string_view>
 
 namespace raytracer {
 
@@ -23,22 +24,22 @@ namespace raytracer {
             m_Start = Clock::now();
         }
 
-        double GetSeconds() const noexcept
+        double ElapsedSeconds() const noexcept
         {
             return std::chrono::duration_cast<std::chrono::seconds>(GetTimeDifference()).count();
         }
 
-        long long GetMilliseconds() const noexcept
+        long long ElapsedMilliseconds() const noexcept
         {
             return std::chrono::duration_cast<std::chrono::milliseconds>(GetTimeDifference()).count();
         }
 
-        long long GetMicroseconds() const noexcept
+        long long ElapsedMicroseconds() const noexcept
         {
             return std::chrono::duration_cast<std::chrono::microseconds>(GetTimeDifference()).count();
         }
 
-        long long GetNanoseconds() const noexcept
+        long long ElapsedNanoseconds() const noexcept
         {
             return std::chrono::duration_cast<std::chrono::nanoseconds>(GetTimeDifference()).count();
         }
@@ -57,14 +58,14 @@ namespace raytracer {
     class ScopedTimer
     {
     public:
-        ScopedTimer(const std::string& name)
+        ScopedTimer(std::string_view name)
             : m_Name{name}
         {
         }
 
         ~ScopedTimer()
         {
-            std::cout << std::format("[{}]: {}ms", m_Name, m_Timer.GetMilliseconds()) << '\n';
+            std::cout << std::format("[{}]: {}ms", m_Name, m_Timer.ElapsedMilliseconds()) << '\n';
         }
 
     private:

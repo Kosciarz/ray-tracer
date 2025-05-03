@@ -63,9 +63,12 @@ namespace raytracer {
 
     void raytracer::RayTracerLayer::OnUpdate(float timeStep, std::uint32_t width, std::uint32_t height)
     {
-        m_ImageData = std::vector<std::uint8_t>(width * height * 4, 0);
-        Render(m_ImageData, width, height);
-        m_Image = Image::Create(GL_TEXTURE_2D, 0, ImageFormat::RGBA, width, height, m_ImageData.data());
+        if (!m_Image->GetHandle() || width != m_Image->GetWidth() || height != m_Image->GetHeight())
+        {
+            m_ImageData = std::vector<std::uint8_t>(width * height * 4, 0);
+            Render(m_ImageData, width, height);
+            m_Image = Image::Create(GL_TEXTURE_2D, 0, ImageFormat::RGBA, width, height, m_ImageData.data());
+        }
 
         m_VertexArray->Bind();
         m_Shader->Use();
@@ -93,7 +96,7 @@ namespace raytracer {
                 buffer[i * 4 + 0] = static_cast<std::uint8_t>(255 * r);
                 buffer[i * 4 + 1] = static_cast<std::uint8_t>(255 * g);
                 buffer[i * 4 + 2] = static_cast<std::uint8_t>(255 * b);
-                buffer[i * 4 + 3] = static_cast<std::uint8_t>(255);
+                buffer[i * 4 + 3] = 255;
             }
         }
     }
