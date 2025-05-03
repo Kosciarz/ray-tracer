@@ -3,7 +3,6 @@ set(SOURCES
     "Window.cpp"
     "StbImageImpl.cpp"
     "GlfwContext.cpp"
-    "AssetManager.cpp"
     "RayTracerLayer.cpp"
 
     "Renderer/Image.cpp"
@@ -22,9 +21,10 @@ set(HEADERS
     "Utils.h"
     "Result.h"
     "GlfwContext.h"
-    "AssetManager.h"
     "Layer.h"
     "RayTracerLayer.h"
+    "Timer.h"
+    "Random.h"
 
     "Renderer/Image.h"
     "Renderer/Renderer.h"

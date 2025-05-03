@@ -11,19 +11,13 @@
 
 #include "Window.h"
 #include "GlfwContext.h"
-#include "AssetManager.h"
 #include "Result.h"
 #include "Utils.h"
 #include "Layer.h"
-
-#include "Renderer/Renderer.h"
-#include "Renderer/Shader.h"
-#include "Renderer/VertexArray.h"
-#include "Renderer/Buffer.h"
-#include "Renderer/Image.h"
+#include "RayTracerLayer.h"
+#include "Timer.h"
 
 namespace fs = std::filesystem;
-
 
 namespace raytracer {
 
@@ -34,6 +28,7 @@ namespace raytracer {
         if (!initResult)
             throw std::runtime_error{initResult.Error()};
 
+        app.PushLayer<RayTracerLayer>();
         return app;
     }
 
@@ -63,6 +58,8 @@ namespace raytracer {
 
         while (!m_Window->ShouldClose() && m_Running)
         {
+            ScopedTimer timer("Main loop");
+
             m_Window->PollEvents();
 
             std::int32_t viewportWidth, viewportHeight;
@@ -91,8 +88,6 @@ namespace raytracer {
         m_LayerStack.emplace_back(layer);
         layer->OnAttach();
     }
-
-    
 
     Application::~Application()
     {

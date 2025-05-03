@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 
 #include "RayTracerGL.h"
 
@@ -8,7 +9,6 @@
 #include "GlfwContext.h"
 #include "Window.h"
 #include "Layer.h"
-#include "AssetManager.h"
 
 namespace raytracer {
 
