@@ -1,7 +1,6 @@
 #include <iostream>
 
 #include "Application.h"
-#include "RayTracerLayer.h"
 
 using namespace raytracer;
 

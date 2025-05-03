@@ -23,10 +23,12 @@ namespace raytracer {
 
         void OnUIRender() override;
 
-        void Render(std::vector<std::uint8_t>& framebuffer,
-            const std::int32_t width, const std::int32_t height) const;
+        void Render();
 
     private:
+        std::uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
+        float m_LastRenderTime = 0.0;
+
         std::shared_ptr<VertexArray> m_VertexArray;
         std::shared_ptr<Shader> m_Shader;
 

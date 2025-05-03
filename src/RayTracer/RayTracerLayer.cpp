@@ -1,12 +1,15 @@
 #include "RayTracerLayer.h"
 
 #include "RayTracerGL.h"
+#include <imgui.h>
 
 #include <memory>
 #include <filesystem>
 #include <iostream>
 #include <cstdint>
 
+#include "Timer.h"
+#include "Random.h"
 #include "Utils.h"
 
 #include "Renderer/VertexArray.h"
@@ -52,15 +55,18 @@ namespace raytracer {
 
     void RayTracerLayer::OnDetach()
     {
+        m_VertexArray.reset();
+        m_Shader.reset();
+        m_Image.reset();
     }
 
     void raytracer::RayTracerLayer::OnUpdate(float timeStep, std::uint32_t width, std::uint32_t height)
     {
-        if (!m_Image || width != m_Image->GetWidth() || height != m_Image->GetHeight())
+        if (!m_Image || m_ViewportWidth != width || m_ViewportHeight != height)
         {
-            m_ImageData = std::vector<std::uint8_t>(width * height * 4, 0);
-            Render(m_ImageData, width, height);
-            m_Image = Image::Create(width, height, ImageFormat::RGBA, m_ImageData.data(), 0);
+            m_ViewportWidth = width;
+            m_ViewportHeight = height;
+            Render();
         }
 
         m_VertexArray->Bind();
@@ -72,26 +78,42 @@ namespace raytracer {
 
     void RayTracerLayer::OnUIRender()
     {
+        ImGui::Begin("Settings");
+        ImGui::Text("Last render time: %.3fms", m_LastRenderTime);
+        if (ImGui::Button("Render"))
+        {
+            Render();
+        }
+        ImGui::End();
     }
 
-    void RayTracerLayer::Render(std::vector<std::uint8_t>& buffer,
-        const std::int32_t width, const std::int32_t height) const
+    void RayTracerLayer::Render()
     {
-        for (auto y = 0; y < height; y++)
-        {
-            for (auto x = 0; x < width; x++)
-            {
-                auto r = static_cast<double>(x) / (width - 1);
-                auto g = static_cast<double>(y) / (height - 1);
-                auto b = 0.0;
+        Timer timer;
 
-                const auto i = (height - y - 1) * width + x;
-                buffer[i * 4 + 0] = static_cast<std::uint8_t>(255 * r);
-                buffer[i * 4 + 1] = static_cast<std::uint8_t>(255 * g);
-                buffer[i * 4 + 2] = static_cast<std::uint8_t>(255 * b);
-                buffer[i * 4 + 3] = 255;
+        m_Image = Image::Create(m_ViewportWidth, m_ViewportHeight, ImageFormat::RGBA, nullptr, 0);
+        m_ImageData = std::vector<std::uint8_t>(m_ViewportWidth * m_ViewportHeight * 4, 0);
+
+        for (auto y = 0; y < m_ViewportHeight; y++)
+        {
+            for (auto x = 0; x < m_ViewportWidth; x++)
+            {
+                float r = static_cast<float>(x) / (m_ViewportWidth - 1);
+                float g = static_cast<float>(y) / (m_ViewportHeight - 1);
+                float b = 0.0;
+
+                const auto i = (m_ViewportHeight - y - 1) * m_ViewportWidth + x;
+                m_ImageData[i * 4 + 0] = static_cast<std::uint8_t>(255 * r);
+                m_ImageData[i * 4 + 1] = static_cast<std::uint8_t>(255 * g);
+                m_ImageData[i * 4 + 2] = static_cast<std::uint8_t>(255 * b);
+                m_ImageData[i * 4 + 3] = 255;
             }
         }
+
+        m_Image->Bind();
+        m_Image->SetData(m_ImageData.data());
+
+        m_LastRenderTime = timer.ElapsedMilliseconds();
     }
 
 }

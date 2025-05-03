@@ -1,6 +1,9 @@
 #include "Application.h"
 
 #include "RayTracerGL.h"
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 
 #include <filesystem>
 #include <vector>
@@ -49,6 +52,8 @@ namespace raytracer {
                 glfwSetWindowShouldClose(window, true);
         });
 
+        SetupImGui();
+
         return Result<void>::Ok();
     }
 
@@ -58,8 +63,6 @@ namespace raytracer {
 
         while (!m_Window->ShouldClose() && m_Running)
         {
-            ScopedTimer timer("Main loop");
-
             m_Window->PollEvents();
 
             {
@@ -70,9 +73,16 @@ namespace raytracer {
                     layer->OnUpdate(m_TimeStep, viewportWidth, viewportHeight);
             }
 
+            ImGui_ImplOpenGL3_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
+
             {
                 for (const auto& layer : m_LayerStack)
                     layer->OnUIRender();
+
+                ImGui::Render();
+                ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
             }
 
             float time = GetTime();
@@ -95,6 +105,29 @@ namespace raytracer {
         layer->OnAttach();
     }
 
+    float Application::GetTime() const
+    {
+        return static_cast<float>(glfwGetTime());
+    }
+
+    GLFWwindow* Application::GetWindowHandle() const
+    {
+        return m_Window->GetWindowHandle();
+    }
+
+    void Application::SetupImGui()
+    {
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGuiIO& io = ImGui::GetIO();
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
+        ImGui_ImplGlfw_InitForOpenGL(m_Window->GetWindowHandle(), true);
+        ImGui_ImplOpenGL3_Init();
+    }
+
     Application::~Application()
     {
         Shutdown();
@@ -102,6 +135,9 @@ namespace raytracer {
 
     void Application::Shutdown()
     {
+        ImGui_ImplOpenGL3_Shutdown();
+        ImGui_ImplGlfw_Shutdown();
+        ImGui::DestroyContext();
     }
 
 }

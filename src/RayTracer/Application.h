@@ -36,10 +36,9 @@ namespace raytracer {
 
         void PushLayer(const std::shared_ptr<Layer>& layer);
 
-        float GetTime()
-        {
-            return static_cast<float>(glfwGetTime());
-        }
+        float GetTime() const;
+
+        GLFWwindow* GetWindowHandle() const;
 
         Application(const Application&) = delete;
         Application& operator=(const Application&) = delete;
@@ -48,6 +47,7 @@ namespace raytracer {
         Application& operator=(Application&&) noexcept = default;
 
     private:
+        void SetupImGui();
 
         void Shutdown();
 
