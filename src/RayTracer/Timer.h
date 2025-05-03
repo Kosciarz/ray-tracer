@@ -26,22 +26,22 @@ namespace raytracer {
 
         double ElapsedSeconds() const noexcept
         {
-            return std::chrono::duration_cast<std::chrono::seconds>(GetTimeDifference()).count();
+            return std::chrono::duration<double>(GetTimeDifference()).count();
         }
 
-        long long ElapsedMilliseconds() const noexcept
+        double ElapsedMilliseconds() const noexcept
         {
-            return std::chrono::duration_cast<std::chrono::milliseconds>(GetTimeDifference()).count();
+            return std::chrono::duration<double, std::milli>(GetTimeDifference()).count();
         }
 
-        long long ElapsedMicroseconds() const noexcept
+        double ElapsedMicroseconds() const noexcept
         {
-            return std::chrono::duration_cast<std::chrono::microseconds>(GetTimeDifference()).count();
+            return std::chrono::duration<double, std::micro>(GetTimeDifference()).count();
         }
 
-        long long ElapsedNanoseconds() const noexcept
+        double ElapsedNanoseconds() const noexcept
         {
-            return std::chrono::duration_cast<std::chrono::nanoseconds>(GetTimeDifference()).count();
+            return std::chrono::duration<double, std::nano>(GetTimeDifference()).count();
         }
 
     private:
