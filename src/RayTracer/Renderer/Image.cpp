@@ -10,27 +10,26 @@
 
 namespace raytracer {
 
-    std::shared_ptr<Image> Image::Create(const GLenum type, const std::uint32_t unitIndex, const ImageFormat format,
-        const std::int32_t width, const std::int32_t height, const void* data)
+    std::shared_ptr<Image> Image::Create(const std::int32_t width, const std::int32_t height,
+        const ImageFormat format, const void* data, const std::uint32_t unitIndex)
     {
-        return std::make_shared<Image>(type, unitIndex, format, width, height, data);
+        return std::make_shared<Image>(width, height, format, data, unitIndex);
     }
 
-    std::shared_ptr<Image> Image::Create(const GLenum type, const std::uint32_t number, const std::filesystem::path& path)
+    std::shared_ptr<Image> Image::Create(const std::filesystem::path& path, const std::uint32_t unitIndex)
     {
-        return std::make_shared<Image>(type, number, path);
+        return std::make_shared<Image>(path, unitIndex);
     }
 
-    Image::Image(const GLenum type, const std::uint32_t number, const std::filesystem::path& path)
-        : m_Target{type}, m_UnitIndex{number}
+    Image::Image(const std::filesystem::path& path, const std::uint32_t unitIndex)
     {
         GL_CHECK(glGenTextures(1, &m_Handle));
         Bind();
 
-        GL_CHECK(glTexParameteri(m_Target, GL_TEXTURE_WRAP_S, GL_REPEAT));
-        GL_CHECK(glTexParameteri(m_Target, GL_TEXTURE_WRAP_T, GL_REPEAT));
-        GL_CHECK(glTexParameteri(m_Target, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-        GL_CHECK(glTexParameteri(m_Target, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+        GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
+        GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
+        GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+        GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 
         stbi_set_flip_vertically_on_load(true);
 
@@ -52,8 +51,8 @@ namespace raytracer {
             else if (m_Format == ImageFormat::RGBA)
                 internalFormat = GL_RGBA8;
 
-            GL_CHECK(glTexImage2D(m_Target, 0, internalFormat, m_Width, m_Height, 0, imageFormat, GL_UNSIGNED_BYTE, textureData));
-            GL_CHECK(glGenerateMipmap(m_Target));
+            GL_CHECK(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_Width, m_Height, 0, imageFormat, GL_UNSIGNED_BYTE, textureData));
+            GL_CHECK(glGenerateMipmap(GL_TEXTURE_2D));
         }
         else
         {
@@ -63,24 +62,24 @@ namespace raytracer {
         stbi_image_free(textureData);
     }
 
-    Image::Image(const GLenum type, const std::uint32_t unitIndex, const ImageFormat format,
-        const std::int32_t m_Width, const std::int32_t height, const void* data)
-        : m_Width{m_Width}, m_Height{height}, m_Target{type}, m_UnitIndex{unitIndex}, m_Format{format}
+    Image::Image(const std::int32_t width, const std::int32_t height,
+        const ImageFormat format, const void* data, const std::uint32_t unitIndex)
+        : m_Width{width}, m_Height{height}, m_Format{format}, m_UnitIndex{unitIndex}
     {
         GL_CHECK(glGenTextures(1, &m_Handle));
         Bind();
 
-        GL_CHECK(glTexParameteri(m_Target, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
-        GL_CHECK(glTexParameteri(m_Target, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+        GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+        GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
 
         GLenum imageFormat = static_cast<GLenum>(m_Format);
         GLenum internalFormat = GL_NONE;
-            if (m_Format == ImageFormat::RGB)
-                internalFormat = GL_RGB8;
-            else if (m_Format == ImageFormat::RGBA)
-                internalFormat = GL_RGBA8;
+        if (m_Format == ImageFormat::RGB)
+            internalFormat = GL_RGB8;
+        else if (m_Format == ImageFormat::RGBA)
+            internalFormat = GL_RGBA8;
 
-        GL_CHECK(glTexImage2D(m_Target, 0, imageFormat, m_Width, m_Height, 0, imageFormat, GL_UNSIGNED_BYTE, data));
+        GL_CHECK(glTexImage2D(GL_TEXTURE_2D, 0, imageFormat, m_Width, m_Height, 0, imageFormat, GL_UNSIGNED_BYTE, data));
     }
 
     Image::~Image()
@@ -88,10 +87,29 @@ namespace raytracer {
         GL_CHECK(glDeleteTextures(1, &m_Handle));
     }
 
+    void Image::Bind() const
+    {
+        GL_CHECK(glActiveTexture(GL_TEXTURE0 + m_UnitIndex));
+        GL_CHECK(glBindTexture(GL_TEXTURE_2D, m_Handle));
+    }
+
+    void Image::Unbind() const
+    {
+        GL_CHECK(glActiveTexture(GL_TEXTURE0 + m_UnitIndex));
+        GL_CHECK(glBindTexture(GL_TEXTURE_2D, 0));
+    }
+
     void Image::SetData(const void* data) const
     {
         Bind();
-        GL_CHECK(glTexImage2D(m_Target, 0, GL_RGB, m_Width, m_Height, 0, GL_RGB, GL_UNSIGNED_BYTE, data));
+        GL_CHECK(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_Width, m_Height, 0, GL_RGB, GL_UNSIGNED_BYTE, data));
+    }
+
+    void Image::SetParameter(const GLenum pname, const GLint param) const
+    {
+        Bind();
+        GL_CHECK(glTexParameteri(GL_TEXTURE_2D, pname, param));
+        Unbind();
     }
 
     std::uint32_t Image::GetWidth() const
@@ -107,24 +125,6 @@ namespace raytracer {
     GLuint Image::GetHandle() const
     {
         return m_Handle;
-    }
-
-    void Image::Bind() const
-    {
-        GL_CHECK(glActiveTexture(GL_TEXTURE0 + m_UnitIndex));
-        GL_CHECK(glBindTexture(m_Target, m_Handle));
-    }
-
-    void Image::Unbind() const
-    {
-        GL_CHECK(glActiveTexture(GL_TEXTURE0 + m_UnitIndex));
-        GL_CHECK(glBindTexture(m_Target, 0));
-    }
-
-    void Image::SetParameter(const GLenum pname, const GLint param) const
-    {
-        Bind();
-        GL_CHECK(glTexParameteri(m_Target, pname, param));
     }
 
 }

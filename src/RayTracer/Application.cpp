@@ -62,12 +62,18 @@ namespace raytracer {
 
             m_Window->PollEvents();
 
-            std::int32_t viewportWidth, viewportHeight;
-            glfwGetWindowSize(m_Window->GetWindowHandle(), &viewportWidth, &viewportHeight);
+            {
+                std::int32_t viewportWidth, viewportHeight;
+                glfwGetWindowSize(m_Window->GetWindowHandle(), &viewportWidth, &viewportHeight);
 
-            for (const auto& layer : m_LayerStack)
-                layer->OnUpdate(m_TimeStep, viewportWidth, viewportHeight);
+                for (const auto& layer : m_LayerStack)
+                    layer->OnUpdate(m_TimeStep, viewportWidth, viewportHeight);
+            }
 
+            {
+                for (const auto& layer : m_LayerStack)
+                    layer->OnUIRender();
+            }
 
             float time = GetTime();
             m_FrameTime = time - m_LastFrameTime;

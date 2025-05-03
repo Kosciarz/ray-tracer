@@ -27,11 +27,11 @@ namespace raytracer {
             const std::int32_t width, const std::int32_t height) const;
 
     private:
-        std::vector<std::uint8_t> m_ImageData;
+        std::shared_ptr<VertexArray> m_VertexArray;
+        std::shared_ptr<Shader> m_Shader;
 
-        std::shared_ptr<raytracer::VertexArray> m_VertexArray;
-        std::shared_ptr<raytracer::Shader> m_Shader;
-        std::shared_ptr<raytracer::Image> m_Image;
+        std::shared_ptr<Image> m_Image;
+        std::vector<std::uint8_t> m_ImageData;
     };
 
 }

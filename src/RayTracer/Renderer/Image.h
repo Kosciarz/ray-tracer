@@ -18,21 +18,27 @@ namespace raytracer {
     class Image
     {
     public:
-        static std::shared_ptr<Image> Create(const GLenum target, const std::uint32_t unitIndex, const ImageFormat format,
-            const std::int32_t m_Width, const std::int32_t height, const void* data);
+        static std::shared_ptr<Image> Create(const std::int32_t m_Width, const std::int32_t height,
+            const ImageFormat format, const void* data, const std::uint32_t unitIndex);
 
-        static std::shared_ptr<Image> Create(const GLenum target, const std::uint32_t unitIndex, const std::filesystem::path& path);
+        static std::shared_ptr<Image> Create(const std::filesystem::path& path, const std::uint32_t unitIndex);
 
-        Image(const GLenum type, const std::uint32_t unitIndex, const std::filesystem::path& path);
+        Image(const std::filesystem::path& path, const std::uint32_t unitIndex);
 
-        Image(const GLenum type, const std::uint32_t unitIndex, const ImageFormat format,
-            const std::int32_t m_Width, const std::int32_t height, const void* data);
-
-        void SetData(const void* data) const;
+        Image(const std::int32_t m_Width, const std::int32_t height,
+            const ImageFormat format, const void* data, const std::uint32_t unitIndex);
 
         Image() = default;
 
         ~Image();
+
+        void Bind() const;
+
+        void Unbind() const;
+
+        void SetData(const void* data) const;
+
+        void SetParameter(const GLenum pname, const GLint param) const;
 
         std::uint32_t GetWidth() const;
 
@@ -40,15 +46,9 @@ namespace raytracer {
 
         GLuint GetHandle() const;
 
-        void Bind() const;
-
-        void Unbind() const;
-
-        void SetParameter(const GLenum pname, const GLint param) const;
-
     private:
-        std::int32_t m_Width;
-        std::int32_t m_Height;
+        std::int32_t m_Width = 0;
+        std::int32_t m_Height = 0;
 
         GLuint m_Handle;
 

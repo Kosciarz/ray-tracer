@@ -23,22 +23,15 @@ namespace raytracer {
     {
 #ifndef NDEBUG
         const auto shadersPath = fs::path{ASSETS_DIR} / "shaders";
-        const auto texturesPath = fs::path{ASSETS_DIR} / "textures";
 #endif 
 
         const auto& shaderSource = ShaderSources::Load({shadersPath / "vs.vert", shadersPath / "fs.frag"});
         if (!shaderSource)
-        {
-            std::cerr << "Error: " << shaderSource.Error() << '\n';
-            return;
-        }
+            throw std::runtime_error{shaderSource.Error()};
 
         const auto& shader = Shader::Create(shaderSource.Value());
         if (!shader)
-        {
-            std::cerr << "Error: " << shader.Error() << '\n';
-            return;
-        }
+            throw std::runtime_error{shader.Error()};
 
         m_Shader = shader.Value();
 
@@ -63,11 +56,11 @@ namespace raytracer {
 
     void raytracer::RayTracerLayer::OnUpdate(float timeStep, std::uint32_t width, std::uint32_t height)
     {
-        if (!m_Image->GetHandle() || width != m_Image->GetWidth() || height != m_Image->GetHeight())
+        if (!m_Image || width != m_Image->GetWidth() || height != m_Image->GetHeight())
         {
             m_ImageData = std::vector<std::uint8_t>(width * height * 4, 0);
             Render(m_ImageData, width, height);
-            m_Image = Image::Create(GL_TEXTURE_2D, 0, ImageFormat::RGBA, width, height, m_ImageData.data());
+            m_Image = Image::Create(width, height, ImageFormat::RGBA, m_ImageData.data(), 0);
         }
 
         m_VertexArray->Bind();
@@ -81,7 +74,7 @@ namespace raytracer {
     {
     }
 
-    void RayTracerLayer::Render(std::vector<std::uint8_t>& buffer, 
+    void RayTracerLayer::Render(std::vector<std::uint8_t>& buffer,
         const std::int32_t width, const std::int32_t height) const
     {
         for (auto y = 0; y < height; y++)
