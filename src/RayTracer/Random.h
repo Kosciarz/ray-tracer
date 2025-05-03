@@ -1,55 +1,77 @@
 #pragma once
 
-#include <string>
 #include <random>
 #include <cstdint>
+#include <limits>
+#include <thread>
+
+#include <glm/vec3.hpp>
 
 namespace raytracer {
 
     class Random
     {
     public:
-        static std::int32_t RandomInt(const std::int32_t min, const std::int32_t max) noexcept
+        static void Seed(std::uint32_t seed)
+        {
+            s_Generator.seed(seed);
+        }
+
+        static std::uint8_t UInt8() noexcept
+        {
+            thread_local static std::uniform_int_distribution<std::uint16_t> dist{0, 255};
+            return static_cast<std::uint8_t>(dist(s_Generator));
+        }
+
+        static std::int32_t Int() noexcept
+        {
+            thread_local static std::uniform_int_distribution<std::int32_t> dist{
+                std::numeric_limits<std::int32_t>::min(),
+                std::numeric_limits<std::int32_t>::max()
+            };
+            return dist(s_Generator);
+        }
+
+        static std::int32_t Int(const std::int32_t min, const std::int32_t max) noexcept
         {
             std::uniform_int_distribution<std::int32_t> dist{min, max};
-            return dist(m_Engine);
+            return dist(s_Generator);
         }
 
-        static double RandomDouble(const double min, const double max)
+        static std::int32_t UInt()
         {
-            std::uniform_real_distribution<double> dist{min, max};
-            return dist(m_Engine);
+            thread_local static std::uniform_int_distribution<std::uint32_t> dist{
+                std::numeric_limits<std::uint32_t>::min(),
+                std::numeric_limits<std::uint32_t>::max()
+            };
+            return dist(s_Generator);
         }
 
-        static bool RandomBool()
+        static std::int32_t UInt(const std::uint32_t min, const std::uint32_t max) noexcept
         {
-            static std::bernoulli_distribution dist{0.5};
-            return dist(m_Engine);
+            std::uniform_int_distribution<std::uint32_t> dist{min, max};
+            return dist(s_Generator);
         }
 
-        static char RandomChar()
+        static float Float() noexcept
         {
-            static constexpr char s_Characters[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*";
-            static constexpr auto s_Size = sizeof(s_Characters) - 1;
-            std::uniform_int_distribution<std::uint32_t> dist{0, s_Size - 1};
-            return s_Characters[dist(m_Engine)];
+            thread_local static std::uniform_real_distribution<float> dist{0.0f, 1.0f};
+            return dist(s_Generator);
         }
 
-        static std::string RandomString(const std::size_t length)
+        static float Float(const float min, const float max) noexcept
         {
-            static constexpr char s_Characters[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*";
-            static constexpr auto s_Size = sizeof(s_Characters) - 1;
-            static std::uniform_int_distribution<std::size_t> dist{0, s_Size - 1};
+            std::uniform_real_distribution<float> dist{min, max};
+            return dist(s_Generator);
+        }
 
-            std::string result(length, 0);
-            for (auto& ch : result)
-                ch = s_Characters[dist(m_Engine)];
-            return result;
+        static glm::vec3 Vec3() noexcept
+        {
+            return glm::vec3{Float(), Float(), Float()};
         }
 
     private:
-        inline static std::random_device m_Device;
-        inline static std::mt19937 m_Engine{m_Device()};
+        inline thread_local static std::mt19937 s_Generator{std::random_device{}()};
     };
 
 }
