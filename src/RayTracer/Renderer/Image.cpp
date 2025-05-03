@@ -79,7 +79,7 @@ namespace raytracer {
         else if (m_Format == ImageFormat::RGBA)
             internalFormat = GL_RGBA8;
 
-        GL_CHECK(glTexImage2D(GL_TEXTURE_2D, 0, imageFormat, m_Width, m_Height, 0, imageFormat, GL_UNSIGNED_BYTE, data));
+        GL_CHECK(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_Width, m_Height, 0, imageFormat, GL_UNSIGNED_BYTE, data));
     }
 
     Image::~Image()
@@ -101,15 +101,19 @@ namespace raytracer {
 
     void Image::SetData(const void* data) const
     {
-        Bind();
-        GL_CHECK(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_Width, m_Height, 0, GL_RGB, GL_UNSIGNED_BYTE, data));
+        GLenum imageFormat = static_cast<GLenum>(m_Format);
+        GLenum internalFormat = GL_NONE;
+        if (m_Format == ImageFormat::RGB)
+            internalFormat = GL_RGB8;
+        else if (m_Format == ImageFormat::RGBA)
+            internalFormat = GL_RGBA8;
+
+        GL_CHECK(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_Width, m_Height, 0, imageFormat, GL_UNSIGNED_BYTE, data));
     }
 
     void Image::SetParameter(const GLenum pname, const GLint param) const
     {
-        Bind();
         GL_CHECK(glTexParameteri(GL_TEXTURE_2D, pname, param));
-        Unbind();
     }
 
     std::uint32_t Image::GetWidth() const
