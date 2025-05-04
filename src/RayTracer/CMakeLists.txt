@@ -38,7 +38,10 @@ foreach(SOURCE IN LISTS SOURCES HEADERS)
 endforeach()
 
 add_library(RayCore STATIC ${SOURCES} ${HEADERS})
-target_compile_definitions(RayCore PRIVATE ASSETS_DIR="${CMAKE_SOURCE_DIR}/assets")
+target_compile_definitions(RayCore PRIVATE 
+    SHADERS_DIR=\"${CMAKE_SOURCE_DIR}/Shaders\"
+    ASSETS_DIR=\"${CMAKE_SOURCE_DIR}/Assets\"
+)
 target_sources(RayCore PRIVATE
     ${imgui_SOURCE_DIR}/imgui.cpp
     ${imgui_SOURCE_DIR}/imgui_demo.cpp
