@@ -4,7 +4,7 @@
 #include <memory>
 #include <cstdint>
 
-#include "Renderer/OpenGLHeaders.h"
+#include "OpenGLHeaders.h"
 
 namespace raytracer {
 

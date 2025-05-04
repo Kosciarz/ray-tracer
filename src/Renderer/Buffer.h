@@ -3,7 +3,7 @@
 #include <cstddef>
 #include <memory>
 
-#include "Renderer/OpenGLHeaders.h"
+#include "OpenGLHeaders.h"
 
 namespace raytracer {
 

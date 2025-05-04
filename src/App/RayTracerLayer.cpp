@@ -26,7 +26,7 @@ namespace raytracer {
 
     void RayTracerLayer::OnAttach()
     {
-#ifdef NDEBUG
+#ifndef NDEBUG
         const fs::path shaderPath{SHADERS_DIR};
         const fs::path assetPath{ASSETS_DIR};
 #else

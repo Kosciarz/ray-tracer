@@ -1,6 +1,6 @@
 #include "Buffer.h"
 
-#include "Renderer/OpenGLHeaders.h"
+#include "OpenGLHeaders.h"
 
 #include <memory>
 

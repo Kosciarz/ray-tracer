@@ -3,7 +3,7 @@
 #include <filesystem>
 #include <memory>
 
-#include "Renderer/OpenGLHeaders.h"
+#include "OpenGLHeaders.h"
 #include <stb_image.h>
 
 #include "Utils/Utils.h"

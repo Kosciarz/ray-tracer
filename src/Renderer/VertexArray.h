@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 
-#include "Renderer/OpenGLHeaders.h"
+#include "OpenGLHeaders.h"
 
 #include "Buffer.h"
 

@@ -5,7 +5,7 @@
 #include <optional>
 #include <memory>
 
-#include "Renderer/OpenGLHeaders.h"
+#include "OpenGLHeaders.h"
 
 #include "Utils/Result.h"
 

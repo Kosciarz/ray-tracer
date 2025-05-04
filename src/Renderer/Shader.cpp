@@ -7,9 +7,10 @@
 #include <vector>
 #include <memory>
 
-#include "Renderer/OpenGLHeaders.h"
+#include "OpenGLHeaders.h"
 
 #include "Utils/Utils.h"
+#include "Utils/Result.h"
 
 namespace fs = std::filesystem;
 

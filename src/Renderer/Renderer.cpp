@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "Renderer/OpenGLHeaders.h"
+#include "OpenGLHeaders.h"
 
 #include "Shader.h"
 #include "VertexArray.h"
