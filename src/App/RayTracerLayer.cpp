@@ -10,6 +10,8 @@
 #include <algorithm>
 #include <execution>
 
+#include "Core/Color.h"
+
 #include "Utils/Timer.hpp"
 #include "Utils/Random.hpp"
 #include "Utils/Utils.hpp"
@@ -106,14 +108,18 @@ namespace raytracer {
         {
             for (auto x = 0; x < m_ViewportWidth; x++)
             {
-                //float r = static_cast<float>(x) / (m_ViewportWidth - 1);
-                //float g = static_cast<float>(y) / (m_ViewportHeight - 1);
-                //float b = 0.0;
+                Color pixelColor{
+                    static_cast<float>(x) / (m_ViewportWidth - 1), 
+                    static_cast<float>(y) / (m_ViewportHeight - 1), 
+                    0.0
+                };
+
+                const auto convertedColor = ScaleColor(pixelColor);
 
                 const auto i = (m_ViewportHeight - y - 1) * m_ViewportWidth + x;
-                m_ImageData[i * 4 + 0] = static_cast<std::uint8_t>(Random::UInt8());
-                m_ImageData[i * 4 + 1] = static_cast<std::uint8_t>(Random::UInt8());
-                m_ImageData[i * 4 + 2] = static_cast<std::uint8_t>(Random::UInt8());
+                m_ImageData[i * 4 + 0] = convertedColor.r;
+                m_ImageData[i * 4 + 1] = convertedColor.g;
+                m_ImageData[i * 4 + 2] = convertedColor.b;
                 m_ImageData[i * 4 + 3] = 255;
             }
         }

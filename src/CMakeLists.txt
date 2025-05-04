@@ -11,6 +11,8 @@ set(SOURCES
     "Renderer/Shader.cpp"
     "Renderer/Buffer.cpp"
     "Renderer/VertexArray.cpp"
+
+    "Core/Color.cpp"
 )
 
 
