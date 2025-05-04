@@ -2,9 +2,9 @@
 
 #include <memory>
 
-#include "Renderer/OpenGLHeaders.h"
+#include "Renderer/OpenGLHeaders.hpp"
 
-#include "Utils/Result.h"
+#include "Utils/Result.hpp"
 
 namespace raytracer {
 

@@ -1,4 +1,4 @@
-#include "Shader.h"
+#include "Shader.hpp"
 
 #include <filesystem>
 #include <iostream>
@@ -7,10 +7,10 @@
 #include <vector>
 #include <memory>
 
-#include "OpenGLHeaders.h"
+#include "OpenGLHeaders.hpp"
 
-#include "Utils/Utils.h"
-#include "Utils/Result.h"
+#include "Utils/Utils.hpp"
+#include "Utils/Result.hpp"
 
 namespace fs = std::filesystem;
 

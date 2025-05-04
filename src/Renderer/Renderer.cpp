@@ -1,16 +1,16 @@
-#include "Renderer.h"
+#include "Renderer.hpp"
 
 #include <string>
 #include <unordered_map>
 #include <vector>
 
-#include "OpenGLHeaders.h"
+#include "OpenGLHeaders.hpp"
 
-#include "Shader.h"
-#include "VertexArray.h"
-#include "Buffer.h"
-#include "Image.h"
-#include "Utils/Utils.h"
+#include "Shader.hpp"
+#include "VertexArray.hpp"
+#include "Buffer.hpp"
+#include "Image.hpp"
+#include "Utils/Utils.hpp"
 
 namespace raytracer {
 

@@ -1,6 +1,6 @@
-#include "Application.h"
+#include "Application.hpp"
 
-#include "Renderer/OpenGLHeaders.h"
+#include "Renderer/OpenGLHeaders.hpp"
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
@@ -12,13 +12,13 @@
 #include <memory>
 #include <iostream>
 
-#include "Window.h"
-#include "GlfwContext.h"
-#include "Layer.h"
-#include "RayTracerLayer.h"
-#include "Utils/Utils.h"
-#include "Utils/Result.h"
-#include "Utils/Timer.h"
+#include "Window.hpp"
+#include "GlfwContext.hpp"
+#include "Layer.hpp"
+#include "RayTracerLayer.hpp"
+#include "Utils/Utils.hpp"
+#include "Utils/Result.hpp"
+#include "Utils/Timer.hpp"
 
 namespace fs = std::filesystem;
 

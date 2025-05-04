@@ -1,10 +1,10 @@
-#include "Buffer.h"
+#include "Buffer.hpp"
 
-#include "OpenGLHeaders.h"
+#include "OpenGLHeaders.hpp"
 
 #include <memory>
 
-#include "Utils/Utils.h"
+#include "Utils/Utils.hpp"
 
 namespace raytracer {
 

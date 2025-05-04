@@ -1,14 +1,14 @@
 #pragma once
 
-#include "Layer.h"
+#include "Layer.hpp"
 
 #include <memory>
 
-#include "Renderer/VertexArray.h"
-#include "Renderer/Buffer.h"
-#include "Renderer/Image.h"
-#include "Renderer/Shader.h"
-#include "Renderer/Renderer.h"
+#include "Renderer/VertexArray.hpp"
+#include "Renderer/Buffer.hpp"
+#include "Renderer/Image.hpp"
+#include "Renderer/Shader.hpp"
+#include "Renderer/Renderer.hpp"
 
 namespace raytracer {
 

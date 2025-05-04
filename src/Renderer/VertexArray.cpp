@@ -1,11 +1,11 @@
-#include "VertexArray.h"
+#include "VertexArray.hpp"
 
 #include <memory>
 
-#include "OpenGLHeaders.h"
+#include "OpenGLHeaders.hpp"
 
-#include "Buffer.h"
-#include "Utils/Utils.h"
+#include "Buffer.hpp"
+#include "Utils/Utils.hpp"
 
 namespace raytracer {
 

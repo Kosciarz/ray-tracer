@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "App/Application.h"
+#include "App/Application.hpp"
 
 using namespace raytracer;
 

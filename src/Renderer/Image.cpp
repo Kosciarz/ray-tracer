@@ -1,12 +1,12 @@
-#include "Image.h"
+#include "Image.hpp"
 
 #include <filesystem>
 #include <memory>
 
-#include "OpenGLHeaders.h"
+#include "OpenGLHeaders.hpp"
 #include <stb_image.h>
 
-#include "Utils/Utils.h"
+#include "Utils/Utils.hpp"
 
 namespace raytracer {
 

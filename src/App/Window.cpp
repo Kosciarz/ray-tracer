@@ -1,13 +1,13 @@
-#include "Window.h"
+#include "Window.hpp"
 
 #include <iostream>
 #include <cstdint>
 #include <memory>
 
-#include "Renderer/OpenGLHeaders.h"
+#include "Renderer/OpenGLHeaders.hpp"
 
-#include "Utils/Result.h"
-#include "Utils/Utils.h"
+#include "Utils/Result.hpp"
+#include "Utils/Utils.hpp"
 
 namespace raytracer {
 

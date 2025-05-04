@@ -4,9 +4,9 @@
 #include <memory>
 #include <vector>
 
-#include "OpenGLHeaders.h"
+#include "OpenGLHeaders.hpp"
 
-#include "Buffer.h"
+#include "Buffer.hpp"
 
 namespace raytracer {
 

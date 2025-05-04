@@ -3,12 +3,12 @@
 #include <memory>
 #include <vector>
 
-#include "Renderer/OpenGLHeaders.h"
+#include "Renderer/OpenGLHeaders.hpp"
 
-#include "GlfwContext.h"
-#include "Window.h"
-#include "Layer.h"
-#include "Utils/Result.h"
+#include "GlfwContext.hpp"
+#include "Window.hpp"
+#include "Layer.hpp"
+#include "Utils/Result.hpp"
 
 namespace raytracer {
 

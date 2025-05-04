@@ -1,6 +1,6 @@
-#include "RayTracerLayer.h"
+#include "RayTracerLayer.hpp"
 
-#include "Renderer/OpenGLHeaders.h"
+#include "Renderer/OpenGLHeaders.hpp"
 #include <imgui.h>
 
 #include <memory>
@@ -10,15 +10,15 @@
 #include <algorithm>
 #include <execution>
 
-#include "Utils/Timer.h"
-#include "Utils/Random.h"
-#include "Utils/Utils.h"
+#include "Utils/Timer.hpp"
+#include "Utils/Random.hpp"
+#include "Utils/Utils.hpp"
 
-#include "Renderer/VertexArray.h"
-#include "Renderer/Buffer.h"
-#include "Renderer/Image.h"
-#include "Renderer/Shader.h"
-#include "Renderer/Renderer.h"
+#include "Renderer/VertexArray.hpp"
+#include "Renderer/Buffer.hpp"
+#include "Renderer/Image.hpp"
+#include "Renderer/Shader.hpp"
+#include "Renderer/Renderer.hpp"
 
 namespace fs = std::filesystem;
 
