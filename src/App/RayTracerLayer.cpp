@@ -7,8 +7,7 @@
 #include <filesystem>
 #include <iostream>
 #include <cstdint>
-#include <algorithm>
-#include <execution>
+#include <vector>
 
 #include "Core/Color.h"
 
@@ -111,7 +110,8 @@ namespace raytracer {
                 Color pixelColor{
                     static_cast<float>(x) / (m_ViewportWidth - 1), 
                     static_cast<float>(y) / (m_ViewportHeight - 1), 
-                    0.0
+                    0.0,
+                    1.0
                 };
 
                 const auto convertedColor = ScaleColor(pixelColor);
@@ -120,7 +120,7 @@ namespace raytracer {
                 m_ImageData[i * 4 + 0] = convertedColor.r;
                 m_ImageData[i * 4 + 1] = convertedColor.g;
                 m_ImageData[i * 4 + 2] = convertedColor.b;
-                m_ImageData[i * 4 + 3] = 255;
+                m_ImageData[i * 4 + 3] = convertedColor.a;
             }
         }
 

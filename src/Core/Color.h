@@ -1,7 +1,7 @@
 #pragma once
 
-#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
 
-using Color = glm::vec3;
+using Color = glm::vec4;
 
 Color ScaleColor(const Color& pixelColor);
