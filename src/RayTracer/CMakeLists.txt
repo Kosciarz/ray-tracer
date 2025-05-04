@@ -18,13 +18,14 @@ set(HEADERS
 
     "Application.h"
     "Window.h"
-    "Utils.h"
-    "Result.h"
     "GlfwContext.h"
     "Layer.h"
     "RayTracerLayer.h"
-    "Timer.h"
-    "Random.h"
+
+    "Utils/Result.h"
+    "Utils/Utils.h"
+    "Utils/Timer.h"
+    "Utils/Random.h"
 
     "Renderer/Image.h"
     "Renderer/Renderer.h"

@@ -7,7 +7,7 @@
 
 #include "RayTracerGL.h"
 
-#include "Result.h"
+#include "Utils/Result.h"
 
 namespace raytracer {
 

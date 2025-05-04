@@ -7,11 +7,11 @@
 
 #include <glm/vec4.hpp>
 
-#include "Result.h"
 #include "Shader.h"
 #include "VertexArray.h"
 #include "Buffer.h"
 #include "Image.h"
+#include "Utils/Result.h"
 
 namespace raytracer {
 

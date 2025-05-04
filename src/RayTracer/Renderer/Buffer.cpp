@@ -4,7 +4,7 @@
 
 #include <memory>
 
-#include "Utils.h"
+#include "Utils/Utils.h"
 
 namespace raytracer {
 

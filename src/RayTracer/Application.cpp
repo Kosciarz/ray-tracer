@@ -14,11 +14,11 @@
 
 #include "Window.h"
 #include "GlfwContext.h"
-#include "Result.h"
-#include "Utils.h"
 #include "Layer.h"
 #include "RayTracerLayer.h"
-#include "Timer.h"
+#include "Utils/Utils.h"
+#include "Utils/Result.h"
+#include "Utils/Timer.h"
 
 namespace fs = std::filesystem;
 

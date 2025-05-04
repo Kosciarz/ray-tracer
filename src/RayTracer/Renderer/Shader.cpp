@@ -9,7 +9,7 @@
 
 #include "RayTracerGL.h"
 
-#include "Utils.h"
+#include "Utils/Utils.h"
 
 namespace fs = std::filesystem;
 

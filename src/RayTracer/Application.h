@@ -5,10 +5,10 @@
 
 #include "RayTracerGL.h"
 
-#include "Result.h"
 #include "GlfwContext.h"
 #include "Window.h"
 #include "Layer.h"
+#include "Utils/Result.h"
 
 namespace raytracer {
 

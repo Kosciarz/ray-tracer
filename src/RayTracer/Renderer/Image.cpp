@@ -6,7 +6,7 @@
 #include "RayTracerGL.h"
 #include <stb_image.h>
 
-#include "Utils.h"
+#include "Utils/Utils.h"
 
 namespace raytracer {
 

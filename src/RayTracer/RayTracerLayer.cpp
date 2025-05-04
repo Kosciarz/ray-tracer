@@ -10,9 +10,9 @@
 #include <algorithm>
 #include <execution>
 
-#include "Timer.h"
-#include "Random.h"
-#include "Utils.h"
+#include "Utils/Timer.h"
+#include "Utils/Random.h"
+#include "Utils/Utils.h"
 
 #include "Renderer/VertexArray.h"
 #include "Renderer/Buffer.h"
@@ -26,7 +26,7 @@ namespace raytracer {
 
     void RayTracerLayer::OnAttach()
     {
-#ifndef NDEBUG
+#ifdef NDEBUG
         const fs::path shaderPath{SHADERS_DIR};
         const fs::path assetPath{ASSETS_DIR};
 #else
