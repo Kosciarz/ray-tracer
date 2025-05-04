@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include "RayTracerGL.h"
+#include "Renderer/OpenGLHeaders.h"
 
 #include "Buffer.h"
 #include "Utils/Utils.h"

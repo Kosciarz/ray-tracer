@@ -5,7 +5,7 @@
 #include <optional>
 #include <memory>
 
-#include "RayTracerGL.h"
+#include "Renderer/OpenGLHeaders.h"
 
 #include "Utils/Result.h"
 

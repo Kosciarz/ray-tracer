@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 
-#include "RayTracerGL.h"
+#include "Renderer/OpenGLHeaders.h"
 
 namespace raytracer {
 

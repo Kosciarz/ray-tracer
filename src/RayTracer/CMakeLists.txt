@@ -1,10 +1,11 @@
 set(SOURCES
-    "Application.cpp"
-    "Window.cpp"
-    "StbImageImpl.cpp"
-    "GlfwContext.cpp"
-    "RayTracerLayer.cpp"
+    "App/Application.cpp"
+    "App/Window.cpp"
+    "App/GlfwContext.cpp"
+    "App/RayTracerLayer.cpp"
 
+    "Utils/StbImageImpl.cpp"
+    
     "Renderer/Image.cpp"
     "Renderer/Renderer.cpp"
     "Renderer/Shader.cpp"
@@ -13,20 +14,19 @@ set(SOURCES
 )
 
 set(HEADERS
-    "RayTracerCore.h"
-    "RayTracerGL.h"
 
-    "Application.h"
-    "Window.h"
-    "GlfwContext.h"
-    "Layer.h"
-    "RayTracerLayer.h"
+    "App/Application.h"
+    "App/Window.h"
+    "App/GlfwContext.h"
+    "App/Layer.h"
+    "App/RayTracerLayer.h"
 
     "Utils/Result.h"
     "Utils/Utils.h"
     "Utils/Timer.h"
     "Utils/Random.h"
 
+    "Renderer/OpenGLHeaders.h"
     "Renderer/Image.h"
     "Renderer/Renderer.h"
     "Renderer/Shader.h"
@@ -39,6 +39,7 @@ foreach(SOURCE IN LISTS SOURCES HEADERS)
 endforeach()
 
 add_library(RayCore STATIC ${SOURCES} ${HEADERS})
+
 target_compile_definitions(RayCore PRIVATE 
     SHADERS_DIR=\"${CMAKE_SOURCE_DIR}/Shaders\"
     ASSETS_DIR=\"${CMAKE_SOURCE_DIR}/Assets\"

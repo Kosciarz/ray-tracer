@@ -1,6 +1,6 @@
 #include "Buffer.h"
 
-#include "RayTracerGL.h"
+#include "Renderer/OpenGLHeaders.h"
 
 #include <memory>
 

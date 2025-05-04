@@ -3,7 +3,7 @@
 #include <filesystem>
 #include <memory>
 
-#include "RayTracerGL.h"
+#include "Renderer/OpenGLHeaders.h"
 #include <stb_image.h>
 
 #include "Utils/Utils.h"

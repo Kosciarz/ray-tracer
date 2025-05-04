@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <memory>
 
-#include "RayTracerGL.h"
+#include "Renderer/OpenGLHeaders.h"
 
 #include "Utils/Result.h"
 #include "Utils/Utils.h"

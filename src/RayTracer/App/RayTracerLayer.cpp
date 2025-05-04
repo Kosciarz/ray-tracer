@@ -1,6 +1,6 @@
 #include "RayTracerLayer.h"
 
-#include "RayTracerGL.h"
+#include "Renderer/OpenGLHeaders.h"
 #include <imgui.h>
 
 #include <memory>

@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 
-#include "RayTracerGL.h"
+#include "Renderer/OpenGLHeaders.h"
 
 #include "Buffer.h"
 
