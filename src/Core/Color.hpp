@@ -2,10 +2,14 @@
 
 #include <glm/vec4.hpp>
 
-using Color = glm::vec4;
+#include "Ray.hpp"
 
 namespace raytracer {
 
+    using Color = glm::vec3;
+
     Color ScaleColor(const Color& pixelColor);
+
+    Color RayColor(const Ray& ray);
 
 }
