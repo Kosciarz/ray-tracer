@@ -13,6 +13,7 @@ set(SOURCES
     "Renderer/VertexArray.cpp"
 
     "Core/Color.cpp"
+    "Core/Ray.cpp"
 )
 
 

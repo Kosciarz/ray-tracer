@@ -9,7 +9,8 @@
 #include <cstdint>
 #include <vector>
 
-#include "Core/Color.h"
+#include "Core/Color.hpp"
+#include "Core/Ray.hpp"
 
 #include "Utils/Timer.hpp"
 #include "Utils/Random.hpp"
