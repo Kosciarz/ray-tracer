@@ -2,6 +2,8 @@
 
 #include "Renderer/OpenGLHeaders.hpp"
 #include <imgui.h>
+#include <glm/glm.hpp>
+#include <glm/vec3.hpp>
 
 #include <memory>
 #include <filesystem>
@@ -101,27 +103,56 @@ namespace raytracer {
     {
         Timer timer;
 
-        m_Image = Image::Create(m_ViewportWidth, m_ViewportHeight, ImageFormat::RGBA, nullptr, 0);
-        m_ImageData = std::vector<std::uint8_t>(m_ViewportWidth * m_ViewportHeight * 4, 0);
+        auto aspectRatio = 16.0 / 9.0;
+        std::int32_t imageWidth = m_ViewportWidth;
 
-        for (auto y = 0; y < m_ViewportHeight; y++)
+        std::int32_t imageHeight = static_cast<std::int32_t>(imageWidth / aspectRatio);
+        imageHeight = (imageHeight < 1) ? 1 : imageHeight;
+
+        // Camera
+        auto focalLenght = 1.0;
+        auto viewportHeight = 2.0;
+        auto viewportWidth = viewportHeight * (static_cast<float>(imageWidth) / imageHeight);
+        glm::vec3 cameraCenter{0, 0, 0};
+
+        // Vectors across the horizontal and down the vertical viewport edges (from top-left corner)
+        glm::vec3 viewportU{viewportWidth, 0, 0};
+        glm::vec3 viewportV{0, -viewportHeight, 0};
+
+        // Horizontal and vertical delta vectors from pixel-to-pixel 
+        glm::vec3 pixelDeltaU = viewportU / static_cast<float>(imageWidth);
+        glm::vec3 pixelDeltaV = viewportV / static_cast<float>(imageHeight);
+
+        // Calculate the top left corner of the viewport (Q on the example)
+        glm::vec3 viewportUpperLeft = cameraCenter - glm::vec3{0, 0, focalLenght} 
+            - viewportU / static_cast<float>(2.0) - viewportV / static_cast<float>(2.0);
+
+        // Calulucate the P(0,0) pixel 
+        glm::vec3 pixel00Location = viewportUpperLeft + (pixelDeltaU + pixelDeltaV) / static_cast<float>(2.0);
+
+
+        m_Image = Image::Create(imageWidth, imageHeight, ImageFormat::RGBA, nullptr, 0);
+        m_ImageData = std::vector<std::uint8_t>(imageWidth * imageHeight * 4, 0);
+
+        for (std::int32_t y = 0; y < imageHeight; y++)
         {
-            for (auto x = 0; x < m_ViewportWidth; x++)
+            for (std::int32_t x = 0; x < imageWidth; x++)
             {
-                Color pixelColor{
-                    static_cast<float>(x) / (m_ViewportWidth - 1), 
-                    static_cast<float>(y) / (m_ViewportHeight - 1), 
-                    0.0,
-                    1.0
-                };
+                glm::vec3 pixelCenter = pixel00Location 
+                    + (static_cast<float>(x) * pixelDeltaU) + (static_cast<float>(y) * pixelDeltaV);
 
-                const auto convertedColor = ScaleColor(pixelColor);
+                glm::vec3 rayDirection = glm::normalize(pixelCenter - cameraCenter);
+                Ray r{cameraCenter, rayDirection};
 
-                const auto i = (m_ViewportHeight - y - 1) * m_ViewportWidth + x;
+                auto pixelColor = RayColor(r);
+                auto convertedColor = ScaleColor(pixelColor);
+
+
+                const auto i = (imageHeight - y - 1) * imageWidth + x;
                 m_ImageData[i * 4 + 0] = convertedColor.r;
                 m_ImageData[i * 4 + 1] = convertedColor.g;
                 m_ImageData[i * 4 + 2] = convertedColor.b;
-                m_ImageData[i * 4 + 3] = convertedColor.a;
+                m_ImageData[i * 4 + 3] = 255;
             }
         }
 
