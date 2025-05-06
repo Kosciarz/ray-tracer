@@ -16,13 +16,36 @@ set(SOURCES
     "Core/Ray.cpp"
 )
 
+set(HEADERS
+    "App/Application.hpp"
+    "App/Window.hpp"
+    "App/GlfwContext.hpp"
+    "App/Layer.hpp"
+    "App/RayTracerLayer.hpp"
+
+    "Utils/Result.hpp"
+    "Utils/Utils.hpp"
+    "Utils/Random.hpp"
+    "Utils/Timer.hpp"
+
+    "Renderer/OpenGLHeaders.hpp"
+    "Renderer/Image.hpp"
+    "Renderer/Renderer.hpp"
+    "Renderer/Shader.hpp"
+    "Renderer/Buffer.hpp"
+    "Renderer/VertexArray.hpp"
+
+    "Core/Color.hpp"
+    "Core/Ray.hpp"
+)
 
 foreach(SOURCE IN LISTS SOURCES)
     message(STATUS "Adding file ${SOURCE}")
 endforeach()
 
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES} ${HEADERS})
 
-add_library(RayCore STATIC ${SOURCES})
+add_library(RayCore STATIC ${SOURCES} ${HEADERS})
 target_compile_definitions(RayCore PRIVATE 
     SHADERS_DIR="${CMAKE_SOURCE_DIR}/Shaders"
     ASSETS_DIR="${CMAKE_SOURCE_DIR}/Assets"
