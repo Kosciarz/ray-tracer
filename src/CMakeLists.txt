@@ -14,6 +14,7 @@ set(SOURCES
 
     "Core/Color.cpp"
     "Core/Ray.cpp"
+    "Core/Sphere.cpp"
 )
 
 

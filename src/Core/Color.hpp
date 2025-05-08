@@ -12,12 +12,4 @@ namespace raytracer {
 
     Color RayColor(const Ray& ray);
 
-    struct Sphere
-    {
-        glm::vec3 center;
-        float radius;
-    };
-
-    bool HitSphere(const Sphere& sphere, const Ray& ray);
-
 }
