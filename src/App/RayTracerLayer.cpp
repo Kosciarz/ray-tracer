@@ -72,7 +72,7 @@ namespace raytracer {
         m_Image.reset();
     }
 
-    void raytracer::RayTracerLayer::OnUpdate(float timeStep, std::uint32_t width, std::uint32_t height)
+    void RayTracerLayer::OnUpdate(float timeStep, const std::uint32_t width, const std::uint32_t height)
     {
         if (!m_Image || m_ViewportWidth != width || m_ViewportHeight != height)
         {
@@ -103,16 +103,20 @@ namespace raytracer {
     {
         Timer timer;
 
-        auto aspectRatio = 16.0 / 9.0;
+        // 16/9 = imageWidth / imageHeight (ideal aspect ratio)
+        float aspectRatio = 16.0 / 9.0;
         std::int32_t imageWidth = m_ViewportWidth;
-
         std::int32_t imageHeight = static_cast<std::int32_t>(imageWidth / aspectRatio);
         imageHeight = (imageHeight < 1) ? 1 : imageHeight;
 
-        // Camera
-        auto focalLenght = 1.0;
-        auto viewportHeight = 2.0;
-        auto viewportWidth = viewportHeight * (static_cast<float>(imageWidth) / imageHeight);
+        // Camera initialization
+        // Focal lenght is the distance of the camera from the virtual viewport
+        // The virtual viewport is an imaginary plane that we shoot rays onto and get the color back
+        // The height is set to 2 so that the bottom is -1 and and top is 1
+        // and the distance of each ray from the camera center to it's pixel is not too high
+        float focalLenght = 1.0;
+        float viewportHeight = 2.0;
+        float viewportWidth = viewportHeight * (static_cast<float>(imageWidth) / imageHeight);
         glm::vec3 cameraCenter{0, 0, 0};
 
         // Vectors across the horizontal and down the vertical viewport edges (from top-left corner)
@@ -144,11 +148,11 @@ namespace raytracer {
                 glm::vec3 rayDirection = glm::normalize(pixelCenter - cameraCenter);
                 Ray r{cameraCenter, rayDirection};
 
-                auto pixelColor = RayColor(r);
-                auto convertedColor = ScaleColor(pixelColor);
+                Color pixelColor = RayColor(r);
+                Color convertedColor = ScaleColor(pixelColor);
 
 
-                const auto i = (imageHeight - y - 1) * imageWidth + x;
+                const std::size_t i = (imageHeight - y - 1) * imageWidth + x;
                 m_ImageData[i * 4 + 0] = convertedColor.r;
                 m_ImageData[i * 4 + 1] = convertedColor.g;
                 m_ImageData[i * 4 + 2] = convertedColor.b;
