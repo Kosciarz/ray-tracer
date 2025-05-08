@@ -10,6 +10,6 @@ namespace raytracer {
         double radius;
     };
 
-    bool HitSphere(const Sphere& sphere, const Ray& ray);
+    double HitSphere(const Sphere& sphere, const Ray& ray);
 
 }

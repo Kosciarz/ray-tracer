@@ -1,6 +1,7 @@
 #include "Color.hpp"
 
 #include <glm/glm.hpp>
+#include <glm/vec3.hpp>
 
 #include "Sphere.hpp"
 
@@ -17,9 +18,14 @@ namespace raytracer {
 
     Color RayColor(const Ray& ray)
     {
-        Sphere sphere{glm::vec3{0, 0, 1}, 0.5};
-        if (HitSphere(sphere, ray))
-            return Color{1, 0, 0};
+        Sphere sphere{glm::vec3{0, 0, -1}, 0.5};
+        auto t = HitSphere(sphere, ray);
+        if (t > 0)
+        {
+            // Calculate the surface normal
+            glm::vec3 normal = glm::normalize(ray.At(t) - glm::vec3{0, 0, -1});
+            return static_cast<float>(0.5) * Color{normal.x + 1, normal.y + 1, normal.z + 1};
+        }
 
         auto direction = glm::normalize(ray.Direction());
         auto a = static_cast<float>(0.5) * (direction.y + static_cast<float>(1.0));

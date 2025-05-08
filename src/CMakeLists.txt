@@ -40,7 +40,7 @@ set(HEADERS
     "Core/Ray.hpp"
 )
 
-foreach(SOURCE IN LISTS SOURCES)
+foreach(SOURCE IN LISTS SOURCES HEADERS)
     message(STATUS "Adding file ${SOURCE}")
 endforeach()
 
