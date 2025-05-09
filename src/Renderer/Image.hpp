@@ -1,10 +1,11 @@
 #pragma once
 
 #include <filesystem>
-#include <memory>
 #include <cstdint>
 
 #include "OpenGLHeaders.hpp"
+
+#include "Utils/Utils.hpp"
 
 namespace raytracer {
 
@@ -18,10 +19,10 @@ namespace raytracer {
     class Image
     {
     public:
-        static std::shared_ptr<Image> Create(const std::int32_t m_Width, const std::int32_t height,
+        static Ref<Image> Create(const std::int32_t m_Width, const std::int32_t height,
             const ImageFormat format, const void* data, const std::uint32_t unitIndex);
 
-        static std::shared_ptr<Image> Create(const std::filesystem::path& path, const std::uint32_t unitIndex);
+        static Ref<Image> Create(const std::filesystem::path& path, const std::uint32_t unitIndex);
 
         Image(const std::filesystem::path& path, const std::uint32_t unitIndex);
 

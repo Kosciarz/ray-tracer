@@ -10,15 +10,15 @@
 
 namespace raytracer {
 
-    std::shared_ptr<Image> Image::Create(const std::int32_t width, const std::int32_t height,
+    Ref<Image> Image::Create(const std::int32_t width, const std::int32_t height,
         const ImageFormat format, const void* data, const std::uint32_t unitIndex)
     {
-        return std::make_shared<Image>(width, height, format, data, unitIndex);
+        return MakeRef<Image>(width, height, format, data, unitIndex);
     }
 
-    std::shared_ptr<Image> Image::Create(const std::filesystem::path& path, const std::uint32_t unitIndex)
+    Ref<Image> Image::Create(const std::filesystem::path& path, const std::uint32_t unitIndex)
     {
-        return std::make_shared<Image>(path, unitIndex);
+        return MakeRef<Image>(path, unitIndex);
     }
 
     Image::Image(const std::filesystem::path& path, const std::uint32_t unitIndex)
