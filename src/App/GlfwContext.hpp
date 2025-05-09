@@ -5,16 +5,14 @@
 #include "Renderer/OpenGLHeaders.hpp"
 
 #include "Utils/Result.hpp"
+#include "Utils/Utils.hpp"
 
 namespace raytracer {
 
     class GlfwContext
     {
     public:
-        using GlfwContextPtr = std::unique_ptr<GlfwContext>;
-
-    public:
-        static Result<GlfwContextPtr> Create();
+        static Result<Scope<GlfwContext>> Create();
 
         GlfwContext() = default;
 

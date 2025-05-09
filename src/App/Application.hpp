@@ -38,7 +38,7 @@ namespace raytracer {
 
         float GetTime() const;
 
-        GLFWwindow* GetWindowHandle() const;
+        GLFWwindow* GetWindow() const;
 
         Application(const Application&) = delete;
         Application& operator=(const Application&) = delete;

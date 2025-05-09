@@ -5,16 +5,17 @@
 #include "Renderer/OpenGLHeaders.hpp"
 
 #include "Utils/Result.hpp"
+#include "Utils/Utils.hpp"
 
 namespace raytracer {
 
-    Result<GlfwContext::GlfwContextPtr> GlfwContext::Create()
+    Result<Scope<GlfwContext>> GlfwContext::Create()
     {
         if (!glfwInit())
-            return Result<GlfwContextPtr>::Err("Failed to initialize GLFW");
+            return Result<Scope<GlfwContext>>::Err("Failed to initialize GLFW");
 
-        auto context = std::make_unique<GlfwContext>();
-        return Result<GlfwContextPtr>::Ok(std::move(context));
+        auto context = MakeScope<GlfwContext>();
+        return Result<Scope<GlfwContext>>::Ok(std::move(context));
     }
 
     GlfwContext::~GlfwContext()

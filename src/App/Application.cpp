@@ -47,7 +47,7 @@ namespace raytracer {
 
         m_GlfwContext = glfwContext.ValueMove();
         m_Window = window.ValueMove();
-        glfwSetKeyCallback(m_Window->GetWindowHandle(), [](GLFWwindow* window, int key, int scancode, int action, int mods) {
+        glfwSetKeyCallback(m_Window->GetWindow(), [](GLFWwindow* window, int key, int scancode, int action, int mods) {
             if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
                 glfwSetWindowShouldClose(window, true);
         });
@@ -67,7 +67,7 @@ namespace raytracer {
 
             {
                 std::int32_t viewportWidth, viewportHeight;
-                glfwGetWindowSize(m_Window->GetWindowHandle(), &viewportWidth, &viewportHeight);
+                glfwGetWindowSize(m_Window->GetWindow(), &viewportWidth, &viewportHeight);
 
                 for (const auto& layer : m_LayerStack)
                     layer->OnUpdate(m_TimeStep, viewportWidth, viewportHeight);
@@ -110,9 +110,9 @@ namespace raytracer {
         return static_cast<float>(glfwGetTime());
     }
 
-    GLFWwindow* Application::GetWindowHandle() const
+    GLFWwindow* Application::GetWindow() const
     {
-        return m_Window->GetWindowHandle();
+        return m_Window->GetWindow();
     }
 
     void Application::SetupImGui()
@@ -124,7 +124,7 @@ namespace raytracer {
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
-        ImGui_ImplGlfw_InitForOpenGL(m_Window->GetWindowHandle(), true);
+        ImGui_ImplGlfw_InitForOpenGL(m_Window->GetWindow(), true);
         ImGui_ImplOpenGL3_Init();
     }
 
