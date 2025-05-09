@@ -38,6 +38,8 @@ set(HEADERS
 
     "Core/Color.hpp"
     "Core/Ray.hpp"
+    "Core/Hittable.hpp"
+    "Core/Sphere.hpp"
 )
 
 foreach(SOURCE IN LISTS SOURCES HEADERS)
@@ -45,6 +47,7 @@ foreach(SOURCE IN LISTS SOURCES HEADERS)
 endforeach()
 
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES} ${HEADERS})
+
 
 add_library(RayCore STATIC ${SOURCES} ${HEADERS})
 target_compile_definitions(RayCore PRIVATE 
