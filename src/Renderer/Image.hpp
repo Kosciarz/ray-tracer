@@ -2,6 +2,7 @@
 
 #include <filesystem>
 #include <cstdint>
+#include <utility>
 
 #include "OpenGLHeaders.hpp"
 
@@ -41,11 +42,14 @@ namespace raytracer {
 
         void SetParameter(const GLenum name, const GLint value) const;
 
-        const std::uint32_t& GetWidth() const;
+        const std::int32_t& Width() const;
 
-        const std::uint32_t& GetHeight() const;
+        const std::int32_t& Height() const;
 
-        GLuint GetHandle() const;
+        const GLuint& Handle() const;
+
+    private:
+        std::pair<GLenum, GLenum> GetImageFormat() const;
 
     private:
         std::int32_t m_Width = 0;

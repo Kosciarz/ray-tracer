@@ -1,7 +1,7 @@
 #include "Image.hpp"
 
 #include <filesystem>
-#include <memory>
+#include <utility>
 
 #include "OpenGLHeaders.hpp"
 #include <stb_image.h>
@@ -72,13 +72,7 @@ namespace raytracer {
         GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
         GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
 
-        GLenum imageFormat = static_cast<GLenum>(m_Format);
-        GLenum internalFormat = GL_NONE;
-        if (m_Format == ImageFormat::RGB)
-            internalFormat = GL_RGB8;
-        else if (m_Format == ImageFormat::RGBA)
-            internalFormat = GL_RGBA8;
-
+        auto [imageFormat, internalFormat] = GetImageFormat();
         GL_CHECK(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_Width, m_Height, 0, imageFormat, GL_UNSIGNED_BYTE, data));
     }
 
@@ -101,13 +95,7 @@ namespace raytracer {
 
     void Image::SetData(const void* data) const
     {
-        GLenum imageFormat = static_cast<GLenum>(m_Format);
-        GLenum internalFormat = GL_NONE;
-        if (m_Format == ImageFormat::RGB)
-            internalFormat = GL_RGB8;
-        else if (m_Format == ImageFormat::RGBA)
-            internalFormat = GL_RGBA8;
-
+        auto [imageFormat, internalFormat] = GetImageFormat();
         GL_CHECK(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_Width, m_Height, 0, imageFormat, GL_UNSIGNED_BYTE, data));
     }
 
@@ -116,19 +104,31 @@ namespace raytracer {
         GL_CHECK(glTexParameteri(GL_TEXTURE_2D, name, value));
     }
 
-    const std::uint32_t& Image::GetWidth() const
+    const std::int32_t& Image::Width() const
     {
         return m_Width;
     }
 
-    const std::uint32_t& Image::GetHeight() const
+    const std::int32_t& Image::Height() const
     {
         return m_Height;
     }
 
-    GLuint Image::GetHandle() const
+    const GLuint& Image::Handle() const
     {
         return m_Handle;
+    }
+
+    std::pair<GLenum, GLenum> Image::GetImageFormat() const
+    {
+        GLenum imageFormat = static_cast<GLenum>(m_Format);
+        GLenum internalFormat = GL_NONE;
+        if (m_Format == ImageFormat::RGB)
+            internalFormat = GL_RGB8;
+        else if (m_Format == ImageFormat::RGBA)
+            internalFormat = GL_RGBA8;
+
+        return {imageFormat, internalFormat};
     }
 
 }
