@@ -1,11 +1,11 @@
 #pragma once
 
 #include <cstdint>
-#include <memory>
 
 #include "Renderer/OpenGLHeaders.hpp"
 
 #include "Utils/Result.hpp"
+#include "Utils/Utils.hpp"
 
 namespace raytracer {
 
@@ -17,20 +17,16 @@ namespace raytracer {
 
         WindowConfig();
 
-        WindowConfig(const std::uint32_t width, const std::uint32_t height, std::string title);
+        WindowConfig(const std::uint32_t width, const std::uint32_t height, const std::string& title);
     };
+
 
     class Window
     {
     public:
-        using WindowPtr = std::unique_ptr<Window>;
-
-    public:
-        static Result<WindowPtr> Create(const WindowConfig& config = WindowConfig());
+        static Result<Scope<Window>> Create(const WindowConfig& config = WindowConfig());
 
         Window() = default;
-
-        explicit Window(GLFWwindow* window);
 
         ~Window();
 
@@ -40,21 +36,13 @@ namespace raytracer {
 
         void SwapBuffers() const;
 
-        void SetUserPointer(void* userPtr) const;
-
-        void* GetUserPointer();
-
-        template <typename T>
-        T* GetUserPointerAs() const;
-
-        GLFWwindow* GetWindowHandle();
+        GLFWwindow* GetWindow();
 
     private:
         Result<void> Init(const WindowConfig& config);
 
     private:
-        GLFWwindow* m_WindowHandle;
-        void* m_UserPointer;
+        GLFWwindow* m_Window;
     };
 
 }

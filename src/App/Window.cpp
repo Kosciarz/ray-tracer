@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <cstdint>
-#include <memory>
 
 #include "Renderer/OpenGLHeaders.hpp"
 
@@ -16,18 +15,19 @@ namespace raytracer {
     {
     }
 
-    WindowConfig::WindowConfig(const std::uint32_t m_Width, const std::uint32_t height, std::string title)
+    WindowConfig::WindowConfig(const std::uint32_t m_Width, const std::uint32_t height, const std::string& title)
         : width{m_Width}, height{height}, title{title}
     {
     }
 
-    Result<Window::WindowPtr> Window::Create(const WindowConfig& config)
+
+    Result<Scope<Window>> Window::Create(const WindowConfig& config)
     {
-        auto window = std::make_unique<Window>();
+        auto window = MakeScope<Window>();
         auto initResult = window->Init(config);
-        if (initResult.IsErr())
-            return Result<WindowPtr>::Err(initResult.Error());
-        return Result<WindowPtr>::Ok(std::move(window));
+        if (!initResult)
+            return Result<Scope<Window>>::Err(initResult.Error());
+        return Result<Scope<Window>>::Ok(std::move(window));
     }
 
     Result<void> Window::Init(const WindowConfig& config)
@@ -40,20 +40,22 @@ namespace raytracer {
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPACT, GL_TRUE);
 #endif
 
-        m_WindowHandle = glfwCreateWindow(config.width, config.height, config.title.c_str(), nullptr, nullptr);
-        if (!m_WindowHandle)
+        m_Window = glfwCreateWindow(config.width, config.height, config.title.c_str(), nullptr, nullptr);
+        if (!m_Window)
             return Result<void>::Err("Failed to create GLFW window");
 
-        glfwMakeContextCurrent(m_WindowHandle);
+        glfwMakeContextCurrent(m_Window);
 
         if (!gladLoadGL(glfwGetProcAddress))
             return Result<void>::Err("Failed to initialize GLAD");
 
-        glfwSetFramebufferSizeCallback(m_WindowHandle, [](GLFWwindow* window, const int m_Width, const int height) {
+        glfwSetFramebufferSizeCallback(m_Window, [](GLFWwindow* window, const int m_Width, const int height)
+        {
             GL_CHECK(glViewport(0, 0, m_Width, height));
         });
 
-        glfwSetKeyCallback(m_WindowHandle, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
+        glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
+        {
             if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
                 glfwSetWindowShouldClose(window, true);
         });
@@ -61,19 +63,14 @@ namespace raytracer {
         return Result<void>::Ok();
     }
 
-    Window::Window(GLFWwindow* window)
-        : m_WindowHandle{window}, m_UserPointer{nullptr}
-    {
-    }
-
     Window::~Window()
     {
-        glfwDestroyWindow(m_WindowHandle);
+        glfwDestroyWindow(m_Window);
     }
 
     bool Window::ShouldClose() const
     {
-        return glfwWindowShouldClose(m_WindowHandle);
+        return glfwWindowShouldClose(m_Window);
     }
 
     void Window::PollEvents() const
@@ -83,28 +80,12 @@ namespace raytracer {
 
     void Window::SwapBuffers() const
     {
-        glfwSwapBuffers(m_WindowHandle);
+        glfwSwapBuffers(m_Window);
     }
 
-    void Window::SetUserPointer(void* ptr) const
+    GLFWwindow* Window::GetWindow()
     {
-        glfwSetWindowUserPointer(m_WindowHandle, ptr);
-    }
-
-    void* Window::GetUserPointer()
-    {
-        return glfwGetWindowUserPointer(m_WindowHandle);
-    }
-
-    template <typename T>
-    T* Window::GetUserPointerAs() const
-    {
-        return static_cast<T*>(GetUserPointer());
-    }
-
-    GLFWwindow* Window::GetWindowHandle()
-    {
-        return m_WindowHandle;
+        return m_Window;
     }
 
 }
