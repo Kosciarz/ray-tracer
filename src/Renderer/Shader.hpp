@@ -37,7 +37,7 @@ namespace raytracer {
 
         ~Shader();
 
-        GLuint GetID() const;
+        const GLuint& GetID() const;
 
         void Use() const;
 

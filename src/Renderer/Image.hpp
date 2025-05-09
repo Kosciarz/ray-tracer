@@ -39,11 +39,11 @@ namespace raytracer {
 
         void SetData(const void* data) const;
 
-        void SetParameter(const GLenum pname, const GLint param) const;
+        void SetParameter(const GLenum name, const GLint value) const;
 
-        std::uint32_t GetWidth() const;
+        const std::uint32_t& GetWidth() const;
 
-        std::uint32_t GetHeight() const;
+        const std::uint32_t& GetHeight() const;
 
         GLuint GetHandle() const;
 

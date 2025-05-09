@@ -33,17 +33,15 @@ namespace raytracer {
     public:
         static Ref<IndexBuffer> Create(const std::size_t size, const void* data);
 
-        IndexBuffer() = default;
-
         IndexBuffer(const std::size_t size, const void* data);
 
         ~IndexBuffer();
 
-        std::size_t Size() const;
-
         void Bind() const;
 
         void Unbind() const;
+
+        const std::size_t& Size() const;
 
     private:
         GLuint m_BufferID;

@@ -111,17 +111,17 @@ namespace raytracer {
         GL_CHECK(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_Width, m_Height, 0, imageFormat, GL_UNSIGNED_BYTE, data));
     }
 
-    void Image::SetParameter(const GLenum pname, const GLint param) const
+    void Image::SetParameter(const GLenum name, const GLint value) const
     {
-        GL_CHECK(glTexParameteri(GL_TEXTURE_2D, pname, param));
+        GL_CHECK(glTexParameteri(GL_TEXTURE_2D, name, value));
     }
 
-    std::uint32_t Image::GetWidth() const
+    const std::uint32_t& Image::GetWidth() const
     {
         return m_Width;
     }
 
-    std::uint32_t Image::GetHeight() const
+    const std::uint32_t& Image::GetHeight() const
     {
         return m_Height;
     }

@@ -71,12 +71,10 @@ namespace raytracer {
     Shader::~Shader()
     {
         if (m_ProgramID != 0)
-        {
             GL_CHECK(glDeleteProgram(m_ProgramID));
-        }
     }
 
-    GLuint Shader::GetID() const
+    const GLuint& Shader::GetID() const
     {
         return m_ProgramID;
     }

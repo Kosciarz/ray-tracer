@@ -58,7 +58,7 @@ namespace raytracer {
         GL_CHECK(glDeleteBuffers(1, &m_BufferID));
     }
 
-    std::size_t IndexBuffer::Size() const
+    const std::size_t& IndexBuffer::Size() const
     {
         return m_Size;
     }
