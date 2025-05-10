@@ -2,6 +2,8 @@ set(SOURCES
     "App/Application.cpp"
     "App/Window.cpp"
     "App/GlfwContext.cpp"
+    "App/Layer.cpp"
+    "App/LayerStack.cpp"
     "App/RayTracerLayer.cpp"
 
     "Utils/StbImageImpl.cpp"
@@ -24,6 +26,7 @@ set(HEADERS
     "App/Window.hpp"
     "App/GlfwContext.hpp"
     "App/Layer.hpp"
+    "App/LayerStack.hpp"
     "App/RayTracerLayer.hpp"
 
     "Renderer/OpenGLHeaders.hpp"

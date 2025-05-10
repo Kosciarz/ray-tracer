@@ -1,4 +1,6 @@
 #include "Application.hpp"
+#include "Application.hpp"
+#include "Application.hpp"
 
 #include "Renderer/OpenGLHeaders.hpp"
 #include <imgui.h>
@@ -36,22 +38,29 @@ namespace raytracer {
         return app;
     }
 
+    Application::~Application()
+    {
+        Shutdown();
+    }
+
     Result<void> Application::Init()
     {
         auto glfwContext = GlfwContext::Create();
-        if (glfwContext.IsErr())
+        if (!glfwContext)
             return Result<void>::Err(glfwContext.Error());
 
         auto window = Window::Create();
-        if (window.IsErr())
+        if (!window)
             return Result<void>::Err(window.Error());
 
         m_GlfwContext = glfwContext.ValueMove();
         m_Window = window.ValueMove();
-        glfwSetKeyCallback(m_Window->GetWindow(), [](GLFWwindow* window, int key, int scancode, int action, int mods) {
-            if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
-                glfwSetWindowShouldClose(window, true);
-        });
+        glfwSetKeyCallback(m_Window->GetWindow(),
+            [](GLFWwindow* window, int key, int scancode, int action, int mods)
+            {
+                if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
+                    glfwSetWindowShouldClose(window, true);
+            });
 
         SetupImGui();
 
@@ -100,10 +109,14 @@ namespace raytracer {
         m_Running = false;
     }
 
-    void Application::PushLayer(const Ref<Layer>& layer)
+    void Application::PushLayer(Scope<Layer> layer)
     {
-        m_LayerStack.emplace_back(layer);
-        layer->OnAttach();
+        m_LayerStack.PushLayer(std::move(layer));
+    }
+
+    void Application::PushOverlay(Scope<Layer> layer)
+    {
+        m_LayerStack.PushOverlay(std::move(layer));
     }
 
     float Application::GetTime() const
@@ -129,10 +142,7 @@ namespace raytracer {
         ImGui_ImplOpenGL3_Init();
     }
 
-    Application::~Application()
-    {
-        Shutdown();
-    }
+
 
     void Application::Shutdown()
     {
