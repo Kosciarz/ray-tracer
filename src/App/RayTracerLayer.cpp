@@ -11,6 +11,9 @@
 #include <cstdint>
 #include <vector>
 
+#include "Events/Event.hpp"
+#include "Events/ApplicationEvents.hpp"
+
 #include "Renderer/VertexArray.hpp"
 #include "Renderer/Buffer.hpp"
 #include "Renderer/Image.hpp"
@@ -29,6 +32,10 @@
 namespace fs = std::filesystem;
 
 namespace raytracer {
+    RayTracerLayer::RayTracerLayer(const std::string& name)
+        : Layer{name}, m_ViewportWidth{1280}, m_ViewportHeight{720}
+    {
+    }
 
     void RayTracerLayer::OnAttach()
     {
@@ -78,14 +85,10 @@ namespace raytracer {
         m_Image.reset();
     }
 
-    void RayTracerLayer::OnUpdate(float timeStep, const std::uint32_t width, const std::uint32_t height)
+    void RayTracerLayer::OnUpdate(float timeStep)
     {
-        if (!m_Image || m_ViewportWidth != width || m_ViewportHeight != height)
-        {
-            m_ViewportWidth = width;
-            m_ViewportHeight = height;
+        if (!m_Image)
             Render();
-        }
 
         m_VertexArray->Bind();
         m_Shader->Use();
@@ -103,6 +106,21 @@ namespace raytracer {
             Render();
         }
         ImGui::End();
+    }
+
+    void RayTracerLayer::OnEvent(Event& event)
+    {
+        EventDispatcher dispatcher(event);
+        dispatcher.Dispatch<WindowResizeEvent>(
+            [this](WindowResizeEvent& e)
+            {
+                m_ViewportWidth = e.Width();
+                m_ViewportHeight = e.Height();
+
+                GL_CHECK(glViewport(0, 0, m_ViewportWidth, m_ViewportHeight));
+
+                return false;
+            });
     }
 
     void RayTracerLayer::Render()

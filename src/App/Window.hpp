@@ -1,6 +1,9 @@
 #pragma once
 
 #include <cstdint>
+#include <functional>
+
+#include "Events/Event.hpp"
 
 #include "Renderer/OpenGLHeaders.hpp"
 
@@ -11,9 +14,9 @@ namespace raytracer {
 
     struct WindowConfig
     {
-        std::uint32_t width;
-        std::uint32_t height;
-        std::string title;
+        std::uint32_t Width;
+        std::uint32_t Height;
+        std::string Title;
 
         WindowConfig();
 
@@ -30,6 +33,8 @@ namespace raytracer {
 
         ~Window();
 
+        void SetEventCallback(const std::function<void(Event&)>& callback);
+
         bool ShouldClose() const;
 
         void PollEvents() const;
@@ -42,7 +47,8 @@ namespace raytracer {
         Result<void> Init(const WindowConfig& config);
 
     private:
-        GLFWwindow* m_Window;
+        GLFWwindow* m_Window = nullptr;
+        std::function<void(Event&)> m_EventCallback;
     };
 
 }

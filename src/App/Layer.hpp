@@ -3,6 +3,8 @@
 #include <string>
 #include <cstdint>
 
+#include "Events/Event.hpp"
+
 namespace raytracer {
 
     class Layer
@@ -20,11 +22,15 @@ namespace raytracer {
         {
         }
 
-        virtual void OnUpdate(float timeStep, const std::uint32_t width, const std::uint32_t height)
+        virtual void OnUpdate(float timeStep)
         {
         }
 
         virtual void OnUIRender()
+        {
+        }
+
+        virtual void OnEvent(Event& event)
         {
         }
 

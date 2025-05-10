@@ -1,4 +1,5 @@
 #include "LayerStack.hpp"
+#include "LayerStack.hpp"
 
 #include <vector>
 #include <algorithm>

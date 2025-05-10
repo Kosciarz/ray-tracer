@@ -36,15 +36,17 @@ namespace raytracer {
 
         void PushLayer(Scope<Layer> layer);
 
-        template <typename T>
+        template <typename T, typename... Args>
             requires std::is_base_of_v<Layer, T>
-        void PushLayer();
+        void PushLayer(Args&&... args);
 
         void PushOverlay(Scope<Layer> layer);
 
         template <typename T, typename... Args>
             requires std::is_base_of_v<Layer, T>
         void PushOverlay(Args&&... args);
+
+        void OnEvent(Event& event);
 
         float GetTime() const;
 
@@ -54,8 +56,6 @@ namespace raytracer {
         Result<void> Init();
 
         void SetupImGui();
-
-        void Shutdown();
 
     private:
         Scope<GlfwContext> m_GlfwContext;
@@ -69,14 +69,12 @@ namespace raytracer {
         float m_LastFrameTime = 0.0f;
     };
 
-    template <typename T>
+    template <typename T, typename... Args>
         requires std::is_base_of_v<Layer, T>
-    inline void Application::PushLayer()
+    inline void Application::PushLayer(Args&&... args)
     {
-        //static_assert(std::is_constructible_v<T, Args...>, "Invalid arguments for constructing the layer.");
-        //m_LayerStack.PushLayer(MakeScope<T>(std::forward<Args>(args)...));
-        auto layer = MakeScope<T>();
-        m_LayerStack.PushLayer(std::move(layer));
+        static_assert(std::is_constructible_v<T, Args...>, "Invalid arguments for constructing the layer.");
+        m_LayerStack.PushLayer(MakeScope<T>(std::forward<Args>(args)...));
     }
 
     template <typename T, typename... Args>
@@ -84,7 +82,6 @@ namespace raytracer {
     inline void Application::PushOverlay(Args&&... args)
     {
         static_assert(std::is_constructible_v<T, Args...>, "Invalid arguments for constructing the overlay.");
-
         m_LayerStack.PushOverlay(std::move(MakeScope<T>(std::forward<Args>(args)...)));
     }
 }

@@ -31,9 +31,13 @@ namespace raytracer {
 
         std::vector<Scope<Layer>>::iterator begin();
         std::vector<Scope<Layer>>::iterator end();
+        std::vector<Scope<Layer>>::reverse_iterator rbegin();
+        std::vector<Scope<Layer>>::reverse_iterator rend();
 
         std::vector<Scope<Layer>>::const_iterator begin() const;
         std::vector<Scope<Layer>>::const_iterator end() const;
+        std::vector<Scope<Layer>>::const_reverse_iterator rbegin() const;
+        std::vector<Scope<Layer>>::const_reverse_iterator rend() const;
 
     private:
         std::vector<Scope<Layer>> m_Layers;
@@ -51,6 +55,16 @@ namespace raytracer {
         return m_Layers.end();
     }
 
+    inline std::vector<Scope<Layer>>::reverse_iterator LayerStack::rbegin()
+    {
+        return m_Layers.rbegin();
+    }
+
+    inline std::vector<Scope<Layer>>::reverse_iterator LayerStack::rend()
+    {
+        return m_Layers.rend();
+    }
+
     inline std::vector<Scope<Layer>>::const_iterator LayerStack::begin() const
     {
         return m_Layers.begin();
@@ -60,4 +74,15 @@ namespace raytracer {
     {
         return m_Layers.end();
     }
+
+    inline std::vector<Scope<Layer>>::const_reverse_iterator LayerStack::rbegin() const
+    {
+        return m_Layers.rbegin();
+    }
+
+    inline std::vector<Scope<Layer>>::const_reverse_iterator LayerStack::rend() const
+    {
+        return m_Layers.rend();
+    }
+
 }

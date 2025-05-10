@@ -3,6 +3,9 @@
 #include "Layer.hpp"
 
 #include <memory>
+#include <string>
+
+#include "Events/Event.hpp"
 
 #include "Renderer/VertexArray.hpp"
 #include "Renderer/Buffer.hpp"
@@ -20,19 +23,23 @@ namespace raytracer {
     class RayTracerLayer : public Layer
     {
     public:
+        RayTracerLayer(const std::string& name);
+
         void OnAttach() override;
 
         void OnDetach() override;
 
-        void OnUpdate(float timeStep, const std::uint32_t width, const std::uint32_t height) override;
+        void OnUpdate(float timeStep) override;
 
         void OnUIRender() override;
+
+        void OnEvent(Event& event) override;
 
     private:
         void Render();
 
     private:
-        std::uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
+        std::uint32_t m_ViewportWidth, m_ViewportHeight;
         float m_LastRenderTime = 0.0;
 
         Ref<VertexArray> m_VertexArray;

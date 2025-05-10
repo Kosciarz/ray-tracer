@@ -1,7 +1,11 @@
 #include "Window.hpp"
+#include "Window.hpp"
 
 #include <iostream>
 #include <cstdint>
+
+#include "Events/Event.hpp"
+#include "Events/ApplicationEvents.hpp"
 
 #include "Renderer/OpenGLHeaders.hpp"
 
@@ -12,12 +16,12 @@
 namespace raytracer {
 
     WindowConfig::WindowConfig()
-        : width{1280}, height{720}, title{"RayTracer"}
+        : Width{1280}, Height{720}, Title{"RayTracer"}
     {
     }
 
     WindowConfig::WindowConfig(const std::uint32_t m_Width, const std::uint32_t height, const std::string& title)
-        : width{m_Width}, height{height}, title{title}
+        : Width{m_Width}, Height{height}, Title{title}
     {
     }
 
@@ -41,7 +45,7 @@ namespace raytracer {
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPACT, GL_TRUE);
 #endif
 
-        m_Window = glfwCreateWindow(config.width, config.height, config.title.c_str(), nullptr, nullptr);
+        m_Window = glfwCreateWindow(config.Width, config.Height, config.Title.c_str(), nullptr, nullptr);
         if (!m_Window)
             return Result<void>::Err("Failed to create GLFW window");
 
@@ -50,10 +54,14 @@ namespace raytracer {
         if (!gladLoadGL(glfwGetProcAddress))
             return Result<void>::Err("Failed to initialize GLAD");
 
+        glfwSetWindowUserPointer(m_Window, this);
+
         glfwSetFramebufferSizeCallback(m_Window,
-            [](GLFWwindow* window, const int m_Width, const int height)
+            [](GLFWwindow* window, int width, int height)
             {
-                GL_CHECK(glViewport(0, 0, m_Width, height));
+                auto* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
+                WindowResizeEvent event(width, height);
+                win->m_EventCallback(event);
             });
 
         glfwSetKeyCallback(m_Window,
@@ -69,6 +77,11 @@ namespace raytracer {
     Window::~Window()
     {
         glfwDestroyWindow(m_Window);
+    }
+
+    void Window::SetEventCallback(const std::function<void(Event&)>& callback)
+    {
+        m_EventCallback = callback;
     }
 
     bool Window::ShouldClose() const

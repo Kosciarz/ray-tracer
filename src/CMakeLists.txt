@@ -6,13 +6,15 @@ set(SOURCES
     "App/LayerStack.cpp"
     "App/RayTracerLayer.cpp"
 
-    "Utils/StbImageImpl.cpp"
-    
+    "Events/ApplicationEvents.cpp"
+
     "Renderer/Image.cpp"
     "Renderer/Renderer.cpp"
     "Renderer/Shader.cpp"
     "Renderer/Buffer.cpp"
     "Renderer/VertexArray.cpp"
+
+    "Utils/StbImageImpl.cpp"
 
     "Core/Color.cpp"
     "Core/Ray.cpp"
@@ -28,6 +30,9 @@ set(HEADERS
     "App/Layer.hpp"
     "App/LayerStack.hpp"
     "App/RayTracerLayer.hpp"
+
+    "Events/Event.hpp"
+    "Events/ApplicationEvents.hpp"
 
     "Renderer/OpenGLHeaders.hpp"
     "Renderer/Image.hpp"
