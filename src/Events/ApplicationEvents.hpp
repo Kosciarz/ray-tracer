@@ -15,7 +15,7 @@ namespace raytracer {
 
         const char* GetName() const override;
 
-        EVENT_CLASS_TYPE(WindowClose);
+        EVENT_CLASS_TYPE(WindowClose)
     };
 
     class WindowResizeEvent : public Event
@@ -33,7 +33,7 @@ namespace raytracer {
 
         std::string ToString() const override;
 
-        EVENT_CLASS_TYPE(WindowResize);
+        EVENT_CLASS_TYPE(WindowResize)
 
     private:
         std::uint32_t m_Width, m_Height;

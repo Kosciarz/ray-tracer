@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 
 #include "Ray.hpp"
+#include "Interval.hpp"
 
 namespace raytracer {
 
@@ -21,7 +22,7 @@ namespace raytracer {
     public:
         virtual ~Hittable() = default;
 
-        virtual bool Hit(const Ray& ray, const double tmin, const double tmax, HitRecord& record) const = 0;
+        virtual bool Hit(const Ray& ray, const Interval& rayT, HitRecord& record) const = 0;
     };
 
 }

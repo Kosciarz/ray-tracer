@@ -68,7 +68,7 @@ namespace raytracer {
         Scope<Window> m_Window;
         LayerStack m_LayerStack;
 
-        bool m_Running = false;
+        bool m_Running = true;
 
         float m_FrameTime = 0.0f;
         float m_TimeStep = 0.0f;

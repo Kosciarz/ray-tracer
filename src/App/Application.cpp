@@ -72,9 +72,7 @@ namespace raytracer {
 
     void Application::Run()
     {
-        m_Running = true;
-
-        while (!m_Window->ShouldClose() && m_Running)
+        while (m_Running)
         {
             m_Window->PollEvents();
 

@@ -2,8 +2,9 @@
 
 #include <glm/glm.hpp>
 
-#include "Hittable.hpp"
 #include "HittableList.hpp"
+#include "Interval.hpp"
+
 #include "Utils/RayTracerUtils.hpp"
 
 namespace raytracer {
@@ -20,7 +21,7 @@ namespace raytracer {
     Color RayColor(const Ray& ray, const HittableList& object)
     {
         HitRecord rec;
-        if (object.Hit(ray, 0, g_Infinity, rec))
+        if (object.Hit(ray, Interval{0, g_Infinity}, rec))
             return static_cast<float>(0.5) * (rec.normal + Color{1, 1, 1});
 
         auto direction = glm::normalize(ray.Direction());

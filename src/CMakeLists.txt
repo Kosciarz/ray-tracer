@@ -21,6 +21,7 @@ set(SOURCES
     "Core/Hittable.cpp"
     "Core/HittableList.cpp"
     "Core/Sphere.cpp"
+    "Core/Interval.cpp"
 )
 
 set(HEADERS
@@ -52,6 +53,7 @@ set(HEADERS
     "Core/Hittable.hpp"
     "Core/HittableList.hpp"
     "Core/Sphere.hpp"
+    "Core/Interval.hpp"
 )
 
 foreach(SOURCE IN LISTS SOURCES HEADERS)

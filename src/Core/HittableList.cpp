@@ -17,15 +17,15 @@ namespace raytracer {
         m_Objects.clear();
     }
 
-    bool HittableList::Hit(const Ray& ray, const double tmin, const double tmax, HitRecord& rec) const
+    bool HittableList::Hit(const Ray& ray, const Interval& rayT, HitRecord& rec) const
     {
         HitRecord tempRec;
         bool hitAnything = false;
-        auto closestSoFar = tmax;
+        auto closestSoFar = rayT.Max();
         
         for (const auto& object : m_Objects)
         {
-            if (object->Hit(ray, tmin, closestSoFar, tempRec))
+            if (object->Hit(ray, Interval{rayT.Min(), closestSoFar}, tempRec))
             {
                 hitAnything = true;
                 closestSoFar = tempRec.t;

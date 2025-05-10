@@ -13,7 +13,7 @@ namespace raytracer {
     {
     }
 
-    bool Sphere::Hit(const Ray& ray, const double tmin, const double tmax, HitRecord& record) const
+    bool raytracer::Sphere::Hit(const Ray& ray, const Interval& rayT, HitRecord& record) const
     {
         // Calculate the vector from ray's origin to sphere's center
         auto originToCenter = m_Center - ray.Origin();
@@ -31,10 +31,10 @@ namespace raytracer {
 
         // Find the nearest root (t1 or t2) that lies in the accaptable range
         auto root = (h - sqrtDisc) / a;
-        if (root <= tmin || root >= tmax)
+        if (!rayT.Surrounds(root))
         {
             root = (h + sqrtDisc) / a;
-            if (root <= tmin || root >= tmax)
+            if (!rayT.Surrounds(root))
                 return false;
         }
 

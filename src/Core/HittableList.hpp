@@ -5,6 +5,8 @@
 
 #include "Ray.hpp"
 #include "Hittable.hpp"
+#include "Interval.hpp"
+
 #include "Utils/RayTracerUtils.hpp"
 
 namespace raytracer {
@@ -18,7 +20,7 @@ namespace raytracer {
 
         void Clear();
 
-        bool Hit(const Ray& ray, const double tmin, const double tmax, HitRecord& rec) const;
+        bool Hit(const Ray& ray, const Interval& rayT, HitRecord& rec) const;
 
 
         std::vector<Ref<Hittable>>& Objects();

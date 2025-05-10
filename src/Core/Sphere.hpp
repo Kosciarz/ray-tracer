@@ -12,7 +12,7 @@ namespace raytracer {
     public:
         Sphere(const glm::vec3& center, const double radius);
 
-        bool Hit(const Ray& ray, const double tmin, const double tmax, HitRecord& record) const override;
+        bool Hit(const Ray& ray, const Interval& rayT, HitRecord& record) const override;
 
     private:
         glm::vec3 m_Center;
