@@ -5,11 +5,13 @@
 #include <type_traits>
 #include <utility>
 
-#include "Renderer/OpenGLHeaders.hpp"
-
 #include "GlfwContext.hpp"
 #include "Window.hpp"
 #include "LayerStack.hpp"
+
+#include "Renderer/OpenGLHeaders.hpp"
+
+#include "Events/ApplicationEvents.hpp"
 
 #include "Utils/Result.hpp"
 #include "Utils/RayTracerUtils.hpp"
@@ -46,7 +48,11 @@ namespace raytracer {
             requires std::is_base_of_v<Layer, T>
         void PushOverlay(Args&&... args);
 
-        void OnEvent(Event& event);
+        void OnEvent(Event& e);
+
+        bool OnWindowClose(WindowCloseEvent& e);
+        
+        bool OnWindowResize(WindowResizeEvent& e);
 
         float GetTime() const;
 

@@ -60,7 +60,7 @@ namespace raytracer {
             [](GLFWwindow* window, int width, int height)
             {
                 auto* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
-                WindowResizeEvent event(width, height);
+                WindowResizeEvent event{static_cast<std::uint32_t>(width), static_cast<std::uint32_t>(height)};
                 win->m_EventCallback(event);
             });
 
@@ -68,7 +68,11 @@ namespace raytracer {
             [](GLFWwindow* window, int key, int scancode, int action, int mods)
             {
                 if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
-                    glfwSetWindowShouldClose(window, true);
+                {
+                    auto* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
+                    WindowCloseEvent event;
+                    win->m_EventCallback(event);
+                }
             });
 
         return Result<void>::Ok();

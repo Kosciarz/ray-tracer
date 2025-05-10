@@ -80,7 +80,6 @@ namespace raytracer {
     {
         m_World.Clear();
 
-        // Add objects to the world
         m_World.Add(MakeRef<Sphere>(glm::vec3{0, 0, -1}, 0.5));
         m_World.Add(MakeRef<Sphere>(glm::vec3{0, -100.5, -1}, 100));
         m_World.Add(MakeRef<Sphere>(Random::Vec3(), 2));
@@ -120,16 +119,14 @@ namespace raytracer {
         ImGui::End();
     }
 
-    void RayTracerLayer::OnEvent(Event& event)
+    void RayTracerLayer::OnEvent(Event& e)
     {
-        EventDispatcher dispatcher(event);
+        EventDispatcher dispatcher(e);
         dispatcher.Dispatch<WindowResizeEvent>(
             [this](WindowResizeEvent& e)
             {
-                m_ViewportWidth = e.Width();
-                m_ViewportHeight = e.Height();
-
-                GL_CHECK(glViewport(0, 0, m_ViewportWidth, m_ViewportHeight));
+                m_ViewportWidth = e.GetWidth();
+                m_ViewportHeight = e.GetHeight();
 
                 return false;
             });

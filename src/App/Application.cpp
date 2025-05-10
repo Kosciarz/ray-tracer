@@ -1,5 +1,4 @@
 #include "Application.hpp"
-#include "Application.hpp"
 
 #include "Renderer/OpenGLHeaders.hpp"
 #include <imgui.h>
@@ -18,7 +17,11 @@
 #include "Layer.hpp"
 #include "RayTracerLayer.hpp"
 
+#include "Events/Event.hpp"
+#include "Events/ApplicationEvents.hpp"
+
 #include "Utils/RayTracerUtils.hpp"
+#include "Utils/GLUtils.hpp"
 #include "Utils/Result.hpp"
 #include "Utils/Timer.hpp"
 
@@ -117,14 +120,39 @@ namespace raytracer {
         m_LayerStack.PushOverlay(std::move(layer));
     }
 
-    void Application::OnEvent(Event& event)
+    void Application::OnEvent(Event& e)
     {
+        EventDispatcher dispatcher(e);
+        dispatcher.Dispatch<WindowCloseEvent>(
+            [this](WindowCloseEvent& e)
+            {
+                return OnWindowClose(e);
+            });
+
+        dispatcher.Dispatch<WindowResizeEvent>(
+            [this](WindowResizeEvent& e)
+            {
+                return OnWindowResize(e);
+            });
+
         for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); it++)
         {
-            if (event.Handled)
+            if (e.Handled)
                 break;
-            (*it)->OnEvent(event);
+            (*it)->OnEvent(e);
         }
+    }
+
+    bool Application::OnWindowClose(WindowCloseEvent& e)
+    {
+        m_Running = false;
+        return true;
+    }
+
+    bool Application::OnWindowResize(WindowResizeEvent& e)
+    {
+        GL_CHECK(glViewport(0, 0, e.GetWidth(), e.GetHeight()));
+        return false;
     }
 
     float Application::GetTime() const

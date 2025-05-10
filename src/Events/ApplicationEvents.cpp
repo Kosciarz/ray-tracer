@@ -21,12 +21,12 @@ namespace raytracer {
     {
     }
 
-    std::uint32_t WindowResizeEvent::Width() const
+    std::uint32_t WindowResizeEvent::GetWidth() const
     {
         return m_Width;
     }
 
-    std::uint32_t WindowResizeEvent::Height() const
+    std::uint32_t WindowResizeEvent::GetHeight() const
     {
         return m_Height;
     }
@@ -41,7 +41,7 @@ namespace raytracer {
         return "WindowResizeEvent";
     }
 
-    const std::string& WindowResizeEvent::ToString() const
+    std::string WindowResizeEvent::ToString() const
     {
         return "WindowResizeEvent: " + std::to_string(m_Width) + " " + std::to_string(m_Height);
     }

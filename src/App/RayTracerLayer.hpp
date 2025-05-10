@@ -33,7 +33,7 @@ namespace raytracer {
 
         void OnUIRender() override;
 
-        void OnEvent(Event& event) override;
+        void OnEvent(Event& e) override;
 
     private:
         void Render();
