@@ -14,8 +14,6 @@ set(SOURCES
 
     "Core/Color.cpp"
     "Core/Ray.cpp"
-    "Core/Hittable.cpp"
-    "Core/HittableList.cpp"
     "Core/Sphere.cpp"
 )
 
@@ -30,7 +28,6 @@ set(HEADERS
     "Utils/Utils.hpp"
     "Utils/Random.hpp"
     "Utils/Timer.hpp"
-    "Utils/RTWeekend.hpp"
 
     "Renderer/OpenGLHeaders.hpp"
     "Renderer/Image.hpp"
@@ -42,7 +39,6 @@ set(HEADERS
     "Core/Color.hpp"
     "Core/Ray.hpp"
     "Core/Hittable.hpp"
-    "Core/HittableList.hpp"
     "Core/Sphere.hpp"
 )
 
