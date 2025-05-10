@@ -53,7 +53,7 @@
       "description": "Build with Visual Studio 2022 (MSBuild) in Debug mode for x86 architecture.",
       "generator": "Visual Studio 17 2022",
       "architecture": "Win32",
-      "binaryDir": "${sourceDir}/out/x64/debug",
+      "binaryDir": "${sourceDir}/out/x86/debug",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug"
       }
@@ -72,27 +72,33 @@
   ],
   "buildPresets": [
     {
-      "name": "Ninja Debug",
+      "name": "ninja-debug",
+      "displayName": "Ninja Debug",
       "configurePreset": "ninja-debug"
     },
     {
-      "name": "Ninja Release",
+      "name": "ninja-release",
+      "displayName": "Ninja Release",
       "configurePreset": "ninja-release"
     },
     {
-      "name": "x64 Debug",
+      "name": "x64-debug",
+      "displayName": "x64 Debug",
       "configurePreset": "x64-debug"
     },
     {
-      "name": "x64 Release",
+      "name": "x64-release",
+      "displayName": "x64 Release",
       "configurePreset": "x64-release"
     },
     {
-      "name": "x86 Debug",
+      "name": "x86-debug",
+      "displayName": "x86 Debug",
       "configurePreset": "x86-debug"
     },
     {
-      "name": "x86 Release",
+      "name": "x86-release",
+      "displayName": "x86 Release",
       "configurePreset": "x86-release"
     }
   ]
