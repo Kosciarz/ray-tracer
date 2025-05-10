@@ -49,7 +49,7 @@ namespace raytracer {
         const GLuint& Handle() const;
 
     private:
-        std::pair<GLenum, GLenum> GetImageFormat() const;
+        std::pair<GLenum, GLenum> GetGLFormats() const;
 
     private:
         std::int32_t m_Width = 0;
