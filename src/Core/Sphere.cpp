@@ -4,23 +4,46 @@
 
 #include <glm/glm.hpp>
 
+#include "Hittable.hpp"
+
 namespace raytracer {
 
-    double HitSphere(const Sphere& sphere, const Ray& ray)
+    Sphere::Sphere(const glm::vec3& center, const double radius)
+        : m_Center{center}, m_Radius{radius}
+    {
+    }
+
+    bool Sphere::Hit(const Ray& ray, const double tmin, const double tmax, HitRecord& record) const
     {
         // Calculate the vector from ray's origin to sphere's center
-        auto originToCenter = sphere.center - ray.Origin();
+        auto originToCenter = m_Center - ray.Origin();
 
         // Solve the quadratic equation to determine if and where the ray hits the sphere
-        auto a = glm::dot(ray.Direction(), ray.Direction());
-        auto b = -2.0 * glm::dot(ray.Direction(), originToCenter);
-        auto c = glm::dot(originToCenter, originToCenter) - glm::pow(sphere.radius, 2);
-        auto discriminant = b * b - 4 * a * c;
+        auto a = glm::pow(glm::length(ray.Direction()), 2);
+        auto h = glm::dot(ray.Direction(), originToCenter);
+        auto c = glm::pow(glm::length(originToCenter), 2) - glm::pow(m_Radius, 2);
 
+        auto discriminant = h * h - a * c;
         if (discriminant < 0)
-            return -1.0;
-        else
-            return (-b - std::sqrt(discriminant)) / (2.0 * a);
+            return false;
+
+        auto sqrtDisc = std::sqrt(discriminant);
+
+        // Find the nearest root (t1 or t2) that lies in the accaptable range
+        auto root = (h - sqrtDisc) / a;
+        if (root <= tmin || root >= tmax)
+        {
+            root = (h + sqrtDisc) / a;
+            if (root <= tmin || root >= tmax)
+                return false;
+        }
+
+        record.t = root;
+        record.point = ray.At(record.t);
+        glm::vec3 outwardNormal = (record.point - m_Center) / static_cast<float>(m_Radius);
+        record.SetFaceNormal(ray, outwardNormal);
+
+        return true;
     }
 
 }
