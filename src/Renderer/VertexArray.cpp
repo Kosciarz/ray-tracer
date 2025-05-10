@@ -5,13 +5,14 @@
 #include "OpenGLHeaders.hpp"
 
 #include "Buffer.hpp"
-#include "Utils/Utils.hpp"
+#include "Utils/GLUtils.hpp"
+#include "Utils/RayTracerUtils.hpp"
 
 namespace raytracer {
 
-    std::shared_ptr<VertexArray> VertexArray::Create()
+    Ref<VertexArray> VertexArray::Create()
     {
-        return std::make_shared<VertexArray>();
+        return MakeRef<VertexArray>();
     }
 
     VertexArray::VertexArray()
@@ -34,17 +35,17 @@ namespace raytracer {
         GL_CHECK(glBindVertexArray(0));
     }
 
-    void VertexArray::AddIndexBuffer(std::shared_ptr<IndexBuffer> indexBuffer)
+    void VertexArray::AddIndexBuffer(Ref<IndexBuffer> indexBuffer)
     {
         m_IndexBuffer = indexBuffer;
     }
 
-    std::shared_ptr<IndexBuffer> VertexArray::GetIndexBuffer() const
+    Ref<IndexBuffer> VertexArray::GetIndexBuffer() const
     {
         return m_IndexBuffer;
     }
 
-    void VertexArray::AddVertexBuffer(std::shared_ptr<VertexBuffer> vertexBuffer, GLuint index, GLint size, GLenum type,
+    void VertexArray::AddVertexBuffer(Ref<VertexBuffer> vertexBuffer, GLuint index, GLint size, GLenum type,
         GLboolean normalized, GLsizei stride, const void* offset)
     {
         Bind();

@@ -2,7 +2,7 @@
 
 #include <glm/vec3.hpp>
 
-#include "Utils/RTWeekend.hpp"
+#include "Utils/RayTracerUtils.hpp"
 
 namespace raytracer {
     

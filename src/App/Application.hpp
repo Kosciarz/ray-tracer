@@ -8,7 +8,9 @@
 #include "GlfwContext.hpp"
 #include "Window.hpp"
 #include "Layer.hpp"
+
 #include "Utils/Result.hpp"
+#include "Utils/RayTracerUtils.hpp"
 
 namespace raytracer {
 
@@ -29,12 +31,12 @@ namespace raytracer {
 
         template <typename T>
         void PushLayer()
+            requires std::is_base_of_v<Layer, T>
         {
-            static_assert(std::is_base_of_v<Layer, T>, "Pushed type is not subclass of Layer!");
-            m_LayerStack.emplace_back(std::make_shared<T>())->OnAttach();
+            m_LayerStack.emplace_back(MakeRef<T>())->OnAttach();
         }
 
-        void PushLayer(const std::shared_ptr<Layer>& layer);
+        void PushLayer(const Ref<Layer>& layer);
 
         float GetTime() const;
 
@@ -52,15 +54,15 @@ namespace raytracer {
         void Shutdown();
 
     private:
-        std::unique_ptr<GlfwContext> m_GlfwContext = nullptr;
-        std::unique_ptr<Window> m_Window = nullptr;
+        Scope<GlfwContext> m_GlfwContext = nullptr;
+        Scope<Window> m_Window = nullptr;
         bool m_Running = false;
 
         float m_FrameTime = 0.0;
         float m_TimeStep = 0.0;
         float m_LastFrameTime = 0.0;
 
-        std::vector<std::shared_ptr<Layer>> m_LayerStack;
+        std::vector<Ref<Layer>> m_LayerStack;
     };
 
 }

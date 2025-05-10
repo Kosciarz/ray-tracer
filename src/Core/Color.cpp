@@ -4,7 +4,7 @@
 
 #include "Hittable.hpp"
 #include "HittableList.hpp"
-#include "Utils/RTWeekend.hpp"
+#include "Utils/RayTracerUtils.hpp"
 
 namespace raytracer {
 

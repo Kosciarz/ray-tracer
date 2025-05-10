@@ -5,7 +5,7 @@
 
 #include "Ray.hpp"
 #include "Hittable.hpp"
-#include "Utils/Utils.hpp"
+#include "Utils/RayTracerUtils.hpp"
 
 namespace raytracer {
 

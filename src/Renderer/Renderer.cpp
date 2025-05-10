@@ -11,7 +11,8 @@
 #include "Buffer.hpp"
 #include "Image.hpp"
 
-#include "Utils/Utils.hpp"
+#include "Utils/RayTracerUtils.hpp"
+#include "Utils/GLUtils.hpp"
 
 namespace raytracer {
 
@@ -38,7 +39,7 @@ namespace raytracer {
         vertexArray->Bind();
         indexBuffer->Bind();
 
-        glDrawElements(GL_TRIANGLES, indexBuffer->Size(), GL_UNSIGNED_INT, nullptr);
+        GL_CHECK(glDrawElements(GL_TRIANGLES, indexBuffer->Size(), GL_UNSIGNED_INT, nullptr));
     }
 
 }

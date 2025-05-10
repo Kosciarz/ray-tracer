@@ -3,8 +3,7 @@
 #include <vector>
 
 #include "Hittable.hpp"
-#include "Utils/RTWeekend.hpp"
-#include "Utils/Utils.hpp"
+#include "Utils/RayTracerUtils.hpp"
 
 namespace raytracer {
 
