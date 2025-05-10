@@ -73,9 +73,17 @@ namespace raytracer {
         m_VertexArray->AddVertexBuffer(vertexBuffer, 0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
         m_VertexArray->AddVertexBuffer(vertexBuffer, 1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 
+        BuildScene();
+    }
+
+    void RayTracerLayer::BuildScene()
+    {
+        m_World.Clear();
+
         // Add objects to the world
         m_World.Add(MakeRef<Sphere>(glm::vec3{0, 0, -1}, 0.5));
         m_World.Add(MakeRef<Sphere>(glm::vec3{0, -100.5, -1}, 100));
+        m_World.Add(MakeRef<Sphere>(Random::Vec3(), 2));
     }
 
     void RayTracerLayer::OnDetach()
@@ -104,6 +112,10 @@ namespace raytracer {
         if (ImGui::Button("Render"))
         {
             Render();
+        }
+        if (ImGui::Button("Build Scene"))
+        {
+            BuildScene();
         }
         ImGui::End();
     }
@@ -176,16 +188,21 @@ namespace raytracer {
                 Color convertedColor = ScaleColor(pixelColor);
 
                 const std::size_t i = (imageHeight - y - 1) * imageWidth + x;
-                m_ImageData[i * 4 + 0] = convertedColor.r;
-                m_ImageData[i * 4 + 1] = convertedColor.g;
-                m_ImageData[i * 4 + 2] = convertedColor.b;
-                m_ImageData[i * 4 + 3] = 255;
+                UpdateBuffer(i, convertedColor);
             }
         }
 
         m_Image->SetData(m_ImageData.data());
 
         m_LastRenderTime = timer.ElapsedMilliseconds();
+    }
+
+    void RayTracerLayer::UpdateBuffer(const std::size_t i, const Color& color)
+    {
+        m_ImageData[i * 4 + 0] = color.r;
+        m_ImageData[i * 4 + 1] = color.g;
+        m_ImageData[i * 4 + 2] = color.b;
+        m_ImageData[i * 4 + 3] = 255;
     }
 
 }

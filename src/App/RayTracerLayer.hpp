@@ -38,6 +38,10 @@ namespace raytracer {
     private:
         void Render();
 
+        void BuildScene();
+
+        void UpdateBuffer(const std::size_t i, const Color& color);
+
     private:
         std::uint32_t m_ViewportWidth, m_ViewportHeight;
         float m_LastRenderTime = 0.0;
