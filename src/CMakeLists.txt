@@ -14,6 +14,8 @@ set(SOURCES
 
     "Core/Color.cpp"
     "Core/Ray.cpp"
+    "Core/Hittable.cpp"
+    "Core/HittableList.cpp"
     "Core/Sphere.cpp"
 )
 
@@ -24,21 +26,23 @@ set(HEADERS
     "App/Layer.hpp"
     "App/RayTracerLayer.hpp"
 
-    "Utils/Result.hpp"
-    "Utils/Utils.hpp"
-    "Utils/Random.hpp"
-    "Utils/Timer.hpp"
-
     "Renderer/OpenGLHeaders.hpp"
     "Renderer/Image.hpp"
     "Renderer/Renderer.hpp"
     "Renderer/Shader.hpp"
     "Renderer/Buffer.hpp"
     "Renderer/VertexArray.hpp"
+    
+    "Utils/RayTracerUtils.hpp"
+    "Utils/GLUtils.hpp"
+    "Utils/Result.hpp"
+    "Utils/Random.hpp"
+    "Utils/Timer.hpp"
 
     "Core/Color.hpp"
     "Core/Ray.hpp"
     "Core/Hittable.hpp"
+    "Core/HittableList.hpp"
     "Core/Sphere.hpp"
 )
 

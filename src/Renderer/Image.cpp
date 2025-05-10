@@ -6,7 +6,8 @@
 #include "OpenGLHeaders.hpp"
 #include <stb_image.h>
 
-#include "Utils/Utils.hpp"
+#include "Utils/RayTracerUtils.hpp"
+#include "Utils/GLUtils.hpp"
 
 namespace raytracer {
 

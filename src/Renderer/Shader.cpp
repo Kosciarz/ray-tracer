@@ -9,7 +9,8 @@
 
 #include "OpenGLHeaders.hpp"
 
-#include "Utils/Utils.hpp"
+#include "Utils/GLUtils.hpp"
+#include "Utils/RayTracerUtils.hpp"
 #include "Utils/Result.hpp"
 
 namespace fs = std::filesystem;

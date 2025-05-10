@@ -12,7 +12,7 @@
 #include "Buffer.hpp"
 #include "Image.hpp"
 
-#include "Utils/Utils.hpp"
+#include "Utils/RayTracerUtils.hpp"
 
 namespace raytracer {
 

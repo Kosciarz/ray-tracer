@@ -16,7 +16,8 @@
 #include "GlfwContext.hpp"
 #include "Layer.hpp"
 #include "RayTracerLayer.hpp"
-#include "Utils/Utils.hpp"
+
+#include "Utils/RayTracerUtils.hpp"
 #include "Utils/Result.hpp"
 #include "Utils/Timer.hpp"
 
@@ -99,7 +100,7 @@ namespace raytracer {
         m_Running = false;
     }
 
-    void Application::PushLayer(const std::shared_ptr<Layer>& layer)
+    void Application::PushLayer(const Ref<Layer>& layer)
     {
         m_LayerStack.emplace_back(layer);
         layer->OnAttach();
