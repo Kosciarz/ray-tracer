@@ -11,6 +11,9 @@ namespace raytracer {
         glm::vec3 point;
         glm::vec3 normal;
         double t;
+        bool frontFace;
+
+        void SetFaceNormal(const Ray& ray, const glm::vec3& outwardNormal);
     };
 
     class Hittable
@@ -18,7 +21,7 @@ namespace raytracer {
     public:
         virtual ~Hittable() = default;
 
-        virtual bool Hit(const Ray& ray, const double tmin, const double tmax, HitRecord& record) = 0;
+        virtual bool Hit(const Ray& ray, const double tmin, const double tmax, HitRecord& record) const = 0;
     };
 
 }
