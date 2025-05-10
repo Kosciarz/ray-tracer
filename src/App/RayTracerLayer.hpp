@@ -10,19 +10,23 @@
 #include "Renderer/Shader.hpp"
 #include "Renderer/Renderer.hpp"
 
+#include "Core/Color.hpp"
+#include "Core/HittableList.hpp"
+
 namespace raytracer {
 
     class RayTracerLayer : public Layer
     {
     public:
-        virtual void OnAttach() override;
+        void OnAttach() override;
 
         void OnDetach() override;
 
-        virtual void OnUpdate(float timeStep, const std::uint32_t width, const std::uint32_t height) override;
+        void OnUpdate(float timeStep, const std::uint32_t width, const std::uint32_t height) override;
 
         void OnUIRender() override;
 
+    private:
         void Render();
 
     private:
@@ -34,6 +38,8 @@ namespace raytracer {
 
         std::shared_ptr<Image> m_Image;
         std::vector<std::uint8_t> m_ImageData;
+
+        HittableList m_World;
     };
 
 }
