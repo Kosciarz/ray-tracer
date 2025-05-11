@@ -26,6 +26,7 @@ namespace raytracer {
 
         Application(const Application&) = delete;
         Application& operator=(const Application&) = delete;
+        Application();
 
         Application(Application&&) noexcept = default;
         Application& operator=(Application&&) noexcept = default;
@@ -66,9 +67,11 @@ namespace raytracer {
     private:
         Scope<GlfwContext> m_GlfwContext;
         Scope<Window> m_Window;
-        LayerStack m_LayerStack;
+        bool m_Running;
 
-        bool m_Running = true;
+        float m_FrameTime;
+        float m_TimeStep;
+        float m_LastFrameTime;
 
         float m_FrameTime = 0.0f;
         float m_TimeStep = 0.0f;

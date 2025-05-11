@@ -36,6 +36,17 @@ namespace raytracer {
         ImGui::DestroyContext();
     }
 
+    
+    Application::Application()
+        : m_Running{true}, m_FrameTime{0.0f}, m_TimeStep{0.0f}, m_LastFrameTime{0.0f}
+    {
+    }
+    
+    Application::~Application()
+    {
+        Shutdown();
+    }
+
     Application Application::Create()
     {
         Application app;
@@ -174,6 +185,13 @@ namespace raytracer {
 
         ImGui_ImplGlfw_InitForOpenGL(m_Window->GetWindow(), true);
         ImGui_ImplOpenGL3_Init();
+    }
+
+    void Application::Shutdown()
+    {
+        ImGui_ImplOpenGL3_Shutdown();
+        ImGui_ImplGlfw_Shutdown();
+        ImGui::DestroyContext();
     }
 
 }
