@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <functional>
+#include <string>
 
 #include "Events/Event.hpp"
 
@@ -14,24 +15,29 @@ namespace raytracer {
 
     struct WindowConfig
     {
+        std::string Title;
         std::uint32_t Width;
         std::uint32_t Height;
-        std::string Title;
 
-        WindowConfig();
-
-        WindowConfig(const std::uint32_t width, const std::uint32_t height, const std::string& title);
+        WindowConfig(const std::string& title = "Ray Tracer", 
+            const std::uint32_t width = 1280, 
+            const std::uint32_t height = 720);
     };
 
 
     class Window
     {
     public:
-        static Result<Scope<Window>> Create(const WindowConfig& config = WindowConfig());
-
-        Window() = default;
-
+        Window(const WindowConfig& config);   
         ~Window();
+
+        Window(const Window&) = delete;
+        Window& operator=(const Window&) = delete;
+
+        Window(Window&&) noexcept = default;
+        Window& operator=(Window&&) noexcept = default;
+
+        static Result<Scope<Window>> Create(const WindowConfig& config = WindowConfig());
 
         void SetEventCallback(const std::function<void(Event&)>& callback);
 
@@ -43,11 +49,17 @@ namespace raytracer {
 
         GLFWwindow* GetWindow();
 
-    private:
-        Result<void> Init(const WindowConfig& config);
+        std::uint32_t GetWidth() const;
+        std::uint32_t GetHeight() const;
 
     private:
-        GLFWwindow* m_Window = nullptr;
+        Result<void> Init();
+
+    private:
+        GLFWwindow* m_Window;
+        std::string m_Title;
+        std::uint32_t m_Width;
+        std::uint32_t m_Height;
         std::function<void(Event&)> m_EventCallback;
     };
 
