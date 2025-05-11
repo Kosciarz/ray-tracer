@@ -42,14 +42,11 @@ namespace raytracer {
 #ifndef NDEBUG
         const fs::path shaderPath{SHADERS_DIR};
         const fs::path assetPath{ASSETS_DIR};
-#else
-#if _WIN32
-        const fs::path shaderPath{"C:\\dev\\Cpp\\RayTracer\\Shaders"};
-        const fs::path assetPath{"C:\\dev\\Cpp\\RayTracer\\Assets"};
 #endif
-#endif 
 
-        const auto& shaderSource = ShaderSources::Load({shaderPath / "vs.vert", shaderPath / "fs.frag"});
+
+        ShaderPaths paths{shaderPath / "vs.vert", shaderPath / "fs.frag"};
+        const auto& shaderSource = ShaderSources::Load(paths);
         if (!shaderSource)
             throw std::runtime_error{shaderSource.Error()};
 

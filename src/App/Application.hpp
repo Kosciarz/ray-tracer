@@ -7,6 +7,7 @@
 
 #include "Window.hpp"
 #include "LayerStack.hpp"
+#include "ImGuiLayer.hpp"
 
 #include "Renderer/OpenGLHeaders.hpp"
 
@@ -21,7 +22,7 @@ namespace raytracer {
     {
     public:
         Application();
-        ~Application();
+        ~Application() = default;
 
         Application(const Application&) = delete;
         Application& operator=(const Application&) = delete;
@@ -44,8 +45,6 @@ namespace raytracer {
     private:
         Result<void> Init();
 
-        void SetupImGui();
-
         bool OnWindowClose(WindowCloseEvent& e);
 
         bool OnWindowResize(WindowResizeEvent& e);
@@ -53,6 +52,7 @@ namespace raytracer {
     private:
         Scope<Window> m_Window;
         LayerStack m_LayerStack;
+        ImGuiLayer* m_ImGuiLayer;
 
         bool m_Running;
 

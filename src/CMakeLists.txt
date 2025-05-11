@@ -4,6 +4,7 @@ set(SOURCES
     "App/Layer.cpp"
     "App/LayerStack.cpp"
     "App/RayTracerLayer.cpp"
+    "App/ImGuiLayer.cpp"
 
     "Events/ApplicationEvents.cpp"
 
@@ -29,6 +30,7 @@ set(HEADERS
     "App/Layer.hpp"
     "App/LayerStack.hpp"
     "App/RayTracerLayer.hpp"
+    "App/ImGuiLayer.hpp"
 
     "Events/Event.hpp"
     "Events/ApplicationEvents.hpp"
@@ -45,6 +47,7 @@ set(HEADERS
     "Utils/Result.hpp"
     "Utils/Random.hpp"
     "Utils/Timer.hpp"
+    "Utils/Time.hpp"
 
     "Core/Color.hpp"
     "Core/Ray.hpp"

@@ -30,15 +30,8 @@ namespace fs = std::filesystem;
 namespace raytracer {
 
     Application::Application()
-        : m_Running{true}, m_LastFrameTime{0.0f}
+        : m_ImGuiLayer{nullptr}, m_Running{true}, m_LastFrameTime{0.0f}
     {
-    }
-    
-    Application::~Application()
-    {
-        ImGui_ImplOpenGL3_Shutdown();
-        ImGui_ImplGlfw_Shutdown();
-        ImGui::DestroyContext();
     }
 
     Application Application::Create()
@@ -64,8 +57,11 @@ namespace raytracer {
                 OnEvent(event);
             });
 
-        SetupImGui();
         PushLayer(MakeScope<RayTracerLayer>("RayTracerLayer"));
+
+        auto imguiLayer = MakeScope<ImGuiLayer>(m_Window->GetWindow());
+        m_ImGuiLayer = imguiLayer.get();
+        PushOverlay(std::move(imguiLayer));
 
         return Result<void>::Ok();
     }
@@ -78,23 +74,13 @@ namespace raytracer {
             float timeStep = time - m_LastFrameTime;
             m_LastFrameTime = time;
 
-            {
-                for (const auto& layer : m_LayerStack)
-                    layer->OnUpdate(timeStep);
-            }
+            for (const auto& layer : m_LayerStack)
+                layer->OnUpdate(timeStep);
 
-
-            {
-                ImGui_ImplOpenGL3_NewFrame();
-                ImGui_ImplGlfw_NewFrame();
-                ImGui::NewFrame();
-
-                for (const auto& layer : m_LayerStack)
-                    layer->OnUIRender();
-
-                ImGui::Render();
-                ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-            }
+            m_ImGuiLayer->Begin();
+            for (const auto& layer : m_LayerStack)
+                layer->OnUIRender();
+            m_ImGuiLayer->End();
 
             m_Window->PollEvents();
             m_Window->SwapBuffers();
@@ -149,19 +135,6 @@ namespace raytracer {
     {
         GL_CHECK(glViewport(0, 0, e.GetWidth(), e.GetHeight()));
         return false;
-    }
-
-    void Application::SetupImGui()
-    {
-        IMGUI_CHECKVERSION();
-        ImGui::CreateContext();
-        ImGuiIO& io = ImGui::GetIO();
-        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-        io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
-        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-
-        ImGui_ImplGlfw_InitForOpenGL(m_Window->GetWindow(), true);
-        ImGui_ImplOpenGL3_Init();
     }
 
 }
