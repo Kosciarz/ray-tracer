@@ -13,8 +13,7 @@
 #include <iostream>
 
 #include "Window.hpp"
-#include "GlfwContext.hpp"
-#include "Layer.hpp"
+#include "LayerStack.hpp"
 #include "RayTracerLayer.hpp"
 
 #include "Events/Event.hpp"
@@ -29,14 +28,6 @@ namespace fs = std::filesystem;
 
 namespace raytracer {
 
-    Application::~Application()
-    {
-        ImGui_ImplOpenGL3_Shutdown();
-        ImGui_ImplGlfw_Shutdown();
-        ImGui::DestroyContext();
-    }
-
-    
     Application::Application()
         : m_Running{true}, m_FrameTime{0.0f}, m_TimeStep{0.0f}, m_LastFrameTime{0.0f}
     {
@@ -44,7 +35,9 @@ namespace raytracer {
     
     Application::~Application()
     {
-        Shutdown();
+        ImGui_ImplOpenGL3_Shutdown();
+        ImGui_ImplGlfw_Shutdown();
+        ImGui::DestroyContext();
     }
 
     Application Application::Create()
@@ -54,21 +47,15 @@ namespace raytracer {
         if (!initResult)
             throw std::runtime_error{initResult.Error()};
 
-        app.PushLayer<RayTracerLayer>("RayTracerLayer");
         return app;
     }
 
     Result<void> Application::Init()
     {
-        auto glfwContext = GlfwContext::Create();
-        if (!glfwContext)
-            return Result<void>::Err(glfwContext.Error());
-
         auto window = Window::Create();
         if (!window)
             return Result<void>::Err(window.Error());
 
-        m_GlfwContext = glfwContext.ValueMove();
         m_Window = window.ValueMove();
         m_Window->SetEventCallback(
             [this](Event& event)
@@ -77,6 +64,7 @@ namespace raytracer {
             });
 
         SetupImGui();
+        PushLayer(MakeScope<RayTracerLayer>("RayTracerLayer"));
 
         return Result<void>::Ok();
     }
@@ -105,7 +93,7 @@ namespace raytracer {
                 ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
             }
 
-            float time = GetTime();
+            float time = glfwGetTime();
             m_FrameTime = time - m_LastFrameTime;
             m_TimeStep = std::min(time, 0.0333f);
             m_LastFrameTime = time;
@@ -164,16 +152,6 @@ namespace raytracer {
         return false;
     }
 
-    float Application::GetTime() const
-    {
-        return static_cast<float>(glfwGetTime());
-    }
-
-    GLFWwindow* Application::GetWindow() const
-    {
-        return m_Window->GetWindow();
-    }
-
     void Application::SetupImGui()
     {
         IMGUI_CHECKVERSION();
@@ -185,13 +163,6 @@ namespace raytracer {
 
         ImGui_ImplGlfw_InitForOpenGL(m_Window->GetWindow(), true);
         ImGui_ImplOpenGL3_Init();
-    }
-
-    void Application::Shutdown()
-    {
-        ImGui_ImplOpenGL3_Shutdown();
-        ImGui_ImplGlfw_Shutdown();
-        ImGui::DestroyContext();
     }
 
 }

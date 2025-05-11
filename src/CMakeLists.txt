@@ -1,7 +1,6 @@
 set(SOURCES
     "App/Application.cpp"
     "App/Window.cpp"
-    "App/GlfwContext.cpp"
     "App/Layer.cpp"
     "App/LayerStack.cpp"
     "App/RayTracerLayer.cpp"
@@ -27,7 +26,6 @@ set(SOURCES
 set(HEADERS
     "App/Application.hpp"
     "App/Window.hpp"
-    "App/GlfwContext.hpp"
     "App/Layer.hpp"
     "App/LayerStack.hpp"
     "App/RayTracerLayer.hpp"
