@@ -9,7 +9,8 @@
 
 #include "OpenGLHeaders.hpp"
 
-#include "Utils/Utils.hpp"
+#include "Utils/GLUtils.hpp"
+#include "Utils/RayTracerUtils.hpp"
 #include "Utils/Result.hpp"
 
 namespace fs = std::filesystem;
@@ -45,22 +46,22 @@ namespace raytracer {
     }
 
 
-    Result<Shader::ShaderPtr> Shader::Create(const ShaderSources& sources)
+    Result<Ref<Shader>> Shader::Create(const ShaderSources& sources)
     {
         auto vertexShader = CompileShader(GL_VERTEX_SHADER, sources.vertex);
         if (vertexShader.IsErr())
-            return Result<ShaderPtr>::Err(vertexShader.Error());
+            return Result<Ref<Shader>>::Err(vertexShader.Error());
 
         auto fragmentShader = CompileShader(GL_FRAGMENT_SHADER, sources.fragment);
         if (fragmentShader.IsErr())
-            return Result<ShaderPtr>::Err(fragmentShader.Error());
+            return Result<Ref<Shader>>::Err(fragmentShader.Error());
 
         auto program = LinkProgram(vertexShader.Value(), fragmentShader.Value());
         if (program.IsErr())
-            return Result<ShaderPtr>::Err(program.Error());
+            return Result<Ref<Shader>>::Err(program.Error());
 
         auto shader = std::make_shared<Shader>(program.Value());
-        return Result<ShaderPtr>::Ok(shader);
+        return Result<Ref<Shader>>::Ok(shader);
     }
 
     Shader::Shader(const GLuint program)
@@ -71,12 +72,10 @@ namespace raytracer {
     Shader::~Shader()
     {
         if (m_ProgramID != 0)
-        {
             GL_CHECK(glDeleteProgram(m_ProgramID));
-        }
     }
 
-    GLuint Shader::GetID() const
+    const GLuint& Shader::GetID() const
     {
         return m_ProgramID;
     }

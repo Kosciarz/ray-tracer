@@ -1,10 +1,12 @@
 #pragma once
 
 #include <filesystem>
-#include <memory>
 #include <cstdint>
+#include <utility>
 
 #include "OpenGLHeaders.hpp"
+
+#include "Utils/RayTracerUtils.hpp"
 
 namespace raytracer {
 
@@ -18,10 +20,10 @@ namespace raytracer {
     class Image
     {
     public:
-        static std::shared_ptr<Image> Create(const std::int32_t m_Width, const std::int32_t height,
+        static Ref<Image> Create(const std::int32_t m_Width, const std::int32_t height,
             const ImageFormat format, const void* data, const std::uint32_t unitIndex);
 
-        static std::shared_ptr<Image> Create(const std::filesystem::path& path, const std::uint32_t unitIndex);
+        static Ref<Image> Create(const std::filesystem::path& path, const std::uint32_t unitIndex);
 
         Image(const std::filesystem::path& path, const std::uint32_t unitIndex);
 
@@ -38,13 +40,16 @@ namespace raytracer {
 
         void SetData(const void* data) const;
 
-        void SetParameter(const GLenum pname, const GLint param) const;
+        void SetParameter(const GLenum name, const GLint value) const;
 
-        std::uint32_t GetWidth() const;
+        const std::int32_t& Width() const;
 
-        std::uint32_t GetHeight() const;
+        const std::int32_t& Height() const;
 
-        GLuint GetHandle() const;
+        const GLuint& Handle() const;
+
+    private:
+        std::pair<GLenum, GLenum> GetGLFormats() const;
 
     private:
         std::int32_t m_Width = 0;

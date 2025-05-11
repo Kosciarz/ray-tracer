@@ -1,16 +1,17 @@
 #pragma once
 
 #include <cstddef>
-#include <memory>
 
 #include "OpenGLHeaders.hpp"
+
+#include "Utils/RayTracerUtils.hpp"
 
 namespace raytracer {
 
     class VertexBuffer
     {
     public:
-        static std::shared_ptr<VertexBuffer> Create(const void* data, const std::size_t size);
+        static Ref<VertexBuffer> Create(const void* data, const std::size_t size);
 
         VertexBuffer(const void* data, const std::size_t size);
 
@@ -26,25 +27,21 @@ namespace raytracer {
         GLuint m_BufferID;
     };
 
+
     class IndexBuffer
     {
     public:
-        static std::shared_ptr<IndexBuffer> Create(const std::size_t size, 
-            const void* data, const GLenum usage);
+        static Ref<IndexBuffer> Create(const std::size_t size, const void* data);
 
-        IndexBuffer() = default;
-
-        IndexBuffer(const std::size_t size, const void* data, const GLenum usage);
+        IndexBuffer(const std::size_t size, const void* data);
 
         ~IndexBuffer();
-
-        std::size_t Size() const;
-
-        GLenum IndexType() const;
 
         void Bind() const;
 
         void Unbind() const;
+
+        const std::size_t& Size() const;
 
     private:
         GLuint m_BufferID;

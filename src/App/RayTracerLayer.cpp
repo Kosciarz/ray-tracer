@@ -11,12 +11,8 @@
 #include <cstdint>
 #include <vector>
 
-#include "Core/Color.hpp"
-#include "Core/Ray.hpp"
-
-#include "Utils/Timer.hpp"
-#include "Utils/Random.hpp"
-#include "Utils/Utils.hpp"
+#include "Events/Event.hpp"
+#include "Events/ApplicationEvents.hpp"
 
 #include "Renderer/VertexArray.hpp"
 #include "Renderer/Buffer.hpp"
@@ -24,23 +20,33 @@
 #include "Renderer/Shader.hpp"
 #include "Renderer/Renderer.hpp"
 
+#include "Utils/Timer.hpp"
+#include "Utils/Random.hpp"
+#include "Utils/RayTracerUtils.hpp"
+#include "Utils/GLUtils.hpp"
+
+#include "Core/Color.hpp"
+#include "Core/Ray.hpp"
+#include "Core/Sphere.hpp"
+
 namespace fs = std::filesystem;
 
 namespace raytracer {
+    RayTracerLayer::RayTracerLayer(const std::string& name)
+        : Layer{name}, m_ViewportWidth{1280}, m_ViewportHeight{720}
+    {
+    }
 
     void RayTracerLayer::OnAttach()
     {
 #ifndef NDEBUG
         const fs::path shaderPath{SHADERS_DIR};
         const fs::path assetPath{ASSETS_DIR};
-#else
-#if _WIN32
-        const fs::path shaderPath{"C:\\dev\\Cpp\\RayTracer\\Shaders"};
-        const fs::path assetPath{"C:\\dev\\Cpp\\RayTracer\\Assets"};
 #endif
-#endif 
 
-        const auto& shaderSource = ShaderSources::Load({shaderPath / "vs.vert", shaderPath / "fs.frag"});
+
+        ShaderPaths paths{shaderPath / "vs.vert", shaderPath / "fs.frag"};
+        const auto& shaderSource = ShaderSources::Load(paths);
         if (!shaderSource)
             throw std::runtime_error{shaderSource.Error()};
 
@@ -63,6 +69,17 @@ namespace raytracer {
         auto vertexBuffer = VertexBuffer::Create(vertices.data(), vertices.size() * sizeof(float));
         m_VertexArray->AddVertexBuffer(vertexBuffer, 0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
         m_VertexArray->AddVertexBuffer(vertexBuffer, 1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+
+        BuildScene();
+    }
+
+    void RayTracerLayer::BuildScene()
+    {
+        m_World.Clear();
+
+        m_World.Add(MakeRef<Sphere>(glm::vec3{0, 0, -1}, 0.5));
+        m_World.Add(MakeRef<Sphere>(glm::vec3{0, -100.5, -1}, 100));
+        m_World.Add(MakeRef<Sphere>(Random::Vec3(), 2));
     }
 
     void RayTracerLayer::OnDetach()
@@ -72,14 +89,10 @@ namespace raytracer {
         m_Image.reset();
     }
 
-    void raytracer::RayTracerLayer::OnUpdate(float timeStep, std::uint32_t width, std::uint32_t height)
+    void RayTracerLayer::OnUpdate(float timeStep)
     {
-        if (!m_Image || m_ViewportWidth != width || m_ViewportHeight != height)
-        {
-            m_ViewportWidth = width;
-            m_ViewportHeight = height;
+        if (!m_Image)
             Render();
-        }
 
         m_VertexArray->Bind();
         m_Shader->Use();
@@ -96,23 +109,44 @@ namespace raytracer {
         {
             Render();
         }
+        if (ImGui::Button("Build Scene"))
+        {
+            BuildScene();
+        }
         ImGui::End();
+    }
+
+    void RayTracerLayer::OnEvent(Event& e)
+    {
+        EventDispatcher dispatcher(e);
+        dispatcher.Dispatch<WindowResizeEvent>(
+            [this](WindowResizeEvent& e)
+            {
+                m_ViewportWidth = e.GetWidth();
+                m_ViewportHeight = e.GetHeight();
+
+                return false;
+            });
     }
 
     void RayTracerLayer::Render()
     {
         Timer timer;
 
-        auto aspectRatio = 16.0 / 9.0;
-        std::int32_t imageWidth = m_ViewportWidth;
-
-        std::int32_t imageHeight = static_cast<std::int32_t>(imageWidth / aspectRatio);
+        // 16/9 = imageWidth / imageHeight (ideal aspect ratio)
+        float aspectRatio = 16.0 / 9.0;
+        std::uint32_t imageWidth = m_ViewportWidth;
+        std::uint32_t imageHeight = static_cast<std::int32_t>(imageWidth / aspectRatio);
         imageHeight = (imageHeight < 1) ? 1 : imageHeight;
 
-        // Camera
-        auto focalLenght = 1.0;
-        auto viewportHeight = 2.0;
-        auto viewportWidth = viewportHeight * (static_cast<float>(imageWidth) / imageHeight);
+        // Camera initialization
+        // Focal lenght is the distance of the camera from the virtual viewport
+        // The virtual viewport is an imaginary plane that we shoot rays onto and get the color back
+        // The height is set to 2 so that the bottom is -1 and and top is 1
+        // and the distance of each ray from the camera center to it's pixel is not too high
+        float focalLenght = 1.0;
+        float viewportHeight = 2.0;
+        float viewportWidth = viewportHeight * (static_cast<float>(imageWidth) / imageHeight);
         glm::vec3 cameraCenter{0, 0, 0};
 
         // Vectors across the horizontal and down the vertical viewport edges (from top-left corner)
@@ -124,8 +158,8 @@ namespace raytracer {
         glm::vec3 pixelDeltaV = viewportV / static_cast<float>(imageHeight);
 
         // Calculate the top left corner of the viewport (Q on the example)
-        glm::vec3 viewportUpperLeft = cameraCenter - glm::vec3{0, 0, focalLenght} 
-            - viewportU / static_cast<float>(2.0) - viewportV / static_cast<float>(2.0);
+        glm::vec3 viewportUpperLeft = cameraCenter - glm::vec3{0, 0, focalLenght}
+        - viewportU / static_cast<float>(2.0) - viewportV / static_cast<float>(2.0);
 
         // Calulucate the P(0,0) pixel 
         glm::vec3 pixel00Location = viewportUpperLeft + (pixelDeltaU + pixelDeltaV) / static_cast<float>(2.0);
@@ -134,32 +168,35 @@ namespace raytracer {
         m_Image = Image::Create(imageWidth, imageHeight, ImageFormat::RGBA, nullptr, 0);
         m_ImageData = std::vector<std::uint8_t>(imageWidth * imageHeight * 4, 0);
 
-        for (std::int32_t y = 0; y < imageHeight; y++)
+        for (std::uint32_t y = 0; y < imageHeight; y++)
         {
-            for (std::int32_t x = 0; x < imageWidth; x++)
+            for (std::uint32_t x = 0; x < imageWidth; x++)
             {
-                glm::vec3 pixelCenter = pixel00Location 
+                glm::vec3 pixelCenter = pixel00Location
                     + (static_cast<float>(x) * pixelDeltaU) + (static_cast<float>(y) * pixelDeltaV);
 
                 glm::vec3 rayDirection = glm::normalize(pixelCenter - cameraCenter);
                 Ray r{cameraCenter, rayDirection};
 
-                auto pixelColor = RayColor(r);
-                auto convertedColor = ScaleColor(pixelColor);
+                Color pixelColor = RayColor(r, m_World);
+                Color convertedColor = ScaleColor(pixelColor);
 
-
-                const auto i = (imageHeight - y - 1) * imageWidth + x;
-                m_ImageData[i * 4 + 0] = convertedColor.r;
-                m_ImageData[i * 4 + 1] = convertedColor.g;
-                m_ImageData[i * 4 + 2] = convertedColor.b;
-                m_ImageData[i * 4 + 3] = 255;
+                const std::size_t i = (imageHeight - y - 1) * imageWidth + x;
+                UpdateBuffer(i, convertedColor);
             }
         }
 
-        m_Image->Bind();
         m_Image->SetData(m_ImageData.data());
 
         m_LastRenderTime = timer.ElapsedMilliseconds();
+    }
+
+    void RayTracerLayer::UpdateBuffer(const std::size_t i, const Color& color)
+    {
+        m_ImageData[i * 4 + 0] = color.r;
+        m_ImageData[i * 4 + 1] = color.g;
+        m_ImageData[i * 4 + 2] = color.b;
+        m_ImageData[i * 4 + 3] = 255;
     }
 
 }

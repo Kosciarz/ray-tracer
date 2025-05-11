@@ -8,6 +8,7 @@
 #include "OpenGLHeaders.hpp"
 
 #include "Utils/Result.hpp"
+#include "Utils/RayTracerUtils.hpp"
 
 namespace raytracer {
 
@@ -28,10 +29,7 @@ namespace raytracer {
     class Shader
     {
     public:
-        using ShaderPtr = std::shared_ptr<Shader>;
-
-    public:
-        static Result<ShaderPtr> Create(const ShaderSources& sources);
+        static Result<Ref<Shader>> Create(const ShaderSources& sources);
 
         Shader() = default;
 
@@ -39,7 +37,7 @@ namespace raytracer {
 
         ~Shader();
 
-        GLuint GetID() const;
+        const GLuint& GetID() const;
 
         void Use() const;
 

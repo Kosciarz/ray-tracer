@@ -1,12 +1,17 @@
 #pragma once
 
+#include <string>
 #include <cstdint>
+
+#include "Events/Event.hpp"
 
 namespace raytracer {
 
     class Layer
     {
     public:
+        Layer(const std::string& name = "Layer");
+
         virtual ~Layer() = default;
 
         virtual void OnAttach()
@@ -17,7 +22,7 @@ namespace raytracer {
         {
         }
 
-        virtual void OnUpdate(float timeStep, std::uint32_t width, std::uint32_t height)
+        virtual void OnUpdate(float timeStep)
         {
         }
 
@@ -25,6 +30,14 @@ namespace raytracer {
         {
         }
 
+        virtual void OnEvent(Event& e)
+        {
+        }
+
+        const std::string& GetName() const;
+
+    protected:
+        std::string m_Name;
     };
 
 }

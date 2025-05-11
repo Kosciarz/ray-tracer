@@ -1,13 +1,12 @@
 #pragma once
 
 #include <iostream>
-#include <string>
 
 #include "Renderer/OpenGLHeaders.hpp"
 
-namespace raytracer {
+namespace glutils {
 
-    inline const char* GetGLErrorString(GLenum error)
+    inline const char* GetGLErrorString(const GLenum error)
     {
         switch (error)
         {
@@ -34,7 +33,7 @@ namespace raytracer {
             ::std::cerr << "OpenGL error in file " << __FILE__ \
                       << " at line " << __LINE__ \
                       << " after calling " #x ": " \
-                      << raytracer::GetGLErrorString(error)  \
+                      << glutils::GetGLErrorString(error)  \
                       << " (" << error << ")" \
                       << ::std::endl; \
         } \
@@ -42,22 +41,4 @@ namespace raytracer {
 
 #else
 #define GL_CHECK(x) x;
-#endif
-
-#ifndef NDEBUG
-#include <cassert>
-
-#define RAYTRACER_ASSERT(x, msg)                         \
-        do {                                            \
-            if (!(x)) {                                 \
-                std::cerr << "Assertion failed: "       \
-                          << #x << "\nMessage: "        \
-                          << msg << "\nFile: "          \
-                          << __FILE__ << "\nLine: "     \
-                          << __LINE__ << std::endl;     \
-                assert(x);                              \
-            }                                           \
-        } while (0)
-#else
-#define RAYTRACER_ASSERT(x, msg) ((void)0)
 #endif

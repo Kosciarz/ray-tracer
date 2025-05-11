@@ -70,6 +70,11 @@ namespace raytracer {
             return glm::vec3{Float(), Float(), Float()};
         }
 
+        static glm::vec3 Vec3(const float min, const float max) noexcept
+        {
+            return glm::vec3{Float(min, max), Float(min, max), Float(min, max)};
+        }
+
     private:
         inline thread_local static std::mt19937 s_Generator{std::random_device{}()};
     };

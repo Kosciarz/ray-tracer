@@ -1,24 +1,25 @@
 #include "Image.hpp"
 
 #include <filesystem>
-#include <memory>
+#include <utility>
 
 #include "OpenGLHeaders.hpp"
 #include <stb_image.h>
 
-#include "Utils/Utils.hpp"
+#include "Utils/RayTracerUtils.hpp"
+#include "Utils/GLUtils.hpp"
 
 namespace raytracer {
 
-    std::shared_ptr<Image> Image::Create(const std::int32_t width, const std::int32_t height,
+    Ref<Image> Image::Create(const std::int32_t width, const std::int32_t height,
         const ImageFormat format, const void* data, const std::uint32_t unitIndex)
     {
-        return std::make_shared<Image>(width, height, format, data, unitIndex);
+        return MakeRef<Image>(width, height, format, data, unitIndex);
     }
 
-    std::shared_ptr<Image> Image::Create(const std::filesystem::path& path, const std::uint32_t unitIndex)
+    Ref<Image> Image::Create(const std::filesystem::path& path, const std::uint32_t unitIndex)
     {
-        return std::make_shared<Image>(path, unitIndex);
+        return MakeRef<Image>(path, unitIndex);
     }
 
     Image::Image(const std::filesystem::path& path, const std::uint32_t unitIndex)
@@ -33,33 +34,28 @@ namespace raytracer {
 
         stbi_set_flip_vertically_on_load(true);
 
-        std::int32_t nrChannels;
+        std::int32_t nrChannels = 0;
         std::uint8_t* textureData = stbi_load(path.string().c_str(), &m_Width, &m_Height, &nrChannels, 0);
+        if (!textureData)
+            throw std::runtime_error{"Failed to load texture with path: " + path.string()};
 
-        if (nrChannels == 3)
+        switch (nrChannels) {
+        case 3:
             m_Format = ImageFormat::RGB;
-        else if (nrChannels == 4)
+            break;
+        case 4:
             m_Format = ImageFormat::RGBA;
-
-
-        if (textureData)
-        {
-            GLenum imageFormat = static_cast<GLenum>(m_Format);
-            GLenum internalFormat = GL_NONE;
-            if (m_Format == ImageFormat::RGB)
-                internalFormat = GL_RGB8;
-            else if (m_Format == ImageFormat::RGBA)
-                internalFormat = GL_RGBA8;
-
-            GL_CHECK(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_Width, m_Height, 0, imageFormat, GL_UNSIGNED_BYTE, textureData));
-            GL_CHECK(glGenerateMipmap(GL_TEXTURE_2D));
+            break;
+        default:
+            throw std::runtime_error{"Error: Unsupported number of channels: " + std::to_string(nrChannels)};
         }
-        else
-        {
-            std::cerr << "Error: failed to load texture: " << path << '\n';
-        }
+
+        auto [imageFormat, internalFormat] = GetGLFormats();
+        GL_CHECK(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_Width, m_Height, 0, imageFormat, GL_UNSIGNED_BYTE, textureData));
+        GL_CHECK(glGenerateMipmap(GL_TEXTURE_2D));
 
         stbi_image_free(textureData);
+        Unbind();
     }
 
     Image::Image(const std::int32_t width, const std::int32_t height,
@@ -72,13 +68,7 @@ namespace raytracer {
         GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
         GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
 
-        GLenum imageFormat = static_cast<GLenum>(m_Format);
-        GLenum internalFormat = GL_NONE;
-        if (m_Format == ImageFormat::RGB)
-            internalFormat = GL_RGB8;
-        else if (m_Format == ImageFormat::RGBA)
-            internalFormat = GL_RGBA8;
-
+        auto [imageFormat, internalFormat] = GetGLFormats();
         GL_CHECK(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_Width, m_Height, 0, imageFormat, GL_UNSIGNED_BYTE, data));
     }
 
@@ -101,34 +91,44 @@ namespace raytracer {
 
     void Image::SetData(const void* data) const
     {
-        GLenum imageFormat = static_cast<GLenum>(m_Format);
-        GLenum internalFormat = GL_NONE;
-        if (m_Format == ImageFormat::RGB)
-            internalFormat = GL_RGB8;
-        else if (m_Format == ImageFormat::RGBA)
-            internalFormat = GL_RGBA8;
-
-        GL_CHECK(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_Width, m_Height, 0, imageFormat, GL_UNSIGNED_BYTE, data));
+        Bind();
+        auto [imageFormat, _] = GetGLFormats();
+        GL_CHECK(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_Width, m_Height, imageFormat, GL_UNSIGNED_BYTE, data));
     }
 
-    void Image::SetParameter(const GLenum pname, const GLint param) const
+    void Image::SetParameter(const GLenum name, const GLint value) const
     {
-        GL_CHECK(glTexParameteri(GL_TEXTURE_2D, pname, param));
+        Bind();
+        GL_CHECK(glTexParameteri(GL_TEXTURE_2D, name, value));
     }
 
-    std::uint32_t Image::GetWidth() const
+    const std::int32_t& Image::Width() const
     {
         return m_Width;
     }
 
-    std::uint32_t Image::GetHeight() const
+    const std::int32_t& Image::Height() const
     {
         return m_Height;
     }
 
-    GLuint Image::GetHandle() const
+    const GLuint& Image::Handle() const
     {
         return m_Handle;
+    }
+
+    std::pair<GLenum, GLenum> Image::GetGLFormats() const
+    {
+        switch (m_Format)
+        {
+        case ImageFormat::RGB:
+            return {GL_RGB, GL_RGB8};
+        case ImageFormat::RGBA:
+            return {GL_RGBA, GL_RGBA8};
+        default:
+            RAYTRACER_ASSERT(false, "Unsupported ImageFormat");
+            return {GL_NONE, GL_NONE};
+        }
     }
 
 }

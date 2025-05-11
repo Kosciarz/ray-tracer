@@ -13,16 +13,26 @@
 #include <iostream>
 
 #include "Window.hpp"
-#include "GlfwContext.hpp"
-#include "Layer.hpp"
+#include "LayerStack.hpp"
 #include "RayTracerLayer.hpp"
-#include "Utils/Utils.hpp"
+
+#include "Events/Event.hpp"
+#include "Events/ApplicationEvents.hpp"
+
+#include "Utils/RayTracerUtils.hpp"
+#include "Utils/GLUtils.hpp"
 #include "Utils/Result.hpp"
 #include "Utils/Timer.hpp"
+#include "Utils/Time.hpp"
 
 namespace fs = std::filesystem;
 
 namespace raytracer {
+
+    Application::Application()
+        : m_ImGuiLayer{nullptr}, m_Running{true}, m_LastFrameTime{0.0f}
+    {
+    }
 
     Application Application::Create()
     {
@@ -31,65 +41,48 @@ namespace raytracer {
         if (!initResult)
             throw std::runtime_error{initResult.Error()};
 
-        app.PushLayer<RayTracerLayer>();
         return app;
     }
 
     Result<void> Application::Init()
     {
-        auto glfwContext = GlfwContext::Create();
-        if (glfwContext.IsErr())
-            return Result<void>::Err(glfwContext.Error());
-
         auto window = Window::Create();
-        if (window.IsErr())
+        if (!window)
             return Result<void>::Err(window.Error());
 
-        m_GlfwContext = glfwContext.ValueMove();
         m_Window = window.ValueMove();
-        glfwSetKeyCallback(m_Window->GetWindowHandle(), [](GLFWwindow* window, int key, int scancode, int action, int mods) {
-            if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
-                glfwSetWindowShouldClose(window, true);
-        });
+        m_Window->SetEventCallback(
+            [this](Event& event)
+            {
+                OnEvent(event);
+            });
 
-        SetupImGui();
+        PushLayer(MakeScope<RayTracerLayer>("RayTracerLayer"));
+
+        auto imguiLayer = MakeScope<ImGuiLayer>(m_Window->GetWindow());
+        m_ImGuiLayer = imguiLayer.get();
+        PushOverlay(std::move(imguiLayer));
 
         return Result<void>::Ok();
     }
 
     void Application::Run()
     {
-        m_Running = true;
-
-        while (!m_Window->ShouldClose() && m_Running)
+        while (m_Running)
         {
-            m_Window->PollEvents();
-
-            {
-                std::int32_t viewportWidth, viewportHeight;
-                glfwGetWindowSize(m_Window->GetWindowHandle(), &viewportWidth, &viewportHeight);
-
-                for (const auto& layer : m_LayerStack)
-                    layer->OnUpdate(m_TimeStep, viewportWidth, viewportHeight);
-            }
-
-            ImGui_ImplOpenGL3_NewFrame();
-            ImGui_ImplGlfw_NewFrame();
-            ImGui::NewFrame();
-
-            {
-                for (const auto& layer : m_LayerStack)
-                    layer->OnUIRender();
-
-                ImGui::Render();
-                ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-            }
-
-            float time = GetTime();
-            m_FrameTime = time - m_LastFrameTime;
-            m_TimeStep = std::min(time, 0.0333f);
+            float time = time::GetTime();
+            float timeStep = time - m_LastFrameTime;
             m_LastFrameTime = time;
 
+            for (const auto& layer : m_LayerStack)
+                layer->OnUpdate(timeStep);
+
+            m_ImGuiLayer->Begin();
+            for (const auto& layer : m_LayerStack)
+                layer->OnUIRender();
+            m_ImGuiLayer->End();
+
+            m_Window->PollEvents();
             m_Window->SwapBuffers();
         }
     }
@@ -99,45 +92,49 @@ namespace raytracer {
         m_Running = false;
     }
 
-    void Application::PushLayer(const std::shared_ptr<Layer>& layer)
+    void Application::PushLayer(Scope<Layer> layer)
     {
-        m_LayerStack.emplace_back(layer);
-        layer->OnAttach();
+        m_LayerStack.PushLayer(std::move(layer));
     }
 
-    float Application::GetTime() const
+    void Application::PushOverlay(Scope<Layer> layer)
     {
-        return static_cast<float>(glfwGetTime());
+        m_LayerStack.PushOverlay(std::move(layer));
     }
 
-    GLFWwindow* Application::GetWindowHandle() const
+    void Application::OnEvent(Event& e)
     {
-        return m_Window->GetWindowHandle();
+        EventDispatcher dispatcher(e);
+        dispatcher.Dispatch<WindowCloseEvent>(
+            [this](WindowCloseEvent& e)
+            {
+                return OnWindowClose(e);
+            });
+
+        dispatcher.Dispatch<WindowResizeEvent>(
+            [this](WindowResizeEvent& e)
+            {
+                return OnWindowResize(e);
+            });
+
+        for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); it++)
+        {
+            if (e.Handled)
+                break;
+            (*it)->OnEvent(e);
+        }
     }
 
-    void Application::SetupImGui()
+    bool Application::OnWindowClose(WindowCloseEvent& e)
     {
-        IMGUI_CHECKVERSION();
-        ImGui::CreateContext();
-        ImGuiIO& io = ImGui::GetIO();
-        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-        io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
-        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-
-        ImGui_ImplGlfw_InitForOpenGL(m_Window->GetWindowHandle(), true);
-        ImGui_ImplOpenGL3_Init();
+        m_Running = false;
+        return true;
     }
 
-    Application::~Application()
+    bool Application::OnWindowResize(WindowResizeEvent& e)
     {
-        Shutdown();
-    }
-
-    void Application::Shutdown()
-    {
-        ImGui_ImplOpenGL3_Shutdown();
-        ImGui_ImplGlfw_Shutdown();
-        ImGui::DestroyContext();
+        GL_CHECK(glViewport(0, 0, e.GetWidth(), e.GetHeight()));
+        return false;
     }
 
 }

@@ -1,32 +1,39 @@
 set(SOURCES
     "App/Application.cpp"
     "App/Window.cpp"
-    "App/GlfwContext.cpp"
+    "App/Layer.cpp"
+    "App/LayerStack.cpp"
     "App/RayTracerLayer.cpp"
+    "App/ImGuiLayer.cpp"
 
-    "Utils/StbImageImpl.cpp"
-    
+    "Events/ApplicationEvents.cpp"
+
     "Renderer/Image.cpp"
     "Renderer/Renderer.cpp"
     "Renderer/Shader.cpp"
     "Renderer/Buffer.cpp"
     "Renderer/VertexArray.cpp"
 
+    "Utils/StbImageImpl.cpp"
+
     "Core/Color.cpp"
     "Core/Ray.cpp"
+    "Core/Hittable.cpp"
+    "Core/HittableList.cpp"
+    "Core/Sphere.cpp"
+    "Core/Interval.cpp"
 )
 
 set(HEADERS
     "App/Application.hpp"
     "App/Window.hpp"
-    "App/GlfwContext.hpp"
     "App/Layer.hpp"
+    "App/LayerStack.hpp"
     "App/RayTracerLayer.hpp"
+    "App/ImGuiLayer.hpp"
 
-    "Utils/Result.hpp"
-    "Utils/Utils.hpp"
-    "Utils/Random.hpp"
-    "Utils/Timer.hpp"
+    "Events/Event.hpp"
+    "Events/ApplicationEvents.hpp"
 
     "Renderer/OpenGLHeaders.hpp"
     "Renderer/Image.hpp"
@@ -34,16 +41,28 @@ set(HEADERS
     "Renderer/Shader.hpp"
     "Renderer/Buffer.hpp"
     "Renderer/VertexArray.hpp"
+    
+    "Utils/RayTracerUtils.hpp"
+    "Utils/GLUtils.hpp"
+    "Utils/Result.hpp"
+    "Utils/Random.hpp"
+    "Utils/Timer.hpp"
+    "Utils/Time.hpp"
 
     "Core/Color.hpp"
     "Core/Ray.hpp"
+    "Core/Hittable.hpp"
+    "Core/HittableList.hpp"
+    "Core/Sphere.hpp"
+    "Core/Interval.hpp"
 )
 
-foreach(SOURCE IN LISTS SOURCES)
+foreach(SOURCE IN LISTS SOURCES HEADERS)
     message(STATUS "Adding file ${SOURCE}")
 endforeach()
 
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES} ${HEADERS})
+
 
 add_library(RayCore STATIC ${SOURCES} ${HEADERS})
 target_compile_definitions(RayCore PRIVATE 

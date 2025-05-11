@@ -1,38 +1,45 @@
 #pragma once
 
 #include <cstdint>
-#include <memory>
+#include <functional>
+#include <string>
+
+#include "Events/Event.hpp"
 
 #include "Renderer/OpenGLHeaders.hpp"
 
 #include "Utils/Result.hpp"
+#include "Utils/RayTracerUtils.hpp"
 
 namespace raytracer {
 
     struct WindowConfig
     {
-        std::uint32_t width;
-        std::uint32_t height;
-        std::string title;
+        std::string Title;
+        std::uint32_t Width;
+        std::uint32_t Height;
 
-        WindowConfig();
-
-        WindowConfig(const std::uint32_t width, const std::uint32_t height, std::string title);
+        WindowConfig(const std::string& title = "Ray Tracer", 
+            const std::uint32_t width = 1280, 
+            const std::uint32_t height = 720);
     };
+
 
     class Window
     {
     public:
-        using WindowPtr = std::unique_ptr<Window>;
-
-    public:
-        static Result<WindowPtr> Create(const WindowConfig& config = WindowConfig());
-
-        Window() = default;
-
-        explicit Window(GLFWwindow* window);
-
+        Window(const WindowConfig& config);   
         ~Window();
+
+        Window(const Window&) = delete;
+        Window& operator=(const Window&) = delete;
+
+        Window(Window&&) noexcept = default;
+        Window& operator=(Window&&) noexcept = default;
+
+        static Result<Scope<Window>> Create(const WindowConfig& config = WindowConfig());
+
+        void SetEventCallback(const std::function<void(Event&)>& callback);
 
         bool ShouldClose() const;
 
@@ -40,21 +47,20 @@ namespace raytracer {
 
         void SwapBuffers() const;
 
-        void SetUserPointer(void* userPtr) const;
+        GLFWwindow* GetWindow();
 
-        void* GetUserPointer();
-
-        template <typename T>
-        T* GetUserPointerAs() const;
-
-        GLFWwindow* GetWindowHandle();
+        std::uint32_t GetWidth() const;
+        std::uint32_t GetHeight() const;
 
     private:
-        Result<void> Init(const WindowConfig& config);
+        Result<void> Init();
 
     private:
-        GLFWwindow* m_WindowHandle;
-        void* m_UserPointer;
+        GLFWwindow* m_Window;
+        std::string m_Title;
+        std::uint32_t m_Width;
+        std::uint32_t m_Height;
+        std::function<void(Event&)> m_EventCallback;
     };
 
 }

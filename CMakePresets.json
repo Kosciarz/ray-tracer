@@ -1,0 +1,105 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 20
+  },
+  "configurePresets": [
+    {
+      "name": "ninja-debug",
+      "displayName": "Ninja Debug",
+      "description": "Build using Ninja in Debug mode.",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/out/ninja/debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "ninja-release",
+      "displayName": "Ninja Release",
+      "description": "Build using Ninja in Release mode.",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/out/ninja/release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "x64-debug",
+      "displayName": "x64 Debug",
+      "description": "Build with Visual Studio 2022 (MSBuild) in Debug mode for x64 architecture.",
+      "generator": "Visual Studio 17 2022",
+      "architecture": "x64",
+      "binaryDir": "${sourceDir}/out/x64/debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "x64-release",
+      "displayName": "x64 Release",
+      "description": "Build with Visual Studio 2022 (MSBuild) in Release mode for x64 architecture.",
+      "generator": "Visual Studio 17 2022",
+      "architecture": "x64",
+      "binaryDir": "${sourceDir}/out/x64/release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "x86-debug",
+      "displayName": "x86 Debug",
+      "description": "Build with Visual Studio 2022 (MSBuild) in Debug mode for x86 architecture.",
+      "generator": "Visual Studio 17 2022",
+      "architecture": "Win32",
+      "binaryDir": "${sourceDir}/out/x86/debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "x86-release",
+      "displayName": "x86 Release",
+      "description": "Build with Visual Studio 2022 (MSBuild) in Release mode for x86 architecture.",
+      "generator": "Visual Studio 17 2022",
+      "architecture": "Win32",
+      "binaryDir": "${sourceDir}/out/x86/release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "ninja-debug",
+      "displayName": "Ninja Debug",
+      "configurePreset": "ninja-debug"
+    },
+    {
+      "name": "ninja-release",
+      "displayName": "Ninja Release",
+      "configurePreset": "ninja-release"
+    },
+    {
+      "name": "x64-debug",
+      "displayName": "x64 Debug",
+      "configurePreset": "x64-debug"
+    },
+    {
+      "name": "x64-release",
+      "displayName": "x64 Release",
+      "configurePreset": "x64-release"
+    },
+    {
+      "name": "x86-debug",
+      "displayName": "x86 Debug",
+      "configurePreset": "x86-debug"
+    },
+    {
+      "name": "x86-release",
+      "displayName": "x86 Release",
+      "configurePreset": "x86-release"
+    }
+  ]
+}
