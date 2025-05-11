@@ -17,7 +17,7 @@ namespace raytracer {
     class Application
     {
     public:
-        Application() = default;
+        Application();
 
         ~Application();
 
@@ -54,13 +54,13 @@ namespace raytracer {
         void Shutdown();
 
     private:
-        Scope<GlfwContext> m_GlfwContext = nullptr;
-        Scope<Window> m_Window = nullptr;
-        bool m_Running = false;
+        Scope<GlfwContext> m_GlfwContext;
+        Scope<Window> m_Window;
+        bool m_Running;
 
-        float m_FrameTime = 0.0;
-        float m_TimeStep = 0.0;
-        float m_LastFrameTime = 0.0;
+        float m_FrameTime;
+        float m_TimeStep;
+        float m_LastFrameTime;
 
         std::vector<Ref<Layer>> m_LayerStack;
     };

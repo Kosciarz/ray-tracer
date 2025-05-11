@@ -3,5 +3,5 @@ out/
 CMakeUserPresets.json
 
 .vs/
-.vs-code/
+.vscode/
 .idea/

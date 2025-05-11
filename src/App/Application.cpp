@@ -24,6 +24,16 @@
 namespace fs = std::filesystem;
 
 namespace raytracer {
+    
+    Application::Application()
+        : m_Running{true}, m_FrameTime{0.0f}, m_TimeStep{0.0f}, m_LastFrameTime{0.0f}
+    {
+    }
+    
+    Application::~Application()
+    {
+        Shutdown();
+    }
 
     Application Application::Create()
     {
@@ -127,11 +137,6 @@ namespace raytracer {
 
         ImGui_ImplGlfw_InitForOpenGL(m_Window->GetWindow(), true);
         ImGui_ImplOpenGL3_Init();
-    }
-
-    Application::~Application()
-    {
-        Shutdown();
     }
 
     void Application::Shutdown()
