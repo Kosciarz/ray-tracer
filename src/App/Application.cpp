@@ -23,13 +23,14 @@
 #include "Utils/GLUtils.hpp"
 #include "Utils/Result.hpp"
 #include "Utils/Timer.hpp"
+#include "Utils/Time.hpp"
 
 namespace fs = std::filesystem;
 
 namespace raytracer {
 
     Application::Application()
-        : m_Running{true}, m_FrameTime{0.0f}, m_TimeStep{0.0f}, m_LastFrameTime{0.0f}
+        : m_Running{true}, m_LastFrameTime{0.0f}
     {
     }
     
@@ -73,11 +74,13 @@ namespace raytracer {
     {
         while (m_Running)
         {
-            m_Window->PollEvents();
+            float time = time::GetTime();
+            float timeStep = time - m_LastFrameTime;
+            m_LastFrameTime = time;
 
             {
                 for (const auto& layer : m_LayerStack)
-                    layer->OnUpdate(m_TimeStep);
+                    layer->OnUpdate(timeStep);
             }
 
 
@@ -93,11 +96,7 @@ namespace raytracer {
                 ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
             }
 
-            float time = glfwGetTime();
-            m_FrameTime = time - m_LastFrameTime;
-            m_TimeStep = std::min(time, 0.0333f);
-            m_LastFrameTime = time;
-
+            m_Window->PollEvents();
             m_Window->SwapBuffers();
         }
     }

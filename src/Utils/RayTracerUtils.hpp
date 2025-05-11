@@ -24,7 +24,7 @@ namespace raytracer {
         return radians * 180.0 / g_Pi;
     }
 
-
+    
     // Smart pointer utilities
     template <typename T>
     using Ref = std::shared_ptr<T>;

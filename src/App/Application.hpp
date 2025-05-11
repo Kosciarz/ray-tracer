@@ -56,8 +56,6 @@ namespace raytracer {
 
         bool m_Running;
 
-        float m_FrameTime;
-        float m_TimeStep;
         float m_LastFrameTime;
     };
 
