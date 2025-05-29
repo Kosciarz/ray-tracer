@@ -21,7 +21,7 @@
 #include "Utils/Timer.hpp"
 #include "Utils/Random.hpp"
 #include "Utils/RayTracerUtils.hpp"
-#include "Utils/gl_utils.hpp"
+#include "Utils/GLUtils.hpp"
 
 #include "Core/Color.hpp"
 #include "Core/Ray.hpp"

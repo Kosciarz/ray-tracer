@@ -16,7 +16,7 @@
 #include "Events/ApplicationEvents.hpp"
 
 #include "Utils/RayTracerUtils.hpp"
-#include "Utils/gl_utils.hpp"
+#include "Utils/GLUtils.hpp"
 #include "Utils/Result.hpp"
 #include "Utils/Timer.hpp"
 #include "Utils/Time.hpp"

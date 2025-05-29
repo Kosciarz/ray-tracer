@@ -9,7 +9,7 @@
 
 #include "OpenGLHeaders.hpp"
 
-#include "Utils/gl_utils.hpp"
+#include "Utils/GLUtils.hpp"
 #include "Utils/RayTracerUtils.hpp"
 #include "Utils/Result.hpp"
 

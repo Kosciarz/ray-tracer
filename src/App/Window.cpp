@@ -12,8 +12,8 @@ namespace raytracer {
 
     static std::size_t s_WindowCount = 0;
 
-    WindowConfig::WindowConfig(const std::string& title, const std::uint32_t m_Width, const std::uint32_t height)
-        : Title{title}, Width{m_Width}, Height{height}
+    WindowConfig::WindowConfig(const std::string& title, const std::uint32_t width, const std::uint32_t height)
+        : Title{title}, Width{width}, Height{height}
     {
     }
 
@@ -28,15 +28,18 @@ namespace raytracer {
         s_WindowCount--;
 
         if (s_WindowCount == 0)
+        {
             glfwTerminate();
+        }
     }
 
     Result<Scope<Window>> Window::Create(const WindowConfig& config)
     {
         auto window = MakeScope<Window>(config);
-        auto initResult = window->Init();
-        if (!initResult)
+        if (auto initResult = window->Init(); !initResult)
+        {
             return Result<Scope<Window>>::Err(initResult.Error());
+        }
         return Result<Scope<Window>>::Ok(std::move(window));
     }
 
@@ -51,19 +54,26 @@ namespace raytracer {
 #endif
 
         if (s_WindowCount == 0)
+        {
             if (!glfwInit())
+            {
                 return Result<void>::Err("Failed to initialize GLFW");
+            }
+        }
 
         m_Window = glfwCreateWindow(m_Width, m_Height, m_Title.c_str(), nullptr, nullptr);
         s_WindowCount++;
         if (!m_Window)
+        {
             return Result<void>::Err("Failed to create GLFW window");
+        }
 
         glfwMakeContextCurrent(m_Window);
 
         if (!gladLoadGL(glfwGetProcAddress))
+        {
             return Result<void>::Err("Failed to initialize GLAD");
-
+        }
 
         glfwSetWindowUserPointer(m_Window, this);
 
@@ -87,7 +97,7 @@ namespace raytracer {
             });
 
         glfwSetKeyCallback(m_Window,
-            [](GLFWwindow* window, int key, int scancode, int action, int mods)
+            [](GLFWwindow* window, const int key, int scancode, const int action, int mods)
             {
                 if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
                 {

@@ -3,7 +3,7 @@
 #include "OpenGLHeaders.hpp"
 
 #include "Utils/RayTracerUtils.hpp"
-#include "Utils/gl_utils.hpp"
+#include "Utils/GLUtils.hpp"
 
 namespace raytracer {
 
