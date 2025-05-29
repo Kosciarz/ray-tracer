@@ -43,7 +43,7 @@ set(HEADERS
     "Renderer/VertexArray.hpp"
     
     "Utils/RayTracerUtils.hpp"
-    "Utils/gl_utils.hpp"
+    "Utils/GLUtils.hpp"
     "Utils/Result.hpp"
     "Utils/Random.hpp"
     "Utils/Timer.hpp"
