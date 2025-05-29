@@ -155,11 +155,9 @@ namespace raytracer {
             std::vector<char> log(logLength);
             GL_CHECK(glGetShaderInfoLog(shader, logLength, &logLength, log.data()));
 
-            return Result<GLuint>::Err(
-                std::format("Failed to compile {} shader: {}",
-                (std::string(shaderType == GL_VERTEX_SHADER ? "vertex" : "fragment"),
-                std::string{log.data()}))
-                );
+            return Result<GLuint>::Err(std::format("Failed to compile {} shader: {}",
+                shaderType == GL_VERTEX_SHADER ? "vertex" : "fragment",
+                log.data()));
         }
 
         return Result<GLuint>::Ok(shader);
