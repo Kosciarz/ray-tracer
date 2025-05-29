@@ -8,7 +8,6 @@
 #include <memory>
 #include <filesystem>
 #include <iostream>
-#include <cstdint>
 #include <vector>
 
 #include "Events/Event.hpp"
@@ -22,7 +21,7 @@
 #include "Utils/Timer.hpp"
 #include "Utils/Random.hpp"
 #include "Utils/RayTracerUtils.hpp"
-#include "Utils/GLUtils.hpp"
+#include "Utils/gl_utils.hpp"
 
 #include "Core/Color.hpp"
 #include "Core/Ray.hpp"
@@ -43,8 +42,7 @@ namespace raytracer {
         const fs::path assetPath{ASSETS_DIR};
 #endif
 
-
-        ShaderPaths paths{shaderPath / "vs.vert", shaderPath / "fs.frag"};
+        const ShaderPaths paths{shaderPath / "vs.vert", shaderPath / "fs.frag"};
         const auto& shaderSource = ShaderSources::Load(paths);
         if (!shaderSource)
             throw std::runtime_error{shaderSource.Error()};
@@ -65,9 +63,9 @@ namespace raytracer {
 
         m_VertexArray = VertexArray::Create();
         m_VertexArray->Bind();
-        auto vertexBuffer = VertexBuffer::Create(vertices.data(), vertices.size() * sizeof(float));
-        m_VertexArray->AddVertexBuffer(vertexBuffer, 0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-        m_VertexArray->AddVertexBuffer(vertexBuffer, 1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+        const auto vertexBuffer = VertexBuffer::Create(vertices.data(), vertices.size() * sizeof(float));
+        m_VertexArray->AddVertexBuffer(vertexBuffer, 0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), nullptr);
+        m_VertexArray->AddVertexBuffer(vertexBuffer, 1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
 
         BuildScene();
     }
@@ -82,7 +80,9 @@ namespace raytracer {
     void RayTracerLayer::OnUpdate(float timeStep)
     {
         if (!m_Image)
+        {
             Render();
+        }
 
         m_VertexArray->Bind();
         m_Shader->Use();
@@ -95,14 +95,17 @@ namespace raytracer {
     {
         ImGui::Begin("Settings");
         ImGui::Text("Last render time: %.3fms", m_LastRenderTime);
+
         if (ImGui::Button("Render"))
         {
             Render();
         }
+
         if (ImGui::Button("Build Scene"))
         {
             BuildScene();
         }
+
         ImGui::End();
     }
 
@@ -110,7 +113,7 @@ namespace raytracer {
     {
         EventDispatcher dispatcher(e);
         dispatcher.Dispatch<WindowResizeEvent>(
-            [this](WindowResizeEvent& e)
+            [this](const WindowResizeEvent& e)
             {
                 m_ViewportWidth = e.GetWidth();
                 m_ViewportHeight = e.GetHeight();
@@ -138,11 +141,11 @@ namespace raytracer {
         imageHeight = (imageHeight < 1) ? 1 : imageHeight;
 
         // Camera initialization
-        // Focal lenght is the distance of the camera from the virtual viewport
+        // Focal length is the distance of the camera from the virtual viewport
         // The virtual viewport is an imaginary plane that we shoot rays onto and get the color back
-        // The height is set to 2 so that the bottom is -1 and and top is 1
-        // and the distance of each ray from the camera center to it's pixel is not too high
-        float focalLenght = 1.0;
+        // The height is set to 2 so that the bottom is -1 and top is 1
+        // and the distance of each ray from the camera center to its pixel is not too high
+        float focalLength = 1.0;
         float viewportHeight = 2.0;
         float viewportWidth = viewportHeight * (static_cast<float>(imageWidth) / imageHeight);
         glm::vec3 cameraCenter{0, 0, 0};
@@ -156,10 +159,10 @@ namespace raytracer {
         glm::vec3 pixelDeltaV = viewportV / static_cast<float>(imageHeight);
 
         // Calculate the top left corner of the viewport (Q on the example)
-        glm::vec3 viewportUpperLeft = cameraCenter - glm::vec3{0, 0, focalLenght}
+        glm::vec3 viewportUpperLeft = cameraCenter - glm::vec3{0, 0, focalLength}
         - viewportU / static_cast<float>(2.0) - viewportV / static_cast<float>(2.0);
 
-        // Calulucate the P(0,0) pixel 
+        // Calculate the P(0,0) pixel
         glm::vec3 pixel00Location = viewportUpperLeft + (pixelDeltaU + pixelDeltaV) / static_cast<float>(2.0);
 
 

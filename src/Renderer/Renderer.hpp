@@ -1,15 +1,11 @@
 #pragma once
 
-#include <string>
-#include <unordered_map>
-#include <memory>
 #include <vector>
 
 #include <glm/vec4.hpp>
 
 #include "Shader.hpp"
 #include "VertexArray.hpp"
-#include "Buffer.hpp"
 #include "Image.hpp"
 
 #include "Utils/RayTracerUtils.hpp"

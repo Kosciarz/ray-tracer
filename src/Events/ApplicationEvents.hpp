@@ -6,7 +6,7 @@
 
 namespace raytracer {
 
-    class WindowCloseEvent : public Event
+    class WindowCloseEvent final : public Event
     {
     public:
         WindowCloseEvent() = default;
@@ -18,7 +18,7 @@ namespace raytracer {
         EVENT_CLASS_TYPE(WindowClose)
     };
 
-    class WindowResizeEvent : public Event
+    class WindowResizeEvent final : public Event
     {
     public:
         WindowResizeEvent(const std::uint32_t width, const std::uint32_t height);

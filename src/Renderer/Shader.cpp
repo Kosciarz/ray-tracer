@@ -9,9 +9,11 @@
 
 #include "OpenGLHeaders.hpp"
 
-#include "Utils/GLUtils.hpp"
+#include "Utils/gl_utils.hpp"
 #include "Utils/RayTracerUtils.hpp"
 #include "Utils/Result.hpp"
+
+#include <format>
 
 namespace fs = std::filesystem;
 
@@ -23,7 +25,9 @@ namespace raytracer {
 
         std::ifstream file(path, std::ios::in);
         if (!file)
+        {
             return Result<std::string>::Err("Cannot open shader file: " + path.string());
+        }
 
         const auto fileSize = fs::file_size(path);
         std::string contents(fileSize, 0);
@@ -50,17 +54,23 @@ namespace raytracer {
     {
         auto vertexShader = CompileShader(GL_VERTEX_SHADER, sources.vertex);
         if (vertexShader.IsErr())
+        {
             return Result<Ref<Shader>>::Err(vertexShader.Error());
+        }
 
         auto fragmentShader = CompileShader(GL_FRAGMENT_SHADER, sources.fragment);
         if (fragmentShader.IsErr())
+        {
             return Result<Ref<Shader>>::Err(fragmentShader.Error());
+        }
 
         auto program = LinkProgram(vertexShader.Value(), fragmentShader.Value());
         if (program.IsErr())
+        {
             return Result<Ref<Shader>>::Err(program.Error());
+        }
 
-        auto shader = std::make_shared<Shader>(program.Value());
+        const auto shader = std::make_shared<Shader>(program.Value());
         return Result<Ref<Shader>>::Ok(shader);
     }
 
@@ -71,11 +81,13 @@ namespace raytracer {
 
     Shader::~Shader()
     {
-        if (m_ProgramID != 0)
+        if (m_ProgramID)
+        {
             GL_CHECK(glDeleteProgram(m_ProgramID));
+        }
     }
 
-    const GLuint& Shader::GetID() const
+    GLuint Shader::GetID() const
     {
         return m_ProgramID;
     }
@@ -90,17 +102,17 @@ namespace raytracer {
         GL_CHECK(glUseProgram(0));
     }
 
-    void Shader::SetUniformBool(const std::string& name, bool value) const
+    void Shader::SetUniformBool(const std::string& name, const bool value) const
     {
         GL_CHECK(glUniform1i(glGetUniformLocation(m_ProgramID, name.c_str()), static_cast<int>(value)));
     }
 
-    void Shader::SetUniformInt(const std::string& name, std::int32_t value) const
+    void Shader::SetUniformInt(const std::string& name, const std::int32_t value) const
     {
         GL_CHECK(glUniform1i(glGetUniformLocation(m_ProgramID, name.c_str()), value));
     }
 
-    void Shader::SetUniformFloat(const std::string& name, float value) const
+    void Shader::SetUniformFloat(const std::string& name, const float value) const
     {
         GL_CHECK(glUniform1f(glGetUniformLocation(m_ProgramID, name.c_str()), value));
     }
@@ -130,7 +142,7 @@ namespace raytracer {
         RAYTRACER_ASSERT(!source.empty(), "Shader source is empty");
 
         const char* sourcePtr = source.c_str();
-        GLuint shader = glCreateShader(shaderType);
+        const GLuint shader = glCreateShader(shaderType);
         GL_CHECK(glShaderSource(shader, 1, &sourcePtr, nullptr));
         GL_CHECK(glCompileShader(shader));
 
@@ -143,9 +155,11 @@ namespace raytracer {
             std::vector<char> log(logLength);
             GL_CHECK(glGetShaderInfoLog(shader, logLength, &logLength, log.data()));
 
-            return Result<GLuint>::Err("Failed to compile "
-                + std::string(shaderType == GL_VERTEX_SHADER ? "vertex" : "fragment")
-                + " shader: " + std::string{log.data()});
+            return Result<GLuint>::Err(
+                std::format("Failed to compile {} shader: {}",
+                (std::string(shaderType == GL_VERTEX_SHADER ? "vertex" : "fragment"),
+                std::string{log.data()}))
+                );
         }
 
         return Result<GLuint>::Ok(shader);
@@ -153,7 +167,7 @@ namespace raytracer {
 
     Result<GLuint> Shader::LinkProgram(const GLuint vertexShader, const GLuint fragmentShader)
     {
-        auto program = glCreateProgram();
+        const auto program = glCreateProgram();
         GL_CHECK(glAttachShader(program, vertexShader));
         GL_CHECK(glAttachShader(program, fragmentShader));
         GL_CHECK(glLinkProgram(program));

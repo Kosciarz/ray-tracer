@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <cstdint>
 
 #include "Events/Event.hpp"
 
@@ -10,7 +9,7 @@ namespace raytracer {
     class Layer
     {
     public:
-        Layer(const std::string& name = "Layer");
+        explicit Layer(const std::string& name = "Layer");
 
         virtual ~Layer() = default;
 

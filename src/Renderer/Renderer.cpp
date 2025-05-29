@@ -12,7 +12,7 @@
 #include "Image.hpp"
 
 #include "Utils/RayTracerUtils.hpp"
-#include "Utils/GLUtils.hpp"
+#include "Utils/gl_utils.hpp"
 
 namespace raytracer {
 

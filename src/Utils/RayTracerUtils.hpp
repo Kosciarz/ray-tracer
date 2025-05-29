@@ -8,12 +8,10 @@
 
 namespace raytracer {
 
-    // Constants
     inline constexpr double g_Infinity = std::numeric_limits<double>::infinity();
     inline constexpr double g_Pi = std::numbers::pi;
 
 
-    // Utility functions
     inline double DegreesToRadians(const double degrees)
     {
         return degrees * g_Pi / 180.0;
@@ -25,7 +23,6 @@ namespace raytracer {
     }
 
     
-    // Smart pointer utilities
     template <typename T>
     using Ref = std::shared_ptr<T>;
 

@@ -2,8 +2,6 @@
 
 #include <filesystem>
 #include <string>
-#include <optional>
-#include <memory>
 
 #include "OpenGLHeaders.hpp"
 
@@ -33,11 +31,11 @@ namespace raytracer {
 
         Shader() = default;
 
-        explicit Shader(const GLuint program);
+        explicit Shader(GLuint program);
 
         ~Shader();
 
-        const GLuint& GetID() const;
+        [[nodiscard]] GLuint GetID() const;
 
         void Use() const;
 
@@ -58,9 +56,9 @@ namespace raytracer {
         void SetUniformMat4(const std::string& name, const GLfloat* value) const;
 
     private:
-        static Result<GLuint> CompileShader(const GLenum shaderType, const std::string& source);
+        static Result<GLuint> CompileShader(GLenum shaderType, const std::string& source);
 
-        static Result<GLuint> LinkProgram(const GLuint vertexShader, const GLuint fragmentShader);
+        static Result<GLuint> LinkProgram(GLuint vertexShader, GLuint fragmentShader);
 
     private:
         GLuint m_ProgramID;

@@ -20,15 +20,15 @@ namespace raytracer {
     class Image
     {
     public:
-        static Ref<Image> Create(const std::int32_t m_Width, const std::int32_t height,
-            const ImageFormat format, const void* data, const std::uint32_t unitIndex);
+        static Ref<Image> Create(std::int32_t width, std::int32_t height,
+                                 ImageFormat format, const void* data, std::uint32_t unitIndex);
 
-        static Ref<Image> Create(const std::filesystem::path& path, const std::uint32_t unitIndex);
+        static Ref<Image> Create(const std::filesystem::path& path, std::uint32_t unitIndex);
 
-        Image(const std::filesystem::path& path, const std::uint32_t unitIndex);
+        Image(const std::filesystem::path& path, std::uint32_t unitIndex);
 
-        Image(const std::int32_t m_Width, const std::int32_t height,
-            const ImageFormat format, const void* data, const std::uint32_t unitIndex);
+        Image(std::int32_t width, std::int32_t height,
+              ImageFormat format, const void* data, std::uint32_t unitIndex);
 
         Image() = default;
 
@@ -40,26 +40,26 @@ namespace raytracer {
 
         void SetData(const void* data) const;
 
-        void SetParameter(const GLenum name, const GLint value) const;
+        void SetParameter(GLenum name, GLint value) const;
 
-        const std::int32_t& Width() const;
+        [[nodiscard]] std::int32_t Width() const;
 
-        const std::int32_t& Height() const;
+        [[nodiscard]] std::int32_t Height() const;
 
-        const GLuint& Handle() const;
+        [[nodiscard]] GLuint Handle() const;
 
     private:
-        std::pair<GLenum, GLenum> GetGLFormats() const;
+        [[nodiscard]] std::pair<GLenum, GLenum> GetGLFormats() const;
 
     private:
         std::int32_t m_Width = 0;
         std::int32_t m_Height = 0;
 
-        GLuint m_Handle;
+        GLuint m_Handle = 0;
 
-        GLenum m_Target;
-        std::uint32_t m_UnitIndex;
-        ImageFormat m_Format;
+        GLenum m_Target = 0;
+        std::uint32_t m_UnitIndex = 0;
+        ImageFormat m_Format = ImageFormat::None;
     };
 
 }

@@ -8,7 +8,6 @@
 #include "Events/Event.hpp"
 
 #include "Renderer/VertexArray.hpp"
-#include "Renderer/Buffer.hpp"
 #include "Renderer/Image.hpp"
 #include "Renderer/Shader.hpp"
 #include "Renderer/Renderer.hpp"
@@ -20,10 +19,10 @@
 
 namespace raytracer {
 
-    class RayTracerLayer : public Layer
+    class RayTracerLayer final : public Layer
     {
     public:
-        RayTracerLayer(const std::string& name);
+        explicit RayTracerLayer(const std::string& name);
 
         void OnAttach() override;
 

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <functional>
 
 namespace raytracer {
 
@@ -34,7 +33,7 @@ namespace raytracer {
     class EventDispatcher
     {
     public:
-        EventDispatcher(Event& e)
+        explicit EventDispatcher(Event& e)
             : m_Event{e}
         {
         }

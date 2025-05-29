@@ -7,7 +7,7 @@
 #include <stb_image.h>
 
 #include "Utils/RayTracerUtils.hpp"
-#include "Utils/GLUtils.hpp"
+#include "Utils/gl_utils.hpp"
 
 namespace raytracer {
 
@@ -37,7 +37,9 @@ namespace raytracer {
         std::int32_t nrChannels = 0;
         std::uint8_t* textureData = stbi_load(path.string().c_str(), &m_Width, &m_Height, &nrChannels, 0);
         if (!textureData)
+        {
             throw std::runtime_error{"Failed to load texture with path: " + path.string()};
+        }
 
         switch (nrChannels) {
         case 3:
@@ -50,7 +52,7 @@ namespace raytracer {
             throw std::runtime_error{"Error: Unsupported number of channels: " + std::to_string(nrChannels)};
         }
 
-        auto [imageFormat, internalFormat] = GetGLFormats();
+        const auto [imageFormat, internalFormat] = GetGLFormats();
         GL_CHECK(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_Width, m_Height, 0, imageFormat, GL_UNSIGNED_BYTE, textureData));
         GL_CHECK(glGenerateMipmap(GL_TEXTURE_2D));
 
@@ -59,8 +61,8 @@ namespace raytracer {
     }
 
     Image::Image(const std::int32_t width, const std::int32_t height,
-        const ImageFormat format, const void* data, const std::uint32_t unitIndex)
-        : m_Width{width}, m_Height{height}, m_Format{format}, m_UnitIndex{unitIndex}
+        ImageFormat format, const void* data, const std::uint32_t unitIndex)
+        : m_Width{width}, m_Height{height}, m_UnitIndex{unitIndex}, m_Format{format}
     {
         GL_CHECK(glGenTextures(1, &m_Handle));
         Bind();

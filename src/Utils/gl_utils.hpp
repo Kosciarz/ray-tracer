@@ -1,12 +1,10 @@
 #pragma once
 
-#include <iostream>
-
 #include "Renderer/OpenGLHeaders.hpp"
 
-namespace glutils {
+namespace gl_utils {
 
-    inline const char* GetGLErrorString(const GLenum error)
+    inline auto GetGLErrorString(const GLenum error) -> const char*
     {
         switch (error)
         {
@@ -33,7 +31,7 @@ namespace glutils {
             ::std::cerr << "OpenGL error in file " << __FILE__ \
                       << " at line " << __LINE__ \
                       << " after calling " #x ": " \
-                      << glutils::GetGLErrorString(error)  \
+                      << gl_utils::GetGLErrorString(error)  \
                       << " (" << error << ")" \
                       << ::std::endl; \
         } \

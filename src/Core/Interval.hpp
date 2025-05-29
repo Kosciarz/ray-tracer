@@ -9,7 +9,7 @@ namespace raytracer {
     public:
         Interval();
 
-        Interval(const double min, const double max);
+        Interval(double min, double max);
 
         double Size() const;
 
@@ -17,9 +17,9 @@ namespace raytracer {
 
         double Max() const;
 
-        bool Contains(const double x) const;
+        bool Contains(double x) const;
 
-        bool Surrounds(const double x) const;
+        bool Surrounds(double x) const;
 
     public:
         static const Interval s_Empty;

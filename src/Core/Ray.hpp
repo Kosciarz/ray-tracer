@@ -13,13 +13,13 @@ namespace raytracer {
 
         glm::vec3& Origin();
 
-        const glm::vec3& Origin() const;
+        [[nodiscard]] const glm::vec3& Origin() const;
 
         glm::vec3& Direction();
 
-        const glm::vec3& Direction() const;
+        [[nodiscard]] const glm::vec3& Direction() const;
 
-        glm::vec3 At(const float t) const;
+        [[nodiscard]] glm::vec3 At(float t) const;
 
     private:
         glm::vec3 m_Origin;

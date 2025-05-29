@@ -11,9 +11,9 @@ namespace raytracer {
     class VertexBuffer
     {
     public:
-        static Ref<VertexBuffer> Create(const void* data, const std::size_t size);
+        static Ref<VertexBuffer> Create(const void* data, std::size_t size);
 
-        VertexBuffer(const void* data, const std::size_t size);
+        VertexBuffer(const void* data, std::size_t size);
 
         ~VertexBuffer();
 
@@ -21,19 +21,19 @@ namespace raytracer {
 
         void Unbind() const;
 
-        void UpdateData(const void* data, const std::size_t size) const;
+        void UpdateData(const void* data, std::size_t size) const;
 
     private:
-        GLuint m_BufferID;
+        GLuint m_BufferID{};
     };
 
 
     class IndexBuffer
     {
     public:
-        static Ref<IndexBuffer> Create(const std::size_t size, const void* data);
+        static Ref<IndexBuffer> Create(std::size_t size, const void* data);
 
-        IndexBuffer(const std::size_t size, const void* data);
+        IndexBuffer(std::size_t size, const void* data);
 
         ~IndexBuffer();
 
@@ -41,10 +41,10 @@ namespace raytracer {
 
         void Unbind() const;
 
-        const std::size_t& Size() const;
+        [[nodiscard]] std::size_t Size() const;
 
     private:
-        GLuint m_BufferID;
+        GLuint m_BufferID{};
         std::size_t m_Size;
     };
 }

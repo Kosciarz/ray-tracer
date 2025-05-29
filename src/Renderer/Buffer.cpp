@@ -3,7 +3,7 @@
 #include "OpenGLHeaders.hpp"
 
 #include "Utils/RayTracerUtils.hpp"
-#include "Utils/GLUtils.hpp"
+#include "Utils/gl_utils.hpp"
 
 namespace raytracer {
 
@@ -59,7 +59,7 @@ namespace raytracer {
         GL_CHECK(glDeleteBuffers(1, &m_BufferID));
     }
 
-    const std::size_t& IndexBuffer::Size() const
+    std::size_t IndexBuffer::Size() const
     {
         return m_Size;
     }

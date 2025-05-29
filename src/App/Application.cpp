@@ -2,12 +2,8 @@
 
 #include "Renderer/OpenGLHeaders.hpp"
 #include <imgui.h>
-#include <imgui_impl_glfw.h>
-#include <imgui_impl_opengl3.h>
 
 #include <filesystem>
-#include <vector>
-#include <cstdint>
 #include <cstdlib>
 #include <memory>
 #include <iostream>
@@ -20,7 +16,7 @@
 #include "Events/ApplicationEvents.hpp"
 
 #include "Utils/RayTracerUtils.hpp"
-#include "Utils/GLUtils.hpp"
+#include "Utils/gl_utils.hpp"
 #include "Utils/Result.hpp"
 #include "Utils/Timer.hpp"
 #include "Utils/Time.hpp"
@@ -70,8 +66,8 @@ namespace raytracer {
     {
         while (m_Running)
         {
-            float time = time::GetTime();
-            float timeStep = time - m_LastFrameTime;
+            const float time = time::GetTime();
+            const float timeStep = time - m_LastFrameTime;
             m_LastFrameTime = time;
 
             for (const auto& layer : m_LayerStack)
@@ -106,18 +102,18 @@ namespace raytracer {
     {
         EventDispatcher dispatcher(e);
         dispatcher.Dispatch<WindowCloseEvent>(
-            [this](WindowCloseEvent& e)
+            [this](const WindowCloseEvent& e)
             {
                 return OnWindowClose(e);
             });
 
         dispatcher.Dispatch<WindowResizeEvent>(
-            [this](WindowResizeEvent& e)
+            [this](const WindowResizeEvent& e)
             {
                 return OnWindowResize(e);
             });
 
-        for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); it++)
+        for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it)
         {
             if (e.Handled)
                 break;
@@ -125,13 +121,13 @@ namespace raytracer {
         }
     }
 
-    bool Application::OnWindowClose(WindowCloseEvent& e)
+    bool Application::OnWindowClose(const WindowCloseEvent& e)
     {
         m_Running = false;
         return true;
     }
 
-    bool Application::OnWindowResize(WindowResizeEvent& e)
+    bool Application::OnWindowResize(const WindowResizeEvent& e)
     {
         GL_CHECK(glViewport(0, 0, e.GetWidth(), e.GetHeight()));
         return false;
