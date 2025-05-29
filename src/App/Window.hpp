@@ -61,6 +61,9 @@ namespace raytracer {
         std::uint32_t m_Height;
 
         std::function<void(Event&)> m_EventCallback;
+
+    private:
+        inline static std::size_t s_WindowCount = 0;
     };
 
 }

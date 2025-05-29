@@ -10,8 +10,6 @@
 
 namespace raytracer {
 
-    static std::size_t s_WindowCount = 0;
-
     WindowConfig::WindowConfig(const std::string& title, const std::uint32_t width, const std::uint32_t height)
         : Title{title}, Width{width}, Height{height}
     {
