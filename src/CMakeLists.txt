@@ -43,7 +43,7 @@ set(HEADERS
     "Renderer/VertexArray.hpp"
     
     "Utils/RayTracerUtils.hpp"
-    "Utils/GLUtils.hpp"
+    "Utils/gl_utils.hpp"
     "Utils/Result.hpp"
     "Utils/Random.hpp"
     "Utils/Timer.hpp"
@@ -78,8 +78,11 @@ target_sources(RayCore PRIVATE
     ${imgui_SOURCE_DIR}/backends/imgui_impl_glfw.cpp
     ${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
 )
-target_include_directories(RayCore PRIVATE 
+target_include_directories(RayCore
+    PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
+
+    PRIVATE
     ${STB_IMAGE_DIR}
     ${imgui_SOURCE_DIR}
     ${imgui_SOURCE_DIR}/backends

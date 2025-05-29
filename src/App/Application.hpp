@@ -1,15 +1,10 @@
 #pragma once
 
 #include <memory>
-#include <vector>
-#include <type_traits>
-#include <utility>
 
 #include "Window.hpp"
 #include "LayerStack.hpp"
 #include "ImGuiLayer.hpp"
-
-#include "Renderer/OpenGLHeaders.hpp"
 
 #include "Events/ApplicationEvents.hpp"
 
@@ -45,9 +40,9 @@ namespace raytracer {
     private:
         Result<void> Init();
 
-        bool OnWindowClose(WindowCloseEvent& e);
+        bool OnWindowClose(const WindowCloseEvent& e);
 
-        bool OnWindowResize(WindowResizeEvent& e);
+        bool OnWindowResize(const WindowResizeEvent& e);
 
     private:
         Scope<Window> m_Window;

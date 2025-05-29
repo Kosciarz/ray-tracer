@@ -58,7 +58,7 @@ namespace raytracer {
     class ScopedTimer
     {
     public:
-        ScopedTimer(std::string_view name)
+        explicit ScopedTimer(const std::string_view name)
             : m_Name{name}
         {
         }

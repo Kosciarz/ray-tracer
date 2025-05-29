@@ -1,7 +1,6 @@
 #pragma once
 
 #include <vector>
-#include <type_traits>
 
 #include "Ray.hpp"
 #include "Hittable.hpp"
@@ -21,7 +20,6 @@ namespace raytracer {
         void Clear();
 
         bool Hit(const Ray& ray, const Interval& rayT, HitRecord& rec) const;
-
 
         std::vector<Ref<Hittable>>& Objects();
         const std::vector<Ref<Hittable>>& Objects() const;

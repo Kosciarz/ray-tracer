@@ -7,7 +7,7 @@
 
 namespace raytracer {
 
-    class Sphere : public Hittable
+    class Sphere final : public Hittable
     {
     public:
         Sphere(const glm::vec3& center, const double radius);

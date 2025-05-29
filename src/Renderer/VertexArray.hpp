@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cstdint>
 #include <memory>
 #include <vector>
 
@@ -27,7 +26,7 @@ namespace raytracer {
 
         void AddIndexBuffer(Ref<IndexBuffer> indexBuffer);
 
-        Ref<IndexBuffer> GetIndexBuffer() const;
+        [[nodiscard]] Ref<IndexBuffer> GetIndexBuffer() const;
 
         void AddVertexBuffer(Ref<VertexBuffer> buffer, GLuint index, GLint size, GLenum type,
             GLboolean normalized, GLsizei stride, const void* offset);

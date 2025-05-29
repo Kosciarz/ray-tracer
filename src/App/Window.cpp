@@ -1,9 +1,4 @@
 #include "Window.hpp"
-#include "Window.hpp"
-#include "Window.hpp"
-
-#include <iostream>
-#include <cstdint>
 
 #include "Events/Event.hpp"
 #include "Events/ApplicationEvents.hpp"
@@ -12,7 +7,6 @@
 
 #include "Utils/Result.hpp"
 #include "Utils/RayTracerUtils.hpp"
-#include "Utils/GLUtils.hpp"
 
 namespace raytracer {
 
@@ -74,7 +68,7 @@ namespace raytracer {
         glfwSetWindowUserPointer(m_Window, this);
 
         glfwSetFramebufferSizeCallback(m_Window,
-            [](GLFWwindow* window, int width, int height)
+            [](GLFWwindow* window, const int width, const int height)
             {
                 auto* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
                 win->m_Width = width;
@@ -87,7 +81,7 @@ namespace raytracer {
         glfwSetWindowCloseCallback(m_Window,
             [](GLFWwindow* window)
             {
-                auto* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
+                const auto* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
                 WindowCloseEvent event;
                 win->m_EventCallback(event);
             });
@@ -97,7 +91,7 @@ namespace raytracer {
             {
                 if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
                 {
-                    auto* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
+                    const auto* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
                     WindowCloseEvent event;
                     win->m_EventCallback(event);
                 }
@@ -126,7 +120,7 @@ namespace raytracer {
         glfwSwapBuffers(m_Window);
     }
 
-    GLFWwindow* Window::GetWindow()
+    GLFWwindow* Window::GetWindow() const
     {
         return m_Window;
     }

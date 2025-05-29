@@ -4,24 +4,19 @@
 
 #include <GLFW/glfw3.h>
 
-#include "Events/Event.hpp"
-#include "Events/ApplicationEvents.hpp"
-
 namespace raytracer {
 
-    class ImGuiLayer : public Layer
+    class ImGuiLayer final : public Layer
     {
     public:
-        ImGuiLayer(GLFWwindow* window);
-        ~ImGuiLayer() = default;
+        explicit ImGuiLayer(GLFWwindow* window);
 
         void OnAttach() override;
 
         void OnDetach() override;
 
-        void Begin();
-
-        void End();
+        static void Begin();
+        static void End();
         
     private:
         GLFWwindow* m_Window;

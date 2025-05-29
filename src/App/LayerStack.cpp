@@ -1,5 +1,4 @@
 #include "LayerStack.hpp"
-#include "LayerStack.hpp"
 
 #include <vector>
 #include <algorithm>
@@ -32,7 +31,7 @@ namespace raytracer {
 
     void LayerStack::PopLayer(Layer* layer)
     {
-        auto it = std::find_if(m_Layers.begin(), m_Layers.begin() + m_LayerInsertIndex,
+        const auto it = std::find_if(m_Layers.begin(), m_Layers.begin() + m_LayerInsertIndex,
             [&layer](const Scope<Layer>& ptr)
             {
                 return ptr.get() == layer;
@@ -48,7 +47,7 @@ namespace raytracer {
 
     void LayerStack::PopOverlay(Layer* layer)
     {
-        auto it = std::find_if(m_Layers.begin() + m_LayerInsertIndex, m_Layers.end(),
+        const auto it = std::find_if(m_Layers.begin() + m_LayerInsertIndex, m_Layers.end(),
             [&layer](const Scope<Layer>& ptr)
             {
                 return ptr.get() == layer;

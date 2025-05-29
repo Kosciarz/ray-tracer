@@ -1,9 +1,7 @@
 #pragma once
 
 #include <random>
-#include <cstdint>
 #include <limits>
-#include <thread>
 
 #include <glm/vec3.hpp>
 
@@ -12,20 +10,20 @@ namespace raytracer {
     class Random
     {
     public:
-        static void Seed(std::uint32_t seed)
+        static void Seed(const std::uint32_t seed)
         {
             s_Generator.seed(seed);
         }
 
         static std::uint8_t UInt8() noexcept
         {
-            thread_local static std::uniform_int_distribution<std::uint16_t> dist{0, 255};
+            thread_local std::uniform_int_distribution<std::uint16_t> dist{0, 255};
             return static_cast<std::uint8_t>(dist(s_Generator));
         }
 
         static std::int32_t Int() noexcept
         {
-            thread_local static std::uniform_int_distribution<std::int32_t> dist{
+            thread_local std::uniform_int_distribution dist{
                 std::numeric_limits<std::int32_t>::min(),
                 std::numeric_limits<std::int32_t>::max()
             };
@@ -34,13 +32,13 @@ namespace raytracer {
 
         static std::int32_t Int(const std::int32_t min, const std::int32_t max) noexcept
         {
-            std::uniform_int_distribution<std::int32_t> dist{min, max};
+            std::uniform_int_distribution dist{min, max};
             return dist(s_Generator);
         }
 
         static std::int32_t UInt()
         {
-            thread_local static std::uniform_int_distribution<std::uint32_t> dist{
+            thread_local std::uniform_int_distribution dist{
                 std::numeric_limits<std::uint32_t>::min(),
                 std::numeric_limits<std::uint32_t>::max()
             };
@@ -49,19 +47,19 @@ namespace raytracer {
 
         static std::int32_t UInt(const std::uint32_t min, const std::uint32_t max) noexcept
         {
-            std::uniform_int_distribution<std::uint32_t> dist{min, max};
+            std::uniform_int_distribution dist{min, max};
             return dist(s_Generator);
         }
 
         static float Float() noexcept
         {
-            thread_local static std::uniform_real_distribution<float> dist{0.0f, 1.0f};
+            thread_local std::uniform_real_distribution dist{0.0f, 1.0f};
             return dist(s_Generator);
         }
 
         static float Float(const float min, const float max) noexcept
         {
-            std::uniform_real_distribution<float> dist{min, max};
+            std::uniform_real_distribution dist{min, max};
             return dist(s_Generator);
         }
 
