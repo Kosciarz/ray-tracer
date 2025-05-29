@@ -61,7 +61,7 @@ namespace raytracer {
     }
 
     Image::Image(const std::int32_t width, const std::int32_t height,
-        ImageFormat format, const void* data, const std::uint32_t unitIndex)
+        const ImageFormat format, const void* data, const std::uint32_t unitIndex)
         : m_Width{width}, m_Height{height}, m_UnitIndex{unitIndex}, m_Format{format}
     {
         GL_CHECK(glGenTextures(1, &m_Handle));
@@ -104,17 +104,17 @@ namespace raytracer {
         GL_CHECK(glTexParameteri(GL_TEXTURE_2D, name, value));
     }
 
-    const std::int32_t& Image::Width() const
+    std::int32_t Image::Width() const
     {
         return m_Width;
     }
 
-    const std::int32_t& Image::Height() const
+    std::int32_t Image::Height() const
     {
         return m_Height;
     }
 
-    const GLuint& Image::Handle() const
+    GLuint Image::Handle() const
     {
         return m_Handle;
     }
