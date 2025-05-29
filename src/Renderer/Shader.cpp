@@ -37,41 +37,43 @@ namespace raytracer {
 
     Result<ShaderSources> ShaderSources::Load(const ShaderPaths& paths)
     {
-        auto vertex = ReadFile(paths.vertex);
+        auto vertex = ReadFile(paths.Vertex);
         if (!vertex)
-            return Result<ShaderSources>::Err("Failed to load vertex shader: " + vertex.Error());
+        {
+            return Result<ShaderSources>::Err("Failed to load Vertex shader: " + vertex.Error());
+        }
 
-        auto fragment = ReadFile(paths.fragment);
+        auto fragment = ReadFile(paths.Fragment);
         if (!fragment)
-            return Result<ShaderSources>::Err("Failed to load vertex shader: " + fragment.Error());
+        {
+            return Result<ShaderSources>::Err("Failed to load Vertex shader: " + fragment.Error());
+        }
 
-        ShaderSources source{vertex.Value(), fragment.Value()};
-        return Result<ShaderSources>::Ok(source);
+        return Result<ShaderSources>::Ok(ShaderSources{vertex.Value(), fragment.Value()});
     }
 
 
     Result<Ref<Shader>> Shader::Create(const ShaderSources& sources)
     {
-        auto vertexShader = CompileShader(GL_VERTEX_SHADER, sources.vertex);
-        if (vertexShader.IsErr())
+        auto vertexShader = CompileShader(GL_VERTEX_SHADER, sources.Vertex);
+        if (!vertexShader)
         {
             return Result<Ref<Shader>>::Err(vertexShader.Error());
         }
 
-        auto fragmentShader = CompileShader(GL_FRAGMENT_SHADER, sources.fragment);
-        if (fragmentShader.IsErr())
+        auto fragmentShader = CompileShader(GL_FRAGMENT_SHADER, sources.Fragment);
+        if (!fragmentShader)
         {
             return Result<Ref<Shader>>::Err(fragmentShader.Error());
         }
 
-        auto program = LinkProgram(vertexShader.Value(), fragmentShader.Value());
-        if (program.IsErr())
+        auto program = LinkProgram(ShaderHandles{vertexShader.Value(), fragmentShader.Value()});
+        if (!program)
         {
             return Result<Ref<Shader>>::Err(program.Error());
         }
 
-        const auto shader = std::make_shared<Shader>(program.Value());
-        return Result<Ref<Shader>>::Ok(shader);
+        return Result<Ref<Shader>>::Ok(MakeRef<Shader>(program.Value()));
     }
 
     Shader::Shader(const GLuint program)
@@ -163,11 +165,11 @@ namespace raytracer {
         return Result<GLuint>::Ok(shader);
     }
 
-    Result<GLuint> Shader::LinkProgram(const GLuint vertexShader, const GLuint fragmentShader)
+    Result<GLuint> Shader::LinkProgram(const ShaderHandles& handles)
     {
         const auto program = glCreateProgram();
-        GL_CHECK(glAttachShader(program, vertexShader));
-        GL_CHECK(glAttachShader(program, fragmentShader));
+        GL_CHECK(glAttachShader(program, handles.Vertex));
+        GL_CHECK(glAttachShader(program, handles.Fragment));
         GL_CHECK(glLinkProgram(program));
         GL_CHECK(glValidateProgram(program));
 
@@ -180,14 +182,14 @@ namespace raytracer {
             std::vector<char> log(logLength);
             GL_CHECK(glGetProgramInfoLog(program, logLength, &logLength, log.data()));
 
-            GL_CHECK(glDeleteShader(vertexShader));
-            GL_CHECK(glDeleteShader(fragmentShader));
+            GL_CHECK(glDeleteShader(handles.Vertex));
+            GL_CHECK(glDeleteShader(handles.Fragment));
 
             return Result<GLuint>::Err("FFailed to link program: " + std::string{log.data()});
         }
 
-        GL_CHECK(glDeleteShader(vertexShader));
-        GL_CHECK(glDeleteShader(fragmentShader));
+        GL_CHECK(glDeleteShader(handles.Vertex));
+        GL_CHECK(glDeleteShader(handles.Fragment));
 
         return Result<GLuint>::Ok(program);
     }
