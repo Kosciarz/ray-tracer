@@ -10,8 +10,8 @@
 
 namespace raytracer {
 
-    WindowConfig::WindowConfig(const std::string& title, const std::uint32_t width, const std::uint32_t height)
-        : Title{title}, Width{width}, Height{height}
+    WindowConfig::WindowConfig(std::string title, const std::uint32_t width, const std::uint32_t height)
+        : Title{std::move(title)}, Width{width}, Height{height}
     {
     }
 
@@ -97,7 +97,12 @@ namespace raytracer {
         glfwSetKeyCallback(m_Window,
             [](GLFWwindow* window, const int key, int scancode, const int action, int mods)
             {
-                if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
+                if (action != GLFW_PRESS)
+                {
+                    return;
+                }
+
+                if (key == GLFW_KEY_ESCAPE)
                 {
                     const auto* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
                     WindowCloseEvent event;

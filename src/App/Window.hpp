@@ -18,11 +18,8 @@ namespace raytracer {
         std::uint32_t Width;
         std::uint32_t Height;
 
-        explicit WindowConfig(const std::string& title = "Ray Tracer",
-                              const std::uint32_t width = 1280,
-                              const std::uint32_t height = 720);
+        explicit WindowConfig(std::string title = "Ray Tracer", std::uint32_t width = 1280, std::uint32_t height = 720);
     };
-
 
     class Window
     {
