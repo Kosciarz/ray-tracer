@@ -12,14 +12,20 @@ namespace raytracer {
 
     struct ShaderPaths
     {
-        std::filesystem::path vertex;
-        std::filesystem::path fragment;
+        std::filesystem::path Vertex;
+        std::filesystem::path Fragment;
+    };
+
+    struct ShaderHandles
+    {
+        GLuint Vertex;
+        GLuint Fragment;
     };
 
     struct ShaderSources
     {
-        std::string vertex;
-        std::string fragment;
+        std::string Vertex;
+        std::string Fragment;
 
         static Result<ShaderSources> Load(const ShaderPaths& paths);
     };
@@ -58,7 +64,7 @@ namespace raytracer {
     private:
         static Result<GLuint> CompileShader(GLenum shaderType, const std::string& source);
 
-        static Result<GLuint> LinkProgram(GLuint vertexShader, GLuint fragmentShader);
+        static Result<GLuint> LinkProgram(const ShaderHandles& handles);
 
     private:
         GLuint m_ProgramID;
