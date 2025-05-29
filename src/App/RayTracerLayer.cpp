@@ -18,7 +18,6 @@
 #include "Renderer/Buffer.hpp"
 #include "Renderer/Image.hpp"
 #include "Renderer/Shader.hpp"
-#include "Renderer/Renderer.hpp"
 
 #include "Utils/Timer.hpp"
 #include "Utils/Random.hpp"
@@ -73,15 +72,6 @@ namespace raytracer {
         BuildScene();
     }
 
-    void RayTracerLayer::BuildScene()
-    {
-        m_World.Clear();
-
-        m_World.Add(MakeRef<Sphere>(glm::vec3{0, 0, -1}, 0.5));
-        m_World.Add(MakeRef<Sphere>(glm::vec3{0, -100.5, -1}, 100));
-        m_World.Add(MakeRef<Sphere>(Random::Vec3(), 2));
-    }
-
     void RayTracerLayer::OnDetach()
     {
         m_VertexArray.reset();
@@ -127,6 +117,14 @@ namespace raytracer {
 
                 return false;
             });
+    }
+
+    void RayTracerLayer::BuildScene()
+    {
+        m_World.Clear();
+
+        m_World.Add(MakeRef<Sphere>(glm::vec3{0, 0, -1}, 0.5));
+        m_World.Add(MakeRef<Sphere>(glm::vec3{0, -100.5, -1}, 100));
     }
 
     void RayTracerLayer::Render()
