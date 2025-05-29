@@ -45,11 +45,15 @@ namespace raytracer {
         const ShaderPaths paths{shaderPath / "vs.vert", shaderPath / "fs.frag"};
         const auto& shaderSource = ShaderSources::Load(paths);
         if (!shaderSource)
+        {
             throw std::runtime_error{shaderSource.Error()};
+        }
 
         const auto& shader = Shader::Create(shaderSource.Value());
         if (!shader)
+        {
             throw std::runtime_error{shader.Error()};
+        }
 
         m_Shader = shader.Value();
 
@@ -117,7 +121,6 @@ namespace raytracer {
             {
                 m_ViewportWidth = e.GetWidth();
                 m_ViewportHeight = e.GetHeight();
-
                 return false;
             });
     }

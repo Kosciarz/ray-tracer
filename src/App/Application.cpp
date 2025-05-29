@@ -44,7 +44,9 @@ namespace raytracer {
     {
         auto window = Window::Create();
         if (!window)
+        {
             return Result<void>::Err(window.Error());
+        }
 
         m_Window = window.ValueMove();
         m_Window->SetEventCallback(
@@ -71,11 +73,15 @@ namespace raytracer {
             m_LastFrameTime = time;
 
             for (const auto& layer : m_LayerStack)
+            {
                 layer->OnUpdate(timeStep);
+            }
 
             m_ImGuiLayer->Begin();
             for (const auto& layer : m_LayerStack)
+            {
                 layer->OnUIRender();
+            }
             m_ImGuiLayer->End();
 
             m_Window->PollEvents();
@@ -116,7 +122,9 @@ namespace raytracer {
         for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it)
         {
             if (e.Handled)
+            {
                 break;
+            }
             (*it)->OnEvent(e);
         }
     }

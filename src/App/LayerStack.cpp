@@ -13,7 +13,9 @@ namespace raytracer {
     LayerStack::~LayerStack()
     {
         for (const auto& layer : m_Layers)
+        {
             layer->OnDetach();
+        }
     }
 
     void LayerStack::PushLayer(Scope<Layer> layer)
