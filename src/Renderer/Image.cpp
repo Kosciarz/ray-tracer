@@ -9,6 +9,8 @@
 #include "Utils/RayTracerUtils.hpp"
 #include "Utils/gl_utils.hpp"
 
+namespace fs = std::filesystem;
+
 namespace raytracer {
 
     Ref<Image> Image::Create(const std::int32_t width, const std::int32_t height,
@@ -17,12 +19,12 @@ namespace raytracer {
         return MakeRef<Image>(width, height, format, data, unitIndex);
     }
 
-    Ref<Image> Image::Create(const std::filesystem::path& path, const std::uint32_t unitIndex)
+    Ref<Image> Image::Create(const fs::path& path, const std::uint32_t unitIndex)
     {
         return MakeRef<Image>(path, unitIndex);
     }
 
-    Image::Image(const std::filesystem::path& path, const std::uint32_t unitIndex)
+    Image::Image(const fs::path& path, const std::uint32_t unitIndex)
     {
         GL_CHECK(glGenTextures(1, &m_Handle));
         Bind();
