@@ -27,14 +27,18 @@ namespace raytracer {
         const std::vector<Ref<Image>>& textures)
     {
         RAYTRACER_ASSERT(vertexArray, "Vertex Array is a nullptr");
-        auto indexBuffer = vertexArray->GetIndexBuffer();
+        const auto indexBuffer = vertexArray->GetIndexBuffer();
         RAYTRACER_ASSERT(indexBuffer, "Index Buffer is a nullptr");
         RAYTRACER_ASSERT(shader, "Shader is a nullptr");
 
         shader->Use();
         for (const auto& texture : textures)
+        {
             if (texture)
+            {
                 texture->Bind();
+            }
+        }
 
         vertexArray->Bind();
         indexBuffer->Bind();
