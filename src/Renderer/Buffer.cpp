@@ -16,19 +16,19 @@ namespace raytracer {
 
     VertexBuffer::VertexBuffer(const void* data, const std::size_t size)
     {
-        GL_CHECK(glGenBuffers(1, &m_BufferID));
+        GL_CHECK(glGenBuffers(1, &m_ID));
         Bind();
         GL_CHECK(glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW));
     }
 
     VertexBuffer::~VertexBuffer()
     {
-        GL_CHECK(glDeleteBuffers(1, &m_BufferID));
+        GL_CHECK(glDeleteBuffers(1, &m_ID));
     }
 
     void VertexBuffer::Bind() const
     {
-        GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, m_BufferID));
+        GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, m_ID));
     }
 
     void VertexBuffer::Unbind() const
@@ -51,14 +51,14 @@ namespace raytracer {
     IndexBuffer::IndexBuffer(const std::size_t size, const void* data)
         : m_Size{size}
     {
-        GL_CHECK(glGenBuffers(1, &m_BufferID));
-        GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_BufferID));
+        GL_CHECK(glGenBuffers(1, &m_ID));
+        GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ID));
         GL_CHECK(glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, GL_STATIC_DRAW));
     }
 
     IndexBuffer::~IndexBuffer()
     {
-        GL_CHECK(glDeleteBuffers(1, &m_BufferID));
+        GL_CHECK(glDeleteBuffers(1, &m_ID));
     }
 
     std::size_t IndexBuffer::Size() const
@@ -68,7 +68,7 @@ namespace raytracer {
 
     void IndexBuffer::Bind() const
     {
-        GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_BufferID));
+        GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ID));
     }
 
     void IndexBuffer::Unbind() const

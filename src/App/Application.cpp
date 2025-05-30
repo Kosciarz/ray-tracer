@@ -22,18 +22,13 @@ namespace fs = std::filesystem;
 
 namespace raytracer {
 
-    Application::Application()
-        : m_ImGuiLayer{nullptr}, m_Running{true}, m_LastFrameTime{0.0f}
-    {
-    }
-
     Application Application::Create()
     {
-        Application app;
-        auto initResult = app.Init();
-        if (!initResult)
+        Application app{};
+        if (auto initResult = app.Init(); !initResult)
+        {
             throw std::runtime_error{initResult.Error()};
-
+        }
         return app;
     }
 
@@ -53,10 +48,7 @@ namespace raytracer {
             });
 
         PushLayer(std::make_unique<RayTracerLayer>("RayTracerLayer"));
-
-        auto imguiLayer = std::make_unique<ImGuiLayer>(m_Window->GetWindow());
-        m_ImGuiLayer = imguiLayer.get();
-        PushOverlay(std::move(imguiLayer));
+        PushOverlay(std::make_unique<ImGuiLayer>(m_Window->GetWindow()));
 
         return Result<void>::Ok();
     }
@@ -74,12 +66,12 @@ namespace raytracer {
                 layer->OnUpdate(timeStep);
             }
 
-            m_ImGuiLayer->Begin();
+            ImGuiLayer::Begin();
             for (const auto& layer : m_LayerStack)
             {
                 layer->OnUIRender();
             }
-            m_ImGuiLayer->End();
+            ImGuiLayer::End();
 
             m_Window->PollEvents();
             m_Window->SwapBuffers();

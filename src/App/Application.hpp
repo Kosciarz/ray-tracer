@@ -9,14 +9,13 @@
 #include "Events/ApplicationEvents.hpp"
 
 #include "Utils/Result.hpp"
-#include "Utils/RayTracerUtils.hpp"
 
 namespace raytracer {
 
     class Application
     {
     public:
-        Application();
+        Application() = default;
         ~Application() = default;
 
         Application(const Application&) = delete;
@@ -32,7 +31,6 @@ namespace raytracer {
         void Close();
 
         void PushLayer(std::unique_ptr<Layer> layer);
-
         void PushOverlay(std::unique_ptr<Layer> layer);
 
         void OnEvent(Event& e);
@@ -41,17 +39,14 @@ namespace raytracer {
         Result<void> Init();
 
         bool OnWindowClose(const WindowCloseEvent& e);
-
         bool OnWindowResize(const WindowResizeEvent& e);
 
     private:
         std::unique_ptr<Window> m_Window;
         LayerStack m_LayerStack;
-        ImGuiLayer* m_ImGuiLayer;
 
-        bool m_Running;
-
-        float m_LastFrameTime;
+        bool m_Running = true;
+        float m_LastFrameTime = 0.0f;
     };
 
 }

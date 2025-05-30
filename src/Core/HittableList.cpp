@@ -20,7 +20,7 @@ namespace raytracer {
 
     bool HittableList::Hit(const Ray& ray, const Interval& rayT, HitRecord& rec) const
     {
-        HitRecord tempRec;
+        HitRecord tempRec{};
         bool hitAnything = false;
         auto closestSoFar = rayT.Max();
         

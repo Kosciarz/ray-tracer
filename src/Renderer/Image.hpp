@@ -1,16 +1,13 @@
 #pragma once
 
 #include <filesystem>
-#include <cstdint>
 #include <utility>
 
 #include "OpenGLHeaders.hpp"
 
-#include "Utils/RayTracerUtils.hpp"
-
 namespace raytracer {
 
-    enum class ImageFormat : GLenum
+    enum class ImageFormat
     {
         None = 0,
         RGB = GL_RGB,
@@ -31,19 +28,15 @@ namespace raytracer {
               ImageFormat format, const void* data, std::uint32_t unitIndex);
 
         Image() = default;
-
         ~Image();
 
         void Bind() const;
-
         void Unbind() const;
 
         void SetData(const void* data) const;
-
         void SetParameter(GLenum name, GLint value) const;
 
         [[nodiscard]] std::int32_t Width() const;
-
         [[nodiscard]] std::int32_t Height() const;
 
         [[nodiscard]] GLuint Handle() const;

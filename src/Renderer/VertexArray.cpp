@@ -1,6 +1,7 @@
 #include "VertexArray.hpp"
 
 #include <memory>
+#include <utility>
 
 #include "OpenGLHeaders.hpp"
 
@@ -37,7 +38,7 @@ namespace raytracer {
 
     void VertexArray::AddIndexBuffer(std::shared_ptr<IndexBuffer> indexBuffer)
     {
-        m_IndexBuffer = indexBuffer;
+        m_IndexBuffer = std::move(indexBuffer);
     }
 
     std::shared_ptr<IndexBuffer> VertexArray::GetIndexBuffer() const
@@ -45,15 +46,15 @@ namespace raytracer {
         return m_IndexBuffer;
     }
 
-    void VertexArray::AddVertexBuffer(std::shared_ptr<VertexBuffer> vertexBuffer, GLuint index, GLint size, GLenum type,
-        GLboolean normalized, GLsizei stride, const void* offset)
+    void VertexArray::AddVertexBuffer(std::shared_ptr<VertexBuffer> buffer, const GLuint index, const GLint size, const GLenum type,
+        const GLboolean normalized, const GLsizei stride, const void* offset)
     {
         Bind();
-        vertexBuffer->Bind();
+        buffer->Bind();
         GL_CHECK(glVertexAttribPointer(index, size, type, normalized, stride, offset));
         GL_CHECK(glEnableVertexAttribArray(index));
 
-        m_VertexBuffers.push_back(vertexBuffer);
+        m_VertexBuffers.push_back(std::move(buffer));
     }
 
 }
