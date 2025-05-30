@@ -23,32 +23,22 @@ namespace raytracer {
     Application Application::Create()
     {
         Application app{};
-        if (auto initResult = app.Init(); !initResult)
-        {
-            throw std::runtime_error{initResult.Error()};
-        }
-        return app;
-    }
 
-    Result<void> Application::Init()
-    {
         auto window = Window::Create();
         if (!window)
-        {
-            return Result<void>::Err(window.Error());
-        }
+            throw std::runtime_error{window.Error()};
 
-        m_Window = std::move(window.Value());
-        m_Window->SetEventCallback(
-            [this](Event& event)
+        app.m_Window = std::move(window.Value());
+        app.m_Window->SetEventCallback(
+            [&app](Event& event)
             {
-                OnEvent(event);
+                app.OnEvent(event);
             });
 
-        PushLayer(std::make_unique<RayTracerLayer>("RayTracerLayer"));
-        PushOverlay(std::make_unique<ImGuiLayer>(m_Window->GetWindow()));
+        app.PushLayer(std::make_unique<RayTracerLayer>("RayTracerLayer"));
+        app.PushOverlay(std::make_unique<ImGuiLayer>(app.m_Window->GetWindow()));
 
-        return Result<void>::Ok();
+        return app;
     }
 
     void Application::Run()

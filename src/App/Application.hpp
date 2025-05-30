@@ -8,8 +8,6 @@
 
 #include "Events/ApplicationEvents.hpp"
 
-#include "Utils/Result.hpp"
-
 namespace raytracer {
 
     class Application
@@ -35,8 +33,6 @@ namespace raytracer {
         void OnEvent(Event& e);
 
     private:
-        Result<void> Init();
-
         bool OnWindowClose(const WindowCloseEvent& e);
         bool OnWindowResize(const WindowResizeEvent& e);
 
