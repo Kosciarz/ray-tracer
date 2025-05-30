@@ -13,18 +13,10 @@ namespace raytracer {
         LayerStack();
         ~LayerStack();
 
-        LayerStack(const LayerStack&) = delete;
-        LayerStack& operator=(const LayerStack&) = delete;
-
-        LayerStack(LayerStack&&) noexcept = default;
-        LayerStack& operator=(LayerStack&&) noexcept = default;
-
         void PushLayer(std::unique_ptr<Layer> layer);
-
         void PushOverlay(std::unique_ptr<Layer> layer);
 
         void PopLayer(Layer* layer);
-
         void PopOverlay(Layer* layer);
 
         std::vector<std::unique_ptr<Layer>>::iterator begin();
