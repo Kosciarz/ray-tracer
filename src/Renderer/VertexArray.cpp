@@ -1,18 +1,19 @@
 #include "VertexArray.hpp"
 
 #include <memory>
+#include <utility>
 
 #include "OpenGLHeaders.hpp"
 
 #include "Buffer.hpp"
-#include "Utils/gl_utils.hpp"
+#include "Utils/GLUtils.hpp"
 #include "Utils/RayTracerUtils.hpp"
 
 namespace raytracer {
 
-    Ref<VertexArray> VertexArray::Create()
+    std::shared_ptr<VertexArray> VertexArray::Create()
     {
-        return MakeRef<VertexArray>();
+        return std::make_shared<VertexArray>();
     }
 
     VertexArray::VertexArray()
@@ -35,25 +36,25 @@ namespace raytracer {
         GL_CHECK(glBindVertexArray(0));
     }
 
-    void VertexArray::AddIndexBuffer(Ref<IndexBuffer> indexBuffer)
+    void VertexArray::AddIndexBuffer(std::shared_ptr<IndexBuffer> indexBuffer)
     {
-        m_IndexBuffer = indexBuffer;
+        m_IndexBuffer = std::move(indexBuffer);
     }
 
-    Ref<IndexBuffer> VertexArray::GetIndexBuffer() const
+    std::shared_ptr<IndexBuffer> VertexArray::GetIndexBuffer() const
     {
         return m_IndexBuffer;
     }
 
-    void VertexArray::AddVertexBuffer(Ref<VertexBuffer> vertexBuffer, GLuint index, GLint size, GLenum type,
-        GLboolean normalized, GLsizei stride, const void* offset)
+    void VertexArray::AddVertexBuffer(std::shared_ptr<VertexBuffer> buffer, const GLuint index, const GLint size, const GLenum type,
+        const GLboolean normalized, const GLsizei stride, const void* offset)
     {
         Bind();
-        vertexBuffer->Bind();
+        buffer->Bind();
         GL_CHECK(glVertexAttribPointer(index, size, type, normalized, stride, offset));
         GL_CHECK(glEnableVertexAttribArray(index));
 
-        m_VertexBuffers.push_back(vertexBuffer);
+        m_VertexBuffers.push_back(std::move(buffer));
     }
 
 }

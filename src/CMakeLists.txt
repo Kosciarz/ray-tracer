@@ -9,7 +9,6 @@ set(SOURCES
     "Events/ApplicationEvents.cpp"
 
     "Renderer/Image.cpp"
-    "Renderer/Renderer.cpp"
     "Renderer/Shader.cpp"
     "Renderer/Buffer.cpp"
     "Renderer/VertexArray.cpp"
@@ -37,17 +36,15 @@ set(HEADERS
 
     "Renderer/OpenGLHeaders.hpp"
     "Renderer/Image.hpp"
-    "Renderer/Renderer.hpp"
     "Renderer/Shader.hpp"
     "Renderer/Buffer.hpp"
     "Renderer/VertexArray.hpp"
     
     "Utils/RayTracerUtils.hpp"
-    "Utils/gl_utils.hpp"
+    "Utils/GLUtils.hpp"
     "Utils/Result.hpp"
     "Utils/Random.hpp"
     "Utils/Timer.hpp"
-    "Utils/Time.hpp"
 
     "Core/Color.hpp"
     "Core/Ray.hpp"

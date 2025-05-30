@@ -2,11 +2,11 @@
 
 #include <filesystem>
 #include <string>
+#include <memory>
 
 #include "OpenGLHeaders.hpp"
 
 #include "Utils/Result.hpp"
-#include "Utils/RayTracerUtils.hpp"
 
 namespace raytracer {
 
@@ -33,10 +33,9 @@ namespace raytracer {
     class Shader
     {
     public:
-        static Result<Ref<Shader>> Create(const ShaderSources& sources);
+        static Result<std::shared_ptr<Shader>> Create(const ShaderSources& sources);
 
         Shader() = default;
-
         explicit Shader(GLuint program);
 
         ~Shader();
@@ -44,7 +43,6 @@ namespace raytracer {
         [[nodiscard]] GLuint GetID() const;
 
         void Use() const;
-
         void Unuse() const;
 
         void SetUniformBool(const std::string& name, bool value) const;
@@ -67,7 +65,7 @@ namespace raytracer {
         static Result<GLuint> LinkProgram(const ShaderHandles& handles);
 
     private:
-        GLuint m_ProgramID;
+        GLuint m_ID;
     };
 
 }

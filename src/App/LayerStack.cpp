@@ -1,6 +1,7 @@
 #include "LayerStack.hpp"
 
 #include <vector>
+#include <memory>
 #include <algorithm>
 
 namespace raytracer {
@@ -13,17 +14,19 @@ namespace raytracer {
     LayerStack::~LayerStack()
     {
         for (const auto& layer : m_Layers)
+        {
             layer->OnDetach();
+        }
     }
 
-    void LayerStack::PushLayer(Scope<Layer> layer)
+    void LayerStack::PushLayer(std::unique_ptr<Layer> layer)
     {
         layer->OnAttach();
         m_Layers.insert(m_Layers.begin() + m_LayerInsertIndex, std::move(layer));
         m_LayerInsertIndex++;
     }
 
-    void LayerStack::PushOverlay(Scope<Layer> layer)
+    void LayerStack::PushOverlay(std::unique_ptr<Layer> layer)
     {
         layer->OnAttach();
         m_Layers.push_back(std::move(layer));
@@ -32,7 +35,7 @@ namespace raytracer {
     void LayerStack::PopLayer(Layer* layer)
     {
         const auto it = std::find_if(m_Layers.begin(), m_Layers.begin() + m_LayerInsertIndex,
-            [&layer](const Scope<Layer>& ptr)
+            [&layer](const std::unique_ptr<Layer>& ptr)
             {
                 return ptr.get() == layer;
             });
@@ -48,7 +51,7 @@ namespace raytracer {
     void LayerStack::PopOverlay(Layer* layer)
     {
         const auto it = std::find_if(m_Layers.begin() + m_LayerInsertIndex, m_Layers.end(),
-            [&layer](const Scope<Layer>& ptr)
+            [&layer](const std::unique_ptr<Layer>& ptr)
             {
                 return ptr.get() == layer;
             });

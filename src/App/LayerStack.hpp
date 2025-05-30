@@ -1,11 +1,9 @@
 #pragma once
 
 #include <vector>
-#include <iostream>
+#include <memory>
 
 #include "Layer.hpp"
-
-#include "Utils/RayTracerUtils.hpp"
 
 namespace raytracer {
 
@@ -21,66 +19,66 @@ namespace raytracer {
         LayerStack(LayerStack&&) noexcept = default;
         LayerStack& operator=(LayerStack&&) noexcept = default;
 
-        void PushLayer(Scope<Layer> layer);
+        void PushLayer(std::unique_ptr<Layer> layer);
 
-        void PushOverlay(Scope<Layer> layer);
+        void PushOverlay(std::unique_ptr<Layer> layer);
 
         void PopLayer(Layer* layer);
 
         void PopOverlay(Layer* layer);
 
-        std::vector<Scope<Layer>>::iterator begin();
-        std::vector<Scope<Layer>>::iterator end();
-        std::vector<Scope<Layer>>::reverse_iterator rbegin();
-        std::vector<Scope<Layer>>::reverse_iterator rend();
+        std::vector<std::unique_ptr<Layer>>::iterator begin();
+        std::vector<std::unique_ptr<Layer>>::iterator end();
+        std::vector<std::unique_ptr<Layer>>::reverse_iterator rbegin();
+        std::vector<std::unique_ptr<Layer>>::reverse_iterator rend();
 
-        std::vector<Scope<Layer>>::const_iterator begin() const;
-        std::vector<Scope<Layer>>::const_iterator end() const;
-        std::vector<Scope<Layer>>::const_reverse_iterator rbegin() const;
-        std::vector<Scope<Layer>>::const_reverse_iterator rend() const;
+        std::vector<std::unique_ptr<Layer>>::const_iterator begin() const;
+        std::vector<std::unique_ptr<Layer>>::const_iterator end() const;
+        std::vector<std::unique_ptr<Layer>>::const_reverse_iterator rbegin() const;
+        std::vector<std::unique_ptr<Layer>>::const_reverse_iterator rend() const;
 
     private:
-        std::vector<Scope<Layer>> m_Layers;
+        std::vector<std::unique_ptr<Layer>> m_Layers;
         std::size_t m_LayerInsertIndex;
     };
 
 
-    inline std::vector<Scope<Layer>>::iterator LayerStack::begin()
+    inline std::vector<std::unique_ptr<Layer>>::iterator LayerStack::begin()
     {
         return m_Layers.begin();
     }
 
-    inline std::vector<Scope<Layer>>::iterator LayerStack::end()
+    inline std::vector<std::unique_ptr<Layer>>::iterator LayerStack::end()
     {
         return m_Layers.end();
     }
 
-    inline std::vector<Scope<Layer>>::reverse_iterator LayerStack::rbegin()
+    inline std::vector<std::unique_ptr<Layer>>::reverse_iterator LayerStack::rbegin()
     {
         return m_Layers.rbegin();
     }
 
-    inline std::vector<Scope<Layer>>::reverse_iterator LayerStack::rend()
+    inline std::vector<std::unique_ptr<Layer>>::reverse_iterator LayerStack::rend()
     {
         return m_Layers.rend();
     }
 
-    inline std::vector<Scope<Layer>>::const_iterator LayerStack::begin() const
+    inline std::vector<std::unique_ptr<Layer>>::const_iterator LayerStack::begin() const
     {
         return m_Layers.begin();
     }
 
-    inline std::vector<Scope<Layer>>::const_iterator LayerStack::end() const
+    inline std::vector<std::unique_ptr<Layer>>::const_iterator LayerStack::end() const
     {
         return m_Layers.end();
     }
 
-    inline std::vector<Scope<Layer>>::const_reverse_iterator LayerStack::rbegin() const
+    inline std::vector<std::unique_ptr<Layer>>::const_reverse_iterator LayerStack::rbegin() const
     {
         return m_Layers.rbegin();
     }
 
-    inline std::vector<Scope<Layer>>::const_reverse_iterator LayerStack::rend() const
+    inline std::vector<std::unique_ptr<Layer>>::const_reverse_iterator LayerStack::rend() const
     {
         return m_Layers.rend();
     }

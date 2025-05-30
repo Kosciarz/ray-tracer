@@ -21,7 +21,7 @@
 #include "Utils/Timer.hpp"
 #include "Utils/Random.hpp"
 #include "Utils/RayTracerUtils.hpp"
-#include "Utils/gl_utils.hpp"
+#include "Utils/GLUtils.hpp"
 
 #include "Core/Color.hpp"
 #include "Core/Ray.hpp"
@@ -45,11 +45,15 @@ namespace raytracer {
         const ShaderPaths paths{shaderPath / "vs.vert", shaderPath / "fs.frag"};
         const auto& shaderSource = ShaderSources::Load(paths);
         if (!shaderSource)
+        {
             throw std::runtime_error{shaderSource.Error()};
+        }
 
         const auto& shader = Shader::Create(shaderSource.Value());
         if (!shader)
+        {
             throw std::runtime_error{shader.Error()};
+        }
 
         m_Shader = shader.Value();
 
@@ -117,7 +121,6 @@ namespace raytracer {
             {
                 m_ViewportWidth = e.GetWidth();
                 m_ViewportHeight = e.GetHeight();
-
                 return false;
             });
     }
@@ -126,8 +129,8 @@ namespace raytracer {
     {
         m_World.Clear();
 
-        m_World.Add(MakeRef<Sphere>(glm::vec3{0, 0, -1}, 0.5));
-        m_World.Add(MakeRef<Sphere>(glm::vec3{0, -100.5, -1}, 100));
+        m_World.Add(std::make_unique<Sphere>(glm::vec3{0, 0, -1}, 0.5));
+        m_World.Add(std::make_unique<Sphere>(glm::vec3{0, -100.5, -1}, 100));
     }
 
     void RayTracerLayer::Render()

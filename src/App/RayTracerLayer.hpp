@@ -10,12 +10,9 @@
 #include "Renderer/VertexArray.hpp"
 #include "Renderer/Image.hpp"
 #include "Renderer/Shader.hpp"
-#include "Renderer/Renderer.hpp"
 
 #include "Core/Color.hpp"
 #include "Core/HittableList.hpp"
-
-#include "Utils/RayTracerUtils.hpp"
 
 namespace raytracer {
 
@@ -39,16 +36,16 @@ namespace raytracer {
 
         void BuildScene();
 
-        void UpdateBuffer(const std::size_t i, const Color& color);
+        void UpdateBuffer(std::size_t i, const Color& color);
 
     private:
         std::uint32_t m_ViewportWidth, m_ViewportHeight;
         float m_LastRenderTime = 0.0;
 
-        Ref<VertexArray> m_VertexArray;
-        Ref<Shader> m_Shader;
+        std::shared_ptr<VertexArray> m_VertexArray;
+        std::shared_ptr<Shader> m_Shader;
 
-        Ref<Image> m_Image;
+        std::shared_ptr<Image> m_Image;
         std::vector<std::uint8_t> m_ImageData;
 
         HittableList m_World;

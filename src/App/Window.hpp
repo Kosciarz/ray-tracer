@@ -18,11 +18,8 @@ namespace raytracer {
         std::uint32_t Width;
         std::uint32_t Height;
 
-        explicit WindowConfig(const std::string& title = "Ray Tracer",
-                              const std::uint32_t width = 1280,
-                              const std::uint32_t height = 720);
+        explicit WindowConfig(std::string title = "Ray Tracer", std::uint32_t width = 1280, std::uint32_t height = 720);
     };
-
 
     class Window
     {
@@ -36,7 +33,7 @@ namespace raytracer {
         Window(Window&&) noexcept = default;
         Window& operator=(Window&&) noexcept = default;
 
-        static Result<Scope<Window>> Create(const WindowConfig& config = WindowConfig());
+        static Result<std::unique_ptr<Window>> Create(const WindowConfig& config = WindowConfig());
 
         void SetEventCallback(const std::function<void(Event&)>& callback);
 
@@ -61,6 +58,9 @@ namespace raytracer {
         std::uint32_t m_Height;
 
         std::function<void(Event&)> m_EventCallback;
+
+    private:
+        inline static std::size_t s_WindowCount = 0;
     };
 
 }

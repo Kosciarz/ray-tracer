@@ -1,10 +1,8 @@
 #include "Application.hpp"
 
 #include "Renderer/OpenGLHeaders.hpp"
-#include <imgui.h>
 
 #include <filesystem>
-#include <cstdlib>
 #include <memory>
 #include <iostream>
 
@@ -15,85 +13,61 @@
 #include "Events/Event.hpp"
 #include "Events/ApplicationEvents.hpp"
 
-#include "Utils/RayTracerUtils.hpp"
-#include "Utils/gl_utils.hpp"
+#include "Utils/GLUtils.hpp"
 #include "Utils/Result.hpp"
-#include "Utils/Timer.hpp"
-#include "Utils/Time.hpp"
 
 namespace fs = std::filesystem;
 
 namespace raytracer {
 
     Application::Application()
-        : m_ImGuiLayer{nullptr}, m_Running{true}, m_LastFrameTime{0.0f}
-    {
-    }
-
-    Application Application::Create()
-    {
-        Application app;
-        auto initResult = app.Init();
-        if (!initResult)
-            throw std::runtime_error{initResult.Error()};
-
-        return app;
-    }
-
-    Result<void> Application::Init()
     {
         auto window = Window::Create();
         if (!window)
-            return Result<void>::Err(window.Error());
+            throw std::runtime_error{window.Error()};
 
-        m_Window = window.ValueMove();
+        m_Window = std::move(window.Value());
         m_Window->SetEventCallback(
             [this](Event& event)
             {
                 OnEvent(event);
             });
 
-        PushLayer(MakeScope<RayTracerLayer>("RayTracerLayer"));
-
-        auto imguiLayer = MakeScope<ImGuiLayer>(m_Window->GetWindow());
-        m_ImGuiLayer = imguiLayer.get();
-        PushOverlay(std::move(imguiLayer));
-
-        return Result<void>::Ok();
+        PushLayer(std::make_unique<RayTracerLayer>("RayTracerLayer"));
+        PushOverlay(std::make_unique<ImGuiLayer>(m_Window->GetWindow()));
     }
 
     void Application::Run()
     {
         while (m_Running)
         {
-            const float time = time::GetTime();
+            const float time = static_cast<float>(glfwGetTime());
             const float timeStep = time - m_LastFrameTime;
             m_LastFrameTime = time;
 
             for (const auto& layer : m_LayerStack)
+            {
                 layer->OnUpdate(timeStep);
+            }
 
-            m_ImGuiLayer->Begin();
+            ImGuiLayer::Begin();
             for (const auto& layer : m_LayerStack)
+            {
                 layer->OnUIRender();
-            m_ImGuiLayer->End();
+            }
+            ImGuiLayer::End();
 
             m_Window->PollEvents();
             m_Window->SwapBuffers();
         }
     }
 
-    void Application::Close()
-    {
-        m_Running = false;
-    }
-
-    void Application::PushLayer(Scope<Layer> layer)
+    void Application::PushLayer(std::unique_ptr<Layer> layer)
     {
         m_LayerStack.PushLayer(std::move(layer));
     }
 
-    void Application::PushOverlay(Scope<Layer> layer)
+    void Application::PushOverlay(std::unique_ptr<Layer> layer)
     {
         m_LayerStack.PushOverlay(std::move(layer));
     }
@@ -116,7 +90,9 @@ namespace raytracer {
         for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it)
         {
             if (e.Handled)
+            {
                 break;
+            }
             (*it)->OnEvent(e);
         }
     }

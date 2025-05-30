@@ -3,6 +3,7 @@
 #include <string>
 #include <utility>
 #include <stdexcept>
+#include <type_traits>
 
 namespace raytracer {
 
@@ -12,59 +13,70 @@ namespace raytracer {
     public:
         Result() = delete;
 
-        static Result<T> Ok(T value)
+        template <typename U>
+            requires std::is_constructible_v<T, U> || std::is_convertible_v<T, U>
+        static auto Ok(U&& v) noexcept -> Result
         {
-            return Result{true, std::move(value), E{}};
+            return Result{true, std::forward<U>(v), E{}};
         }
 
-        static Result<T> Err(E error)
+        template <typename U>
+            requires std::is_constructible_v<E, U> || std::is_convertible_v<E, U>
+        static auto Err(U&& e) noexcept -> Result
         {
-            return {false, T{}, std::move(error)};
+            return Result{false, T{}, std::forward<U>(e)};
         }
 
-        bool IsOk() const
+        [[nodiscard]] bool IsOk() const
         {
             return m_Success;
         }
 
-        bool IsErr() const
+        [[nodiscard]] bool IsErr() const
         {
             return !m_Success;
         }
 
-        T& Value()
+        T& Value() &
         {
             if (!m_Success)
                 throw std::runtime_error{"Attempted to access value in an Err result"};
             return m_Value;
         }
 
-        const T& Value() const
+        const T& Value() const&
         {
             if (!m_Success)
                 throw std::runtime_error{"Attempted to access value in an Err result"};
             return m_Value;
         }
 
-        T&& ValueMove()
+        T&& Value() &&
         {
             if (!m_Success)
                 throw std::runtime_error{"Attempted to access value in an Err result"};
             return std::move(m_Value);
         }
 
-        E& Error()
+        E& Error() &
         {
             if (m_Success)
                 throw std::runtime_error{"Attempted to access error in an Ok result"};
             return m_Error;
         }
 
-        const E& Error() const
+        const E& Error() const&
         {
             if (m_Success)
                 throw std::runtime_error{"Attempted to access error in an Ok result"};
             return m_Error;
+        }
+
+        E&& Error() &&
+        {
+            if (m_Success)
+                throw std::runtime_error{"Attempted to access error in an Ok result"};
+            return std::move(m_Error);
         }
 
         explicit operator bool() const
@@ -73,8 +85,9 @@ namespace raytracer {
         }
 
     private:
-        Result(bool success, T value, E error)
-            : m_Success{success}, m_Value{std::move(value)}, m_Error{std::move(error)}
+        template <typename U, typename V>
+        Result(const bool success, U&& value, V&& error)
+            : m_Success{success}, m_Value{std::forward<U>(value)}, m_Error{std::forward<V>(error)}
         {
         }
 
@@ -95,29 +108,42 @@ namespace raytracer {
             return Result{true, E{}};
         }
 
-        static Result Err(std::string error)
+        template <typename U>
+            requires std::is_constructible_v<E, U> || std::is_convertible_v<E, U>
+        static auto Err(U&& error) noexcept -> Result
         {
-            return {false, std::move(error)};
+            return Result{false, std::forward<U>(error)};
         }
 
-        bool IsOk() const
+        [[nodiscard]] bool IsOk() const
         {
             return m_Success;
         }
 
-        bool IsErr() const
+        [[nodiscard]] bool IsErr() const
         {
             return !m_Success;
         }
 
-        E& Error()
+        E& Error() &
         {
+            if (m_Success)
+                throw std::runtime_error{"Attempted to access error in an Ok result"};
             return m_Error;
         }
 
-        const E& Error() const
+        const E& Error() const&
         {
+            if (m_Success)
+                throw std::runtime_error{"Attempted to access error in an Ok result"};
             return m_Error;
+        }
+
+        E&& Error() &&
+        {
+            if (m_Success)
+                throw std::runtime_error{"Attempted to access error in an Ok result"};
+            return std::move(m_Error);
         }
 
         explicit operator bool() const
@@ -126,7 +152,7 @@ namespace raytracer {
         }
 
     private:
-        Result(bool success, E error)
+        Result(const bool success, E error)
             : m_Success{success}, m_Error{std::move(error)}
         {
         }

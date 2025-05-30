@@ -3,38 +3,33 @@
 #include <memory>
 #include <vector>
 
-#include "OpenGLHeaders.hpp"
-
 #include "Buffer.hpp"
 
-#include "Utils/RayTracerUtils.hpp"
+#include "Renderer/OpenGLHeaders.hpp"
 
 namespace raytracer {
 
     class VertexArray
     {
     public:
-        static Ref<VertexArray> Create();
-
         VertexArray();
-
         ~VertexArray();
 
-        void Bind() const;
+        static std::shared_ptr<VertexArray> Create();
 
+        void Bind() const;
         void Unbind() const;
 
-        void AddIndexBuffer(Ref<IndexBuffer> indexBuffer);
+        void AddIndexBuffer(std::shared_ptr<IndexBuffer> indexBuffer);
+        [[nodiscard]] std::shared_ptr<IndexBuffer> GetIndexBuffer() const;
 
-        [[nodiscard]] Ref<IndexBuffer> GetIndexBuffer() const;
-
-        void AddVertexBuffer(Ref<VertexBuffer> buffer, GLuint index, GLint size, GLenum type,
+        void AddVertexBuffer(std::shared_ptr<VertexBuffer> buffer, GLuint index, GLint size, GLenum type,
             GLboolean normalized, GLsizei stride, const void* offset);
 
     private:
         GLuint m_VAO;
-        Ref<IndexBuffer> m_IndexBuffer;
-        std::vector<Ref<VertexBuffer>> m_VertexBuffers;
+        std::shared_ptr<IndexBuffer> m_IndexBuffer;
+        std::vector<std::shared_ptr<VertexBuffer>> m_VertexBuffers;
     };
 
 }

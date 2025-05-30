@@ -1,13 +1,14 @@
 #include "HittableList.hpp"
 
 #include <vector>
+#include <memory>
 
 #include "Hittable.hpp"
 #include "Utils/RayTracerUtils.hpp"
 
 namespace raytracer {
 
-    void HittableList::Add(const Ref<Hittable>& object)
+    void HittableList::Add(const std::shared_ptr<Hittable>& object)
     {
         m_Objects.push_back(object);
     }
@@ -19,7 +20,7 @@ namespace raytracer {
 
     bool HittableList::Hit(const Ray& ray, const Interval& rayT, HitRecord& rec) const
     {
-        HitRecord tempRec;
+        HitRecord tempRec{};
         bool hitAnything = false;
         auto closestSoFar = rayT.Max();
         
@@ -36,12 +37,12 @@ namespace raytracer {
         return hitAnything;
     }
 
-    std::vector<Ref<Hittable>>& HittableList::Objects()
+    std::vector<std::shared_ptr<Hittable>>& HittableList::Objects()
     {
         return m_Objects;
     }
 
-    const std::vector<Ref<Hittable>>& HittableList::Objects() const
+    const std::vector<std::shared_ptr<Hittable>>& HittableList::Objects() const
     {
         return m_Objects;
     }
