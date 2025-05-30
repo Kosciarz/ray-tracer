@@ -10,7 +10,6 @@
 #include "Renderer/VertexArray.hpp"
 #include "Renderer/Image.hpp"
 #include "Renderer/Shader.hpp"
-#include "Renderer/Renderer.hpp"
 
 #include "Core/Color.hpp"
 #include "Core/HittableList.hpp"

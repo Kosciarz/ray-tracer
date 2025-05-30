@@ -9,7 +9,6 @@ set(SOURCES
     "Events/ApplicationEvents.cpp"
 
     "Renderer/Image.cpp"
-    "Renderer/Renderer.cpp"
     "Renderer/Shader.cpp"
     "Renderer/Buffer.cpp"
     "Renderer/VertexArray.cpp"
@@ -37,7 +36,6 @@ set(HEADERS
 
     "Renderer/OpenGLHeaders.hpp"
     "Renderer/Image.hpp"
-    "Renderer/Renderer.hpp"
     "Renderer/Shader.hpp"
     "Renderer/Buffer.hpp"
     "Renderer/VertexArray.hpp"
