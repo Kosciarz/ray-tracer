@@ -22,12 +22,12 @@ namespace raytracer {
             return {false, T{}, std::move(error)};
         }
 
-        bool IsOk() const
+        [[nodiscard]] bool IsOk() const
         {
             return m_Success;
         }
 
-        bool IsErr() const
+        [[nodiscard]] bool IsErr() const
         {
             return !m_Success;
         }
@@ -59,15 +59,6 @@ namespace raytracer {
             return std::move(m_Value);
         }
 
-        const T&& Value() const&&
-        {
-            if (!m_Success)
-            {
-                throw std::runtime_error{"Attempted to access value in an Err result"};
-            }
-            return std::move(m_Value);
-        }
-
         E& Error() &
         {
             if (m_Success)
@@ -87,15 +78,6 @@ namespace raytracer {
         }
 
         E&& Error() &&
-        {
-            if (m_Success)
-            {
-                throw std::runtime_error{"Attempted to access error in an Ok result"};
-            }
-            return std::move(m_Error);
-        }
-
-        const E&& Error() const&&
         {
             if (m_Success)
             {
@@ -137,12 +119,12 @@ namespace raytracer {
             return {false, std::move(error)};
         }
 
-        bool IsOk() const
+        [[nodiscard]] bool IsOk() const
         {
             return m_Success;
         }
 
-        bool IsErr() const
+        [[nodiscard]] bool IsErr() const
         {
             return !m_Success;
         }
@@ -166,15 +148,6 @@ namespace raytracer {
         }
 
         E&& Error() &&
-        {
-            if (m_Success)
-            {
-                throw std::runtime_error{"Attempted to access error in an Ok result"};
-            }
-            return std::move(m_Error);
-        }
-
-        const E&& Error() const&&
         {
             if (m_Success)
             {
