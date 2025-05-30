@@ -35,35 +35,45 @@ namespace raytracer {
         T& Value()
         {
             if (!m_Success)
+            {
                 throw std::runtime_error{"Attempted to access value in an Err result"};
+            }
             return m_Value;
         }
 
         const T& Value() const
         {
             if (!m_Success)
+            {
                 throw std::runtime_error{"Attempted to access value in an Err result"};
+            }
             return m_Value;
         }
 
         T&& ValueMove()
         {
             if (!m_Success)
+            {
                 throw std::runtime_error{"Attempted to access value in an Err result"};
+            }
             return std::move(m_Value);
         }
 
         E& Error()
         {
             if (m_Success)
+            {
                 throw std::runtime_error{"Attempted to access error in an Ok result"};
+            }
             return m_Error;
         }
 
         const E& Error() const
         {
             if (m_Success)
+            {
                 throw std::runtime_error{"Attempted to access error in an Ok result"};
+            }
             return m_Error;
         }
 
@@ -73,7 +83,7 @@ namespace raytracer {
         }
 
     private:
-        Result(bool success, T value, E error)
+        Result(const bool success, T value, E error)
             : m_Success{success}, m_Value{std::move(value)}, m_Error{std::move(error)}
         {
         }
@@ -126,7 +136,7 @@ namespace raytracer {
         }
 
     private:
-        Result(bool success, E error)
+        Result(const bool success, E error)
             : m_Success{success}, m_Error{std::move(error)}
         {
         }
