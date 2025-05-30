@@ -20,25 +20,21 @@ namespace fs = std::filesystem;
 
 namespace raytracer {
 
-    Application Application::Create()
+    Application::Application()
     {
-        Application app{};
-
         auto window = Window::Create();
         if (!window)
             throw std::runtime_error{window.Error()};
 
-        app.m_Window = std::move(window.Value());
-        app.m_Window->SetEventCallback(
-            [&app](Event& event)
+        m_Window = std::move(window.Value());
+        m_Window->SetEventCallback(
+            [this](Event& event)
             {
-                app.OnEvent(event);
+                OnEvent(event);
             });
 
-        app.PushLayer(std::make_unique<RayTracerLayer>("RayTracerLayer"));
-        app.PushOverlay(std::make_unique<ImGuiLayer>(app.m_Window->GetWindow()));
-
-        return app;
+        PushLayer(std::make_unique<RayTracerLayer>("RayTracerLayer"));
+        PushOverlay(std::make_unique<ImGuiLayer>(m_Window->GetWindow()));
     }
 
     void Application::Run()

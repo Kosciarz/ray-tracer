@@ -13,7 +13,7 @@ namespace raytracer {
     class Application
     {
     public:
-        Application() = default;
+        Application();
         ~Application() = default;
 
         Application(const Application&) = delete;
@@ -21,8 +21,6 @@ namespace raytracer {
 
         Application(Application&&) noexcept = default;
         Application& operator=(Application&&) noexcept = default;
-
-        static Application Create();
 
         void Run();
         void Close();

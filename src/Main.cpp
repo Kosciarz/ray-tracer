@@ -6,7 +6,7 @@ int main(int argc, char* argv[])
 {
     try
     {
-        raytracer::Application app = raytracer::Application::Create();
+        raytracer::Application app;
         app.Run();
     }
     catch (const std::runtime_error& e)
