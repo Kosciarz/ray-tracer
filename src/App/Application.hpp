@@ -16,12 +16,6 @@ namespace raytracer {
         Application();
         ~Application() = default;
 
-        Application(const Application&) = delete;
-        Application& operator=(const Application&) = delete;
-
-        Application(Application&&) noexcept = default;
-        Application& operator=(Application&&) noexcept = default;
-
         void Run();
         void Close();
 
