@@ -15,7 +15,6 @@
 
 #include "Utils/GLUtils.hpp"
 #include "Utils/Result.hpp"
-#include "Utils/Timer.hpp"
 
 namespace fs = std::filesystem;
 
@@ -39,7 +38,7 @@ namespace raytracer {
             return Result<void>::Err(window.Error());
         }
 
-        m_Window = window.ValueMove();
+        m_Window = std::move(window.Value());
         m_Window->SetEventCallback(
             [this](Event& event)
             {

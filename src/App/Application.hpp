@@ -27,7 +27,6 @@ namespace raytracer {
         static Application Create();
 
         void Run();
-
         void Close();
 
         void PushLayer(std::unique_ptr<Layer> layer);
