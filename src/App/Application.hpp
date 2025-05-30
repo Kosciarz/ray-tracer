@@ -17,7 +17,6 @@ namespace raytracer {
         ~Application() = default;
 
         void Run();
-        void Close();
 
         void PushLayer(std::unique_ptr<Layer> layer);
         void PushOverlay(std::unique_ptr<Layer> layer);

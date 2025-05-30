@@ -62,11 +62,6 @@ namespace raytracer {
         }
     }
 
-    void Application::Close()
-    {
-        m_Running = false;
-    }
-
     void Application::PushLayer(std::unique_ptr<Layer> layer)
     {
         m_LayerStack.PushLayer(std::move(layer));
