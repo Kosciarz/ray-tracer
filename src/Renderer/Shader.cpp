@@ -28,7 +28,7 @@ namespace raytracer {
             return Result<std::string>::Err("Cannot open shader file: " + path.string());
         }
 
-        const auto fileSize = fs::file_size(path);
+        const std::streamsize fileSize = fs::file_size(path);
         std::string contents(fileSize, 0);
         file.read(contents.data(), fileSize);
         return Result<std::string>::Ok(contents);

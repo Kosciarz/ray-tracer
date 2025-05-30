@@ -41,7 +41,7 @@ namespace raytracer {
     {
         while (m_Running)
         {
-            const float time = glfwGetTime();
+            const float time = static_cast<float>(glfwGetTime());
             const float timeStep = time - m_LastFrameTime;
             m_LastFrameTime = time;
 
