@@ -47,7 +47,6 @@ set(HEADERS
     "Utils/Result.hpp"
     "Utils/Random.hpp"
     "Utils/Timer.hpp"
-    "Utils/Time.hpp"
 
     "Core/Color.hpp"
     "Core/Ray.hpp"

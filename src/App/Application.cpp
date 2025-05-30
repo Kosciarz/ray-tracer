@@ -16,7 +16,6 @@
 #include "Utils/GLUtils.hpp"
 #include "Utils/Result.hpp"
 #include "Utils/Timer.hpp"
-#include "Utils/Time.hpp"
 
 namespace fs = std::filesystem;
 
@@ -57,7 +56,7 @@ namespace raytracer {
     {
         while (m_Running)
         {
-            const float time = time::GetTime();
+            const float time = glfwGetTime();
             const float timeStep = time - m_LastFrameTime;
             m_LastFrameTime = time;
 
