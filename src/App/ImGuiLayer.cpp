@@ -24,7 +24,7 @@ namespace raytracer {
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
-        RAYTRACER_ASSERT(m_Window, "m_Window is a nullptr");
+        RAYTRACER_ASSERT(m_Window, "Window is a nullptr");
         ImGui_ImplGlfw_InitForOpenGL(m_Window, true);
         ImGui_ImplOpenGL3_Init();
     }

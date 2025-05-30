@@ -27,12 +27,6 @@ namespace raytracer {
         explicit Window(const WindowConfig& config);
         ~Window();
 
-        Window(const Window&) = delete;
-        Window& operator=(const Window&) = delete;
-
-        Window(Window&&) noexcept = default;
-        Window& operator=(Window&&) noexcept = default;
-
         static Result<std::unique_ptr<Window>> Create(const WindowConfig& config = WindowConfig());
 
         void SetEventCallback(const std::function<void(Event&)>& callback);
