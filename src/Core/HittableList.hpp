@@ -1,12 +1,11 @@
 #pragma once
 
 #include <vector>
+#include <memory>
 
 #include "Ray.hpp"
 #include "Hittable.hpp"
 #include "Interval.hpp"
-
-#include "Utils/RayTracerUtils.hpp"
 
 namespace raytracer {
 
@@ -15,66 +14,66 @@ namespace raytracer {
     public:
         HittableList() = default;
 
-        void Add(const Ref<Hittable>& object);
+        void Add(const std::shared_ptr<Hittable>& object);
 
         void Clear();
 
         bool Hit(const Ray& ray, const Interval& rayT, HitRecord& rec) const;
 
-        std::vector<Ref<Hittable>>& Objects();
-        const std::vector<Ref<Hittable>>& Objects() const;
+        std::vector<std::shared_ptr<Hittable>>& Objects();
+        const std::vector<std::shared_ptr<Hittable>>& Objects() const;
 
-        std::vector<Ref<Hittable>>::iterator begin();
-        std::vector<Ref<Hittable>>::iterator end();
-        std::vector<Ref<Hittable>>::reverse_iterator rbegin();
-        std::vector<Ref<Hittable>>::reverse_iterator rend();
+        std::vector<std::shared_ptr<Hittable>>::iterator begin();
+        std::vector<std::shared_ptr<Hittable>>::iterator end();
+        std::vector<std::shared_ptr<Hittable>>::reverse_iterator rbegin();
+        std::vector<std::shared_ptr<Hittable>>::reverse_iterator rend();
 
-        std::vector<Ref<Hittable>>::const_iterator begin() const;
-        std::vector<Ref<Hittable>>::const_iterator end() const;
-        std::vector<Ref<Hittable>>::const_reverse_iterator rbegin() const;
-        std::vector<Ref<Hittable>>::const_reverse_iterator rend() const;
+        std::vector<std::shared_ptr<Hittable>>::const_iterator begin() const;
+        std::vector<std::shared_ptr<Hittable>>::const_iterator end() const;
+        std::vector<std::shared_ptr<Hittable>>::const_reverse_iterator rbegin() const;
+        std::vector<std::shared_ptr<Hittable>>::const_reverse_iterator rend() const;
 
     private:
-        std::vector<Ref<Hittable>> m_Objects;
+        std::vector<std::shared_ptr<Hittable>> m_Objects;
     };
 
 
-    inline std::vector<Ref<Hittable>>::iterator HittableList::begin()
+    inline std::vector<std::shared_ptr<Hittable>>::iterator HittableList::begin()
     {
         return m_Objects.begin();
     }
 
-    inline std::vector<Ref<Hittable>>::iterator HittableList::end()
+    inline std::vector<std::shared_ptr<Hittable>>::iterator HittableList::end()
     {
         return m_Objects.end();
     }
     
-    inline std::vector<Ref<Hittable>>::reverse_iterator HittableList::rbegin()
+    inline std::vector<std::shared_ptr<Hittable>>::reverse_iterator HittableList::rbegin()
     {
         return m_Objects.rbegin();
     }
 
-    inline std::vector<Ref<Hittable>>::reverse_iterator HittableList::rend()
+    inline std::vector<std::shared_ptr<Hittable>>::reverse_iterator HittableList::rend()
     {
         return m_Objects.rend();
     }
 
-    inline std::vector<Ref<Hittable>>::const_iterator HittableList::begin() const
+    inline std::vector<std::shared_ptr<Hittable>>::const_iterator HittableList::begin() const
     {
         return m_Objects.begin();
     }
 
-    inline std::vector<Ref<Hittable>>::const_iterator HittableList::end() const
+    inline std::vector<std::shared_ptr<Hittable>>::const_iterator HittableList::end() const
     {
         return m_Objects.end();
     }
     
-    inline std::vector<Ref<Hittable>>::const_reverse_iterator HittableList::rbegin() const
+    inline std::vector<std::shared_ptr<Hittable>>::const_reverse_iterator HittableList::rbegin() const
     {
         return m_Objects.rbegin();
     }
 
-    inline std::vector<Ref<Hittable>>::const_reverse_iterator HittableList::rend() const
+    inline std::vector<std::shared_ptr<Hittable>>::const_reverse_iterator HittableList::rend() const
     {
         return m_Objects.rend();
     }

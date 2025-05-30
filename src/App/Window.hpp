@@ -33,7 +33,7 @@ namespace raytracer {
         Window(Window&&) noexcept = default;
         Window& operator=(Window&&) noexcept = default;
 
-        static Result<Scope<Window>> Create(const WindowConfig& config = WindowConfig());
+        static Result<std::unique_ptr<Window>> Create(const WindowConfig& config = WindowConfig());
 
         void SetEventCallback(const std::function<void(Event&)>& callback);
 

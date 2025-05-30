@@ -31,9 +31,9 @@ namespace raytracer {
 
         void Close();
 
-        void PushLayer(Scope<Layer> layer);
+        void PushLayer(std::unique_ptr<Layer> layer);
 
-        void PushOverlay(Scope<Layer> layer);
+        void PushOverlay(std::unique_ptr<Layer> layer);
 
         void OnEvent(Event& e);
 
@@ -45,7 +45,7 @@ namespace raytracer {
         bool OnWindowResize(const WindowResizeEvent& e);
 
     private:
-        Scope<Window> m_Window;
+        std::unique_ptr<Window> m_Window;
         LayerStack m_LayerStack;
         ImGuiLayer* m_ImGuiLayer;
 

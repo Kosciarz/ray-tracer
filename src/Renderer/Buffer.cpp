@@ -1,5 +1,7 @@
 #include "Buffer.hpp"
 
+#include <memory>
+
 #include "OpenGLHeaders.hpp"
 
 #include "Utils/RayTracerUtils.hpp"
@@ -7,9 +9,9 @@
 
 namespace raytracer {
 
-    Ref<VertexBuffer> VertexBuffer::Create(const void* data, const std::size_t size)
+    std::shared_ptr<VertexBuffer> VertexBuffer::Create(const void* data, const std::size_t size)
     {
-        return MakeRef<VertexBuffer>(data, size);
+        return std::make_shared<VertexBuffer>(data, size);
     }
 
     VertexBuffer::VertexBuffer(const void* data, const std::size_t size)
@@ -41,9 +43,9 @@ namespace raytracer {
     }
 
 
-    Ref<IndexBuffer> IndexBuffer::Create(const std::size_t size, const void* data)
+    std::shared_ptr<IndexBuffer> IndexBuffer::Create(const std::size_t size, const void* data)
     {
-        return MakeRef<IndexBuffer>(size, data);
+        return std::make_shared<IndexBuffer>(size, data);
     }
 
     IndexBuffer::IndexBuffer(const std::size_t size, const void* data)

@@ -22,9 +22,9 @@ namespace raytracer {
         GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
     }
 
-    void Renderer::Draw(const Ref<VertexArray>& vertexArray, 
-        const Ref<Shader>& shader,
-        const std::vector<Ref<Image>>& textures)
+    void Renderer::Draw(const std::shared_ptr<VertexArray>& vertexArray,
+        const std::shared_ptr<Shader>& shader,
+        const std::vector<std::shared_ptr<Image>>& textures)
     {
         RAYTRACER_ASSERT(vertexArray, "Vertex Array is a nullptr");
         const auto indexBuffer = vertexArray->GetIndexBuffer();

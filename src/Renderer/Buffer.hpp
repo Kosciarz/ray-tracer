@@ -11,7 +11,7 @@ namespace raytracer {
     class VertexBuffer
     {
     public:
-        static Ref<VertexBuffer> Create(const void* data, std::size_t size);
+        static std::shared_ptr<VertexBuffer> Create(const void* data, std::size_t size);
 
         VertexBuffer(const void* data, std::size_t size);
 
@@ -31,7 +31,7 @@ namespace raytracer {
     class IndexBuffer
     {
     public:
-        static Ref<IndexBuffer> Create(std::size_t size, const void* data);
+        static std::shared_ptr<IndexBuffer> Create(std::size_t size, const void* data);
 
         IndexBuffer(std::size_t size, const void* data);
 

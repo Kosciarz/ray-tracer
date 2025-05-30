@@ -14,7 +14,7 @@ namespace raytracer {
     class VertexArray
     {
     public:
-        static Ref<VertexArray> Create();
+        static std::shared_ptr<VertexArray> Create();
 
         VertexArray();
 
@@ -24,17 +24,17 @@ namespace raytracer {
 
         void Unbind() const;
 
-        void AddIndexBuffer(Ref<IndexBuffer> indexBuffer);
+        void AddIndexBuffer(std::shared_ptr<IndexBuffer> indexBuffer);
 
-        [[nodiscard]] Ref<IndexBuffer> GetIndexBuffer() const;
+        [[nodiscard]] std::shared_ptr<IndexBuffer> GetIndexBuffer() const;
 
-        void AddVertexBuffer(Ref<VertexBuffer> buffer, GLuint index, GLint size, GLenum type,
+        void AddVertexBuffer(std::shared_ptr<VertexBuffer> buffer, GLuint index, GLint size, GLenum type,
             GLboolean normalized, GLsizei stride, const void* offset);
 
     private:
         GLuint m_VAO;
-        Ref<IndexBuffer> m_IndexBuffer;
-        std::vector<Ref<VertexBuffer>> m_VertexBuffers;
+        std::shared_ptr<IndexBuffer> m_IndexBuffer;
+        std::vector<std::shared_ptr<VertexBuffer>> m_VertexBuffers;
     };
 
 }

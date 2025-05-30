@@ -10,9 +10,9 @@
 
 namespace raytracer {
 
-    Ref<VertexArray> VertexArray::Create()
+    std::shared_ptr<VertexArray> VertexArray::Create()
     {
-        return MakeRef<VertexArray>();
+        return std::make_shared<VertexArray>();
     }
 
     VertexArray::VertexArray()
@@ -35,17 +35,17 @@ namespace raytracer {
         GL_CHECK(glBindVertexArray(0));
     }
 
-    void VertexArray::AddIndexBuffer(Ref<IndexBuffer> indexBuffer)
+    void VertexArray::AddIndexBuffer(std::shared_ptr<IndexBuffer> indexBuffer)
     {
         m_IndexBuffer = indexBuffer;
     }
 
-    Ref<IndexBuffer> VertexArray::GetIndexBuffer() const
+    std::shared_ptr<IndexBuffer> VertexArray::GetIndexBuffer() const
     {
         return m_IndexBuffer;
     }
 
-    void VertexArray::AddVertexBuffer(Ref<VertexBuffer> vertexBuffer, GLuint index, GLint size, GLenum type,
+    void VertexArray::AddVertexBuffer(std::shared_ptr<VertexBuffer> vertexBuffer, GLuint index, GLint size, GLenum type,
         GLboolean normalized, GLsizei stride, const void* offset)
     {
         Bind();

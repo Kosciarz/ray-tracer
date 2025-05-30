@@ -33,7 +33,7 @@ namespace raytracer {
     class Shader
     {
     public:
-        static Result<Ref<Shader>> Create(const ShaderSources& sources);
+        static Result<std::shared_ptr<Shader>> Create(const ShaderSources& sources);
 
         Shader() = default;
 

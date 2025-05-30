@@ -1,10 +1,8 @@
 #include "Application.hpp"
 
 #include "Renderer/OpenGLHeaders.hpp"
-#include <imgui.h>
 
 #include <filesystem>
-#include <cstdlib>
 #include <memory>
 #include <iostream>
 
@@ -15,7 +13,6 @@
 #include "Events/Event.hpp"
 #include "Events/ApplicationEvents.hpp"
 
-#include "Utils/RayTracerUtils.hpp"
 #include "Utils/GLUtils.hpp"
 #include "Utils/Result.hpp"
 #include "Utils/Timer.hpp"
@@ -55,9 +52,9 @@ namespace raytracer {
                 OnEvent(event);
             });
 
-        PushLayer(MakeScope<RayTracerLayer>("RayTracerLayer"));
+        PushLayer(std::make_unique<RayTracerLayer>("RayTracerLayer"));
 
-        auto imguiLayer = MakeScope<ImGuiLayer>(m_Window->GetWindow());
+        auto imguiLayer = std::make_unique<ImGuiLayer>(m_Window->GetWindow());
         m_ImGuiLayer = imguiLayer.get();
         PushOverlay(std::move(imguiLayer));
 
@@ -94,12 +91,12 @@ namespace raytracer {
         m_Running = false;
     }
 
-    void Application::PushLayer(Scope<Layer> layer)
+    void Application::PushLayer(std::unique_ptr<Layer> layer)
     {
         m_LayerStack.PushLayer(std::move(layer));
     }
 
-    void Application::PushOverlay(Scope<Layer> layer)
+    void Application::PushOverlay(std::unique_ptr<Layer> layer)
     {
         m_LayerStack.PushOverlay(std::move(layer));
     }

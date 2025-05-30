@@ -20,10 +20,10 @@ namespace raytracer {
     class Image
     {
     public:
-        static Ref<Image> Create(std::int32_t width, std::int32_t height,
+        static std::shared_ptr<Image> Create(std::int32_t width, std::int32_t height,
                                  ImageFormat format, const void* data, std::uint32_t unitIndex);
 
-        static Ref<Image> Create(const std::filesystem::path& path, std::uint32_t unitIndex);
+        static std::shared_ptr<Image> Create(const std::filesystem::path& path, std::uint32_t unitIndex);
 
         Image(const std::filesystem::path& path, std::uint32_t unitIndex);
 

@@ -53,27 +53,27 @@ namespace raytracer {
     }
 
 
-    Result<Ref<Shader>> Shader::Create(const ShaderSources& sources)
+    Result<std::shared_ptr<Shader>> Shader::Create(const ShaderSources& sources)
     {
         auto vertexShader = CompileShader(GL_VERTEX_SHADER, sources.Vertex);
         if (!vertexShader)
         {
-            return Result<Ref<Shader>>::Err(vertexShader.Error());
+            return Result<std::shared_ptr<Shader>>::Err(vertexShader.Error());
         }
 
         auto fragmentShader = CompileShader(GL_FRAGMENT_SHADER, sources.Fragment);
         if (!fragmentShader)
         {
-            return Result<Ref<Shader>>::Err(fragmentShader.Error());
+            return Result<std::shared_ptr<Shader>>::Err(fragmentShader.Error());
         }
 
         auto program = LinkProgram(ShaderHandles{vertexShader.Value(), fragmentShader.Value()});
         if (!program)
         {
-            return Result<Ref<Shader>>::Err(program.Error());
+            return Result<std::shared_ptr<Shader>>::Err(program.Error());
         }
 
-        return Result<Ref<Shader>>::Ok(MakeRef<Shader>(program.Value()));
+        return Result<std::shared_ptr<Shader>>::Ok(std::make_shared<Shader>(program.Value()));
     }
 
     Shader::Shader(const GLuint program)

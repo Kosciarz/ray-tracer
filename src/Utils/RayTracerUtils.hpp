@@ -1,8 +1,5 @@
 #pragma once
 
-#include <memory>
-#include <iostream>
-#include <utility>
 #include <numbers>
 #include <limits>
 
@@ -22,29 +19,11 @@ namespace raytracer {
         return radians * 180.0 / g_Pi;
     }
 
-    
-    template <typename T>
-    using Ref = std::shared_ptr<T>;
-
-    template <typename T, typename ...Args>
-    Ref<T> MakeRef(Args&&... args)
-    {
-        return std::make_shared<T>(std::forward<Args>(args)...);
-    }
-
-    template <typename T>
-    using Scope = std::unique_ptr<T>;
-
-    template <typename T, typename ...Args>
-    Scope<T> MakeScope(Args&&... args)
-    {
-        return std::make_unique<T>(std::forward<Args>(args)...);
-    }
-
 }
 
 #ifndef NDEBUG
 #include <cassert>
+#include <iostream>
 
 #define RAYTRACER_ASSERT(x, msg)                         \
         do {                                            \

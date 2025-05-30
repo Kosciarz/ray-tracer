@@ -129,8 +129,8 @@ namespace raytracer {
     {
         m_World.Clear();
 
-        m_World.Add(MakeRef<Sphere>(glm::vec3{0, 0, -1}, 0.5));
-        m_World.Add(MakeRef<Sphere>(glm::vec3{0, -100.5, -1}, 100));
+        m_World.Add(std::make_unique<Sphere>(glm::vec3{0, 0, -1}, 0.5));
+        m_World.Add(std::make_unique<Sphere>(glm::vec3{0, -100.5, -1}, 100));
     }
 
     void RayTracerLayer::Render()

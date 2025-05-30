@@ -1,5 +1,7 @@
 #include "Window.hpp"
 
+#include <memory>
+
 #include "Events/Event.hpp"
 #include "Events/ApplicationEvents.hpp"
 
@@ -31,14 +33,14 @@ namespace raytracer {
         }
     }
 
-    Result<Scope<Window>> Window::Create(const WindowConfig& config)
+    Result<std::unique_ptr<Window>> Window::Create(const WindowConfig& config)
     {
-        auto window = MakeScope<Window>(config);
+        auto window = std::make_unique<Window>(config);
         if (auto initResult = window->Init(); !initResult)
         {
-            return Result<Scope<Window>>::Err(initResult.Error());
+            return Result<std::unique_ptr<Window>>::Err(initResult.Error());
         }
-        return Result<Scope<Window>>::Ok(std::move(window));
+        return Result<std::unique_ptr<Window>>::Ok(std::move(window));
     }
 
     Result<void> Window::Init()
