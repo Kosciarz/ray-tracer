@@ -24,7 +24,6 @@
 #include "Utils/GLUtils.hpp"
 
 #include "Core/Color.hpp"
-#include "Core/Ray.hpp"
 #include "Core/Sphere.hpp"
 
 namespace fs = std::filesystem;
@@ -127,36 +126,10 @@ namespace raytracer {
     {
         const Timer timer;
 
-        Camera camera;
-        camera.SetAspectRatio(16.0 / 9.0);
-        camera.SetImageWidth(m_ViewportWidth);
+        Camera camera(16.0 / 9.0, m_ViewportWidth);
 
-        camera.Render(m_World, m_ImageData);
-
-
-        m_ImageData = std::vector<std::uint8_t>(camera.ImageWidth() * camera.ImageHeight() * 4, 0);
-        m_Image = Image::Create(camera.ImageWidth(), camera.ImageHeight(), ImageFormat::RGBA, nullptr, 0);
-
-
-        for (std::uint32_t y = 0; y < camera.ImageHeight(); y++)
-        {
-            for (std::uint32_t x = 0; x < camera.ImageWidth(); x++)
-            {
-                glm::vec3 pixelCenter = camera.Pixel00Location()
-                    + (static_cast<float>(x) * camera.PixelDeltaU()) + (static_cast<float>(y) * camera.PixelDeltaV());
-
-                glm::vec3 rayDirection = glm::normalize(pixelCenter - camera.Center());
-                Ray r{camera.Center(), rayDirection};
-
-                Color pixelColor = RayColor(r, m_World);
-                Color convertedColor = ScaleColor(pixelColor);
-
-                const std::size_t i = (camera.ImageHeight() - y - 1) * camera.ImageWidth() + x;
-                WriteColor(i, convertedColor);
-            }
-        }
-
-        m_Image->SetData(m_ImageData.data());
+        m_ImageData = camera.Render(m_World);
+        m_Image = Image::Create(camera.ImageWidth(), camera.ImageHeight(), ImageFormat::RGBA, m_ImageData.data(), 0);
 
         m_LastRenderTime = timer.ElapsedMilliseconds();
     }

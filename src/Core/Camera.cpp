@@ -1,28 +1,52 @@
 #include "Camera.hpp"
 
+#include <vector>
+#include <cstdint>
+
+#include <glm/vec3.hpp>
+
 #include "HittableList.hpp"
 
 namespace raytracer {
 
-    Camera::Camera()
-        : m_AspectRatio{1.0}, m_ImageWidth{100}, m_ImageHeight{0}, m_Center{}, m_Pixel00Location{},
+    Camera::Camera(const double aspectRatio, const std::uint32_t imageWidth)
+        : m_AspectRatio{aspectRatio}, m_ImageWidth{imageWidth}, m_ImageHeight{0}, m_Center{}, m_Pixel00Location{},
           m_PixelDeltaU{}, m_PixelDeltaV{}
-    {
-    }
-
-    void Camera::Render(const HittableList& world, std::vector<std::uint8_t>& imageData)
     {
         Init();
     }
 
-    void Camera::SetAspectRatio(const double ratio)
+    std::vector<std::uint8_t> Camera::Render(const HittableList& world) const
     {
-        m_AspectRatio = ratio;
+        std::vector<std::uint8_t> imageData(m_ImageWidth * m_ImageHeight * 4, 0);
+
+        for (std::uint32_t y = 0; y < m_ImageHeight; y++)
+        {
+            for (std::uint32_t x = 0; x < m_ImageWidth; x++)
+            {
+                glm::vec3 pixelCenter = m_Pixel00Location
+                    + (static_cast<float>(x) * m_PixelDeltaU) + (static_cast<float>(y) * m_PixelDeltaV);
+
+                glm::vec3 rayDirection = glm::normalize(pixelCenter - m_Center);
+                Ray r{m_Center, rayDirection};
+
+                Color pixelColor = RayColor(r, world);
+                Color convertedColor = ScaleColor(pixelColor);
+
+                const std::size_t index = (m_ImageHeight - y - 1) * m_ImageWidth + x;
+                WriteColor(imageData, index, convertedColor);
+            }
+        }
+
+        return imageData;
     }
 
-    void Camera::SetImageWidth(const std::uint32_t width)
+    void Camera::WriteColor(std::vector<uint8_t>& imageData, const std::size_t index, const Color& color)
     {
-        m_ImageWidth = width;
+        imageData[index * 4 + 0] = color.r;
+        imageData[index * 4 + 1] = color.g;
+        imageData[index * 4 + 2] = color.b;
+        imageData[index * 4 + 3] = 255;
     }
 
     double Camera::AspectRatio() const
@@ -38,26 +62,6 @@ namespace raytracer {
     std::uint32_t Camera::ImageHeight() const
     {
         return m_ImageHeight;
-    }
-
-    glm::vec3 Camera::Center() const
-    {
-        return m_Center;
-    }
-
-    glm::vec3 Camera::Pixel00Location() const
-    {
-        return m_Pixel00Location;
-    }
-
-    glm::vec3 Camera::PixelDeltaU() const
-    {
-        return m_PixelDeltaU;
-    }
-
-    glm::vec3 Camera::PixelDeltaV() const
-    {
-        return m_PixelDeltaV;
     }
 
     void Camera::Init()
@@ -87,12 +91,5 @@ namespace raytracer {
         m_Pixel00Location = viewportUpperLeft + (m_PixelDeltaU + m_PixelDeltaV) / static_cast<float>(2.0);
     }
 
-    void Camera::WriteColor(std::vector<uint8_t>& imageData, const std::size_t index, const Color& color)
-    {
-        imageData[index * 4] = color.r;
-        imageData[index * 4 + 1] = color.g;
-        imageData[index * 4 + 2] = color.b;
-        imageData[index * 4 + 3] = 0;
-    }
 
 }

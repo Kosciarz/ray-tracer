@@ -13,21 +13,13 @@ namespace raytracer {
     class Camera
     {
     public:
-        Camera();
+        Camera(double aspectRatio, std::uint32_t imageWidth);
 
-        void Render(const HittableList& world, std::vector<std::uint8_t>& imageData);
-
-        void SetAspectRatio(double ratio);
-        void SetImageWidth(std::uint32_t width);
+        std::vector<std::uint8_t> Render(const HittableList& world) const;
 
         double AspectRatio() const;
         std::uint32_t ImageWidth() const;
         std::uint32_t ImageHeight() const;
-
-        glm::vec3 Center() const;
-        glm::vec3 Pixel00Location() const;
-        glm::vec3 PixelDeltaU() const;
-        glm::vec3 PixelDeltaV() const;
 
     private:
         void Init();
