@@ -21,6 +21,7 @@ set(SOURCES
     "Core/HittableList.cpp"
     "Core/Sphere.cpp"
     "Core/Interval.cpp"
+    "Core/Camera.cpp"
 )
 
 set(HEADERS
@@ -39,7 +40,7 @@ set(HEADERS
     "Renderer/Shader.hpp"
     "Renderer/Buffer.hpp"
     "Renderer/VertexArray.hpp"
-    
+
     "Utils/RayTracerUtils.hpp"
     "Utils/GLUtils.hpp"
     "Utils/Result.hpp"
@@ -52,12 +53,13 @@ set(HEADERS
     "Core/HittableList.hpp"
     "Core/Sphere.hpp"
     "Core/Interval.hpp"
+    "Core/Camera.hpp"
 )
 
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES} ${HEADERS})
 
 add_library(RayCore STATIC ${SOURCES} ${HEADERS})
-target_compile_definitions(RayCore PRIVATE 
+target_compile_definitions(RayCore PRIVATE
     SHADERS_DIR="${CMAKE_SOURCE_DIR}/Shaders"
     ASSETS_DIR="${CMAKE_SOURCE_DIR}/Assets"
 )

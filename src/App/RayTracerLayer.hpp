@@ -36,7 +36,7 @@ namespace raytracer {
 
         void BuildScene();
 
-        void UpdateBuffer(std::size_t i, const Color& color);
+        void WriteColor(std::size_t index, const Color& color);
 
     private:
         std::uint32_t m_ViewportWidth, m_ViewportHeight;
