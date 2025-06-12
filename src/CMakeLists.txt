@@ -54,12 +54,7 @@ set(HEADERS
     "Core/Interval.hpp"
 )
 
-foreach(SOURCE IN LISTS SOURCES HEADERS)
-    message(STATUS "Adding file ${SOURCE}")
-endforeach()
-
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES} ${HEADERS})
-
 
 add_library(RayCore STATIC ${SOURCES} ${HEADERS})
 target_compile_definitions(RayCore PRIVATE 
@@ -86,10 +81,5 @@ target_include_directories(RayCore
 )
 target_link_libraries(RayCore PUBLIC glfw glad glm)
 
-
 add_executable(RayTracer "${CMAKE_CURRENT_SOURCE_DIR}/Main.cpp")
 target_link_libraries(RayTracer PRIVATE RayCore)
-
-if (MSVC AND CMAKE_BUILD_TYPE STREQUAL "Debug")
-    target_compile_options(RayTracer PRIVATE /ZI)    
-endif()
