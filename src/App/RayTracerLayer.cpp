@@ -38,7 +38,6 @@ namespace raytracer {
     {
 #ifndef NDEBUG
         const fs::path shaderPath{SHADERS_DIR};
-        const fs::path assetPath{ASSETS_DIR};
 #endif
 
         const ShaderPaths paths{shaderPath / "vs.vert", shaderPath / "fs.frag"};

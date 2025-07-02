@@ -28,7 +28,7 @@ namespace raytracer {
         bool OnWindowResize(const WindowResizeEvent& e);
 
     private:
-        std::unique_ptr<Window> m_Window;
+        Window m_Window;
         LayerStack m_LayerStack;
 
         bool m_Running = true;

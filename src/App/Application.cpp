@@ -22,19 +22,14 @@ namespace raytracer {
 
     Application::Application()
     {
-        auto window = Window::Create();
-        if (!window)
-            throw std::runtime_error{window.Error()};
-
-        m_Window = std::move(window.Value());
-        m_Window->SetEventCallback(
+        m_Window.SetEventCallback(
             [this](Event& event)
             {
                 OnEvent(event);
             });
 
         PushLayer(std::make_unique<RayTracerLayer>("RayTracerLayer"));
-        PushOverlay(std::make_unique<ImGuiLayer>(m_Window->GetWindow()));
+        PushOverlay(std::make_unique<ImGuiLayer>(m_Window.GlfwWindow()));
     }
 
     void Application::Run()
@@ -57,8 +52,8 @@ namespace raytracer {
             }
             ImGuiLayer::End();
 
-            m_Window->PollEvents();
-            m_Window->SwapBuffers();
+            m_Window.PollEvents();
+            m_Window.SwapBuffers();
         }
     }
 
@@ -90,9 +85,8 @@ namespace raytracer {
         for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it)
         {
             if (e.Handled)
-            {
                 break;
-            }
+
             (*it)->OnEvent(e);
         }
     }
