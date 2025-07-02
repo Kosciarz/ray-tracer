@@ -26,42 +26,26 @@ namespace raytracer {
     {
         std::string Vertex;
         std::string Fragment;
-
-        static Result<ShaderSources> Load(const ShaderPaths& paths);
     };
 
     class Shader
     {
     public:
-        static Result<std::shared_ptr<Shader>> Create(const ShaderSources& sources);
+        using Ptr = std::shared_ptr<Shader>;
 
-        Shader() = default;
-        explicit Shader(GLuint program);
+        static Ptr Create(const ShaderPaths& paths);
 
+        explicit Shader(const ShaderPaths& paths);
         ~Shader();
 
-        [[nodiscard]] GLuint GetID() const;
+        [[nodiscard]] GLuint ID() const;
 
         void Use() const;
         void Unuse() const;
 
-        void SetUniformBool(const std::string& name, bool value) const;
-
-        void SetUniformInt(const std::string& name, std::int32_t value) const;
-
-        void SetUniformFloat(const std::string& name, float value) const;
-
-        void SetUniformVec3(const std::string& name, const GLfloat* value) const;
-
-        void SetUniformVec4(const std::string& name, const GLfloat* value) const;
-
-        void SetUniformMat3(const std::string& name, const GLfloat* value) const;
-
-        void SetUniformMat4(const std::string& name, const GLfloat* value) const;
-
     private:
+        static Result<ShaderSources> LoadSources(const ShaderPaths& paths);
         static Result<GLuint> CompileShader(GLenum shaderType, const std::string& source);
-
         static Result<GLuint> LinkProgram(const ShaderHandles& handles);
 
     private:

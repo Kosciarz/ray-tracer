@@ -29,6 +29,7 @@
 namespace fs = std::filesystem;
 
 namespace raytracer {
+
     RayTracerLayer::RayTracerLayer(const std::string& name)
         : Layer{name}, m_ViewportWidth{1280}, m_ViewportHeight{720}
     {
@@ -38,21 +39,12 @@ namespace raytracer {
     {
 #ifndef NDEBUG
         const fs::path shaderPath{SHADERS_DIR};
+        ShaderPaths paths{shaderPath / "vs.vert", shaderPath / "fs.frag"};
+        m_Shader = Shader::Create(paths);
 #endif
 
-        const ShaderPaths paths{shaderPath / "vs.vert", shaderPath / "fs.frag"};
-        const auto& shaderSource = ShaderSources::Load(paths);
-        if (!shaderSource)
-            throw std::runtime_error{shaderSource.Error()};
-
-        const auto& shader = Shader::Create(shaderSource.Value());
-        if (!shader)
-            throw std::runtime_error{shader.Error()};
-
-        m_Shader = shader.Value();
-
         const std::vector vertices = {
-            // Positions         // Texture Coordinates
+            // Positions         // Texture Coords
             1.0f,  1.0f, 0.0f,   1.0f, 1.0f,   // top right
             1.0f, -1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
            -1.0f,  1.0f, 0.0f,   0.0f, 1.0f,   // top left
@@ -71,7 +63,6 @@ namespace raytracer {
     void RayTracerLayer::OnDetach()
     {
         m_VertexArray.reset();
-        m_Shader.reset();
         m_Image.reset();
     }
 
@@ -123,8 +114,7 @@ namespace raytracer {
 
     void RayTracerLayer::Render()
     {
-        const Timer timer;
-
+        Timer timer;
         Camera camera(16.0 / 9.0, m_ViewportWidth);
 
         m_ImageData = camera.Render(m_World);

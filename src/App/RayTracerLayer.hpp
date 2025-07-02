@@ -22,13 +22,10 @@ namespace raytracer {
         explicit RayTracerLayer(const std::string& name);
 
         void OnAttach() override;
-
         void OnDetach() override;
 
         void OnUpdate(float timeStep) override;
-
         void OnUIRender() override;
-
         void OnEvent(Event& e) override;
 
     private:
