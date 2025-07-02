@@ -54,8 +54,8 @@ namespace raytracer {
         m_VertexArray = VertexArray::Create();
         m_VertexArray->Bind();
         const auto vertexBuffer = VertexBuffer::Create(vertices.data(), vertices.size() * sizeof(float));
-        m_VertexArray->AddVertexBuffer(vertexBuffer, 0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), nullptr);
-        m_VertexArray->AddVertexBuffer(vertexBuffer, 1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
+        m_VertexArray->AddVertexBuffer(vertexBuffer, 0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(0));
+        m_VertexArray->AddVertexBuffer(vertexBuffer, 1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 
         BuildScene();
     }
@@ -63,6 +63,7 @@ namespace raytracer {
     void RayTracerLayer::OnDetach()
     {
         m_VertexArray.reset();
+        m_Shader.reset();
         m_Image.reset();
     }
 
@@ -117,18 +118,10 @@ namespace raytracer {
         Timer timer;
         Camera camera(16.0 / 9.0, m_ViewportWidth);
 
-        m_ImageData = camera.Render(m_World);
-        m_Image = Image::Create(camera.ImageWidth(), camera.ImageHeight(), ImageFormat::RGBA, m_ImageData.data(), 0);
+        auto imageData = camera.Render(m_World);
+        m_Image = Image::Create(camera.ImageWidth(), camera.ImageHeight(), ImageFormat::RGBA, imageData.data(), 0);
 
         m_LastRenderTime = timer.ElapsedMilliseconds();
-    }
-
-    void RayTracerLayer::WriteColor(const std::size_t index, const Color& color)
-    {
-        m_ImageData[index * 4 + 0] = color.r;
-        m_ImageData[index * 4 + 1] = color.g;
-        m_ImageData[index * 4 + 2] = color.b;
-        m_ImageData[index * 4 + 3] = 255;
     }
 
 }

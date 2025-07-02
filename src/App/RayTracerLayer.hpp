@@ -30,10 +30,7 @@ namespace raytracer {
 
     private:
         void Render();
-
         void BuildScene();
-
-        void WriteColor(std::size_t index, const Color& color);
 
     private:
         std::uint32_t m_ViewportWidth, m_ViewportHeight;
@@ -43,7 +40,6 @@ namespace raytracer {
         std::shared_ptr<Shader> m_Shader;
 
         std::shared_ptr<Image> m_Image;
-        std::vector<std::uint8_t> m_ImageData;
 
         HittableList m_World;
     };

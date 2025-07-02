@@ -10,8 +10,13 @@
 namespace raytracer {
 
     Camera::Camera(const double aspectRatio, const std::uint32_t imageWidth)
-        : m_AspectRatio{aspectRatio}, m_ImageWidth{imageWidth}, m_ImageHeight{0}, m_Center{}, m_Pixel00Location{},
-          m_PixelDeltaU{}, m_PixelDeltaV{}
+        : m_AspectRatio{aspectRatio},
+          m_ImageWidth{imageWidth},
+          m_ImageHeight{0},
+          m_Center{},
+          m_Pixel00Location{},
+          m_PixelDeltaU{},
+          m_PixelDeltaV{}
     {
         Init();
     }
@@ -24,8 +29,8 @@ namespace raytracer {
         {
             for (std::uint32_t x = 0; x < m_ImageWidth; x++)
             {
-                glm::vec3 pixelCenter = m_Pixel00Location
-                    + (static_cast<float>(x) * m_PixelDeltaU) + (static_cast<float>(y) * m_PixelDeltaV);
+                glm::vec3 pixelCenter = m_Pixel00Location + (static_cast<float>(x) * m_PixelDeltaU) + (static_cast<
+                    float>(y) * m_PixelDeltaV);
 
                 glm::vec3 rayDirection = glm::normalize(pixelCenter - m_Center);
                 Ray r{m_Center, rayDirection};
@@ -84,12 +89,11 @@ namespace raytracer {
         m_PixelDeltaV = viewportV / static_cast<float>(m_ImageHeight);
 
         // Calculate the top left corner of the viewport
-        glm::vec3 const viewportUpperLeft = m_Center - glm::vec3{0, 0, focalLength}
-            - viewportU / static_cast<float>(2.0) - viewportV / static_cast<float>(2.0);
+        glm::vec3 const viewportUpperLeft = m_Center - glm::vec3{0, 0, focalLength} - viewportU / static_cast<float>(
+            2.0) - viewportV / static_cast<float>(2.0);
 
         // Calculate the P(0,0) pixel
         m_Pixel00Location = viewportUpperLeft + (m_PixelDeltaU + m_PixelDeltaV) / static_cast<float>(2.0);
     }
-
 
 }

@@ -10,6 +10,8 @@
 
 namespace raytracer {
 
+    using Point3 = glm::vec3;
+
     class Camera
     {
     public:
@@ -31,8 +33,8 @@ namespace raytracer {
         std::uint32_t m_ImageWidth;
         std::uint32_t m_ImageHeight;
 
-        glm::vec3 m_Center;
-        glm::vec3 m_Pixel00Location;
+        Point3 m_Center;
+        Point3 m_Pixel00Location;
         glm::vec3 m_PixelDeltaU;
         glm::vec3 m_PixelDeltaV;
     };
