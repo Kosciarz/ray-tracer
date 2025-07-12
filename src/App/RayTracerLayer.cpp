@@ -22,7 +22,6 @@
 #include "Utils/Random.hpp"
 #include "Utils/GLUtils.hpp"
 
-#include "Core/Color.hpp"
 #include "Core/Sphere.hpp"
 
 namespace fs = std::filesystem;
@@ -52,8 +51,8 @@ namespace raytracer {
         m_VertexArray->Bind();
         
         const auto vertexBuffer = VertexBuffer::Create(vertices.data(), vertices.size() * sizeof(float));
-        m_VertexArray->AddVertexBuffer(vertexBuffer, 0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(0));
-        m_VertexArray->AddVertexBuffer(vertexBuffer, 1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+        m_VertexArray->AddVertexBuffer(vertexBuffer, 0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(0));
+        m_VertexArray->AddVertexBuffer(vertexBuffer, 1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 
         m_World.Add(std::make_unique<Sphere>(glm::vec3{0, 0, -1}, 0.5));
         m_World.Add(std::make_unique<Sphere>(glm::vec3{0, -100.5, -1}, 100));
