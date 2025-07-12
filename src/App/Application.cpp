@@ -2,9 +2,7 @@
 
 #include "Renderer/OpenGLHeaders.hpp"
 
-#include <filesystem>
 #include <memory>
-#include <iostream>
 
 #include "Window.hpp"
 #include "LayerStack.hpp"
@@ -14,7 +12,6 @@
 #include "Events/ApplicationEvents.hpp"
 
 #include "Utils/GLUtils.hpp"
-#include "Utils/Result.hpp"
 
 namespace fs = std::filesystem;
 
@@ -29,7 +26,6 @@ namespace raytracer {
             });
 
         PushLayer(std::make_unique<RayTracerLayer>("RayTracerLayer"));
-        PushOverlay(std::make_unique<ImGuiLayer>(m_Window.GlfwWindow()));
     }
 
     void Application::Run()
@@ -41,16 +37,7 @@ namespace raytracer {
             m_LastFrameTime = time;
 
             for (const auto& layer : m_LayerStack)
-            {
                 layer->OnUpdate(timeStep);
-            }
-
-            ImGuiLayer::Begin();
-            for (const auto& layer : m_LayerStack)
-            {
-                layer->OnUIRender();
-            }
-            ImGuiLayer::End();
 
             m_Window.PollEvents();
             m_Window.SwapBuffers();

@@ -1,7 +1,6 @@
 #include "RayTracerLayer.hpp"
 
 #include "Renderer/OpenGLHeaders.hpp"
-#include <imgui.h>
 #include <glm/vec3.hpp>
 
 #include <memory>
@@ -79,13 +78,6 @@ namespace raytracer {
 
     void RayTracerLayer::OnUIRender()
     {
-        ImGui::Begin("Settings");
-        ImGui::Text("Last render time: %.3fms", m_LastRenderTime);
-
-        if (ImGui::Button("Render"))
-            Render();
-
-        ImGui::End();
     }
 
     void RayTracerLayer::OnEvent(Event& e)

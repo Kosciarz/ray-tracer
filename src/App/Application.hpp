@@ -4,7 +4,6 @@
 
 #include "Window.hpp"
 #include "LayerStack.hpp"
-#include "ImGuiLayer.hpp"
 
 #include "Events/ApplicationEvents.hpp"
 
@@ -14,7 +13,6 @@ namespace raytracer {
     {
     public:
         Application();
-        ~Application() = default;
 
         void Run();
 
