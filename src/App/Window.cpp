@@ -1,13 +1,15 @@
 #include "Window.hpp"
 
 #include <memory>
+#include <string>
+#include <cstdint>
 
 #include "Events/Event.hpp"
 #include "Events/ApplicationEvents.hpp"
 
 #include "Renderer/OpenGLHeaders.hpp"
+#include "spdlog/spdlog.h"
 
-#include "Utils/Result.hpp"
 #include "Utils/RayTracerUtils.hpp"
 
 namespace raytracer {
@@ -17,33 +19,23 @@ namespace raytracer {
     {
     }
 
+
     Window::Window(const WindowConfig& config)
-        : m_Window{nullptr}, m_Title{config.Title}, m_Width{config.Width}, m_Height{config.Height}
+        : m_GlfwWindow{nullptr}, m_Title{config.Title}, m_Width{config.Width}, m_Height{config.Height}
     {
+        Init();
     }
 
     Window::~Window()
     {
-        glfwDestroyWindow(m_Window);
+        glfwDestroyWindow(m_GlfwWindow);
         s_WindowCount--;
 
         if (s_WindowCount == 0)
-        {
             glfwTerminate();
-        }
     }
 
-    Result<std::unique_ptr<Window>> Window::Create(const WindowConfig& config)
-    {
-        auto window = std::make_unique<Window>(config);
-        if (auto initResult = window->Init(); !initResult)
-        {
-            return Result<std::unique_ptr<Window>>::Err(initResult.Error());
-        }
-        return Result<std::unique_ptr<Window>>::Ok(std::move(window));
-    }
-
-    Result<void> Window::Init()
+    void Window::Init()
     {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
@@ -57,27 +49,26 @@ namespace raytracer {
         {
             if (!glfwInit())
             {
-                return Result<void>::Err("Failed to initialize GLFW");
+                throw std::runtime_error{"Failed to initialize GLFW"};
             }
         }
 
-        m_Window = glfwCreateWindow(m_Width, m_Height, m_Title.c_str(), nullptr, nullptr);
+        m_GlfwWindow = glfwCreateWindow(m_Width, m_Height, m_Title.c_str(), nullptr, nullptr);
         s_WindowCount++;
-        if (!m_Window)
-        {
-            return Result<void>::Err("Failed to create GLFW window");
-        }
+        if (!m_GlfwWindow)
+            throw std::runtime_error{"Failed to create GLFW window"};
 
-        glfwMakeContextCurrent(m_Window);
+        glfwMakeContextCurrent(m_GlfwWindow);
 
-        if (!gladLoadGL(glfwGetProcAddress))
-        {
-            return Result<void>::Err("Failed to initialize GLAD");
-        }
+        const int version = gladLoadGL(glfwGetProcAddress);
+        if (!version)
+            throw std::runtime_error{"Failed to initialize GLAD"};
 
-        glfwSetWindowUserPointer(m_Window, this);
+        spdlog::info("Loaded OpenGL {}.{}", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
 
-        glfwSetFramebufferSizeCallback(m_Window,
+        glfwSetWindowUserPointer(m_GlfwWindow, this);
+
+        glfwSetFramebufferSizeCallback(m_GlfwWindow,
             [](GLFWwindow* window, const int width, const int height)
             {
                 auto* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
@@ -88,7 +79,7 @@ namespace raytracer {
                 win->m_EventCallback(event);
             });
 
-        glfwSetWindowCloseCallback(m_Window,
+        glfwSetWindowCloseCallback(m_GlfwWindow,
             [](GLFWwindow* window)
             {
                 const auto* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
@@ -96,13 +87,11 @@ namespace raytracer {
                 win->m_EventCallback(event);
             });
 
-        glfwSetKeyCallback(m_Window,
+        glfwSetKeyCallback(m_GlfwWindow,
             [](GLFWwindow* window, const int key, int scancode, const int action, int mods)
             {
                 if (action != GLFW_PRESS)
-                {
                     return;
-                }
 
                 if (key == GLFW_KEY_ESCAPE)
                 {
@@ -111,8 +100,6 @@ namespace raytracer {
                     win->m_EventCallback(event);
                 }
             });
-
-        return Result<void>::Ok();
     }
 
     void Window::SetEventCallback(const std::function<void(Event&)>& callback)
@@ -122,7 +109,7 @@ namespace raytracer {
 
     bool Window::ShouldClose() const
     {
-        return glfwWindowShouldClose(m_Window);
+        return glfwWindowShouldClose(m_GlfwWindow);
     }
 
     void Window::PollEvents() const
@@ -132,12 +119,12 @@ namespace raytracer {
 
     void Window::SwapBuffers() const
     {
-        glfwSwapBuffers(m_Window);
+        glfwSwapBuffers(m_GlfwWindow);
     }
 
-    GLFWwindow* Window::GetWindow() const
+    GLFWwindow* Window::GlfwWindow() const
     {
-        return m_Window;
+        return m_GlfwWindow;
     }
 
     std::uint32_t Window::GetWidth() const

@@ -21,9 +21,7 @@ namespace raytracer {
     Color RayColor(const Ray& ray, const HittableList& object)
     {
         if (HitRecord rec{}; object.Hit(ray, Interval{0, g_Infinity}, rec))
-        {
-            return static_cast<float>(0.5) * (rec.normal + Color{1, 1, 1});
-        }
+            return static_cast<float>(0.5) * (rec.Normal + Color{1, 1, 1});
 
         const auto direction = glm::normalize(ray.Direction());
         const auto a = static_cast<float>(0.5) * (direction.y + static_cast<float>(1.0));

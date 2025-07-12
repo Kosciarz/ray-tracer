@@ -29,7 +29,7 @@ namespace raytracer {
             if (object->Hit(ray, Interval{rayT.Min(), closestSoFar}, tempRec))
             {
                 hitAnything = true;
-                closestSoFar = tempRec.t;
+                closestSoFar = tempRec.T;
                 rec = tempRec;
             }
         }

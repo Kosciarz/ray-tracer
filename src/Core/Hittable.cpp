@@ -6,8 +6,8 @@ namespace raytracer {
     
     void HitRecord::SetFaceNormal(const Ray& ray, const glm::vec3& outwardNormal)
     {
-        frontFace = glm::dot(ray.Direction(), outwardNormal) < 0;
-        normal = frontFace ? outwardNormal : -outwardNormal;
+        FrontFace = glm::dot(ray.Direction(), outwardNormal) < 0;
+        Normal = FrontFace ? outwardNormal : -outwardNormal;
     }
 
 }

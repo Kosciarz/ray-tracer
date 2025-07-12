@@ -1,12 +1,11 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.25)
 
 project("RayTracer" VERSION 0.0.1)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Set the output directories
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
@@ -14,9 +13,6 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 message(STATUS "Output dir: ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 message(STATUS "Library dir: ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
 message(STATUS "Archive dir: ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}")
-
-# Export compile commands for IDEs and tools
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include(FetchContent)
 
@@ -45,6 +41,13 @@ FetchContent_Declare(
 	GIT_SHALLOW ON
 )
 
+FetchContent_Declare(
+	spdlog
+	GIT_REPOSITORY https://github.com/gabime/spdlog.git
+	GIT_TAG v1.15.3
+	GIT_SHALLOW ON
+)
+
 find_package(OpenGL REQUIRED)
 
 set(STB_IMAGE_DIR ${CMAKE_BINARY_DIR}/external/stb)
@@ -57,14 +60,8 @@ if(NOT EXISTS ${STB_IMAGE_DIR}/stb_image.h)
 	)
 endif()
 
-FetchContent_Declare(
-	imgui
-	GIT_REPOSITORY https://github.com/ocornut/imgui/
-	GIT_TAG v1.91.9b-docking
-	GIT_SHALLOW ON
-)
 
-FetchContent_MakeAvailable(glfw3 glm glad imgui)
+FetchContent_MakeAvailable(glfw3 glm glad spdlog)
 
 add_subdirectory("${glad_SOURCE_DIR}/cmake" glad_cmake)
 glad_add_library(glad REPRODUCIBLE EXCLUDE_FROM_ALL LOADER API gl:core=4.6)

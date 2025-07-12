@@ -9,10 +9,10 @@ namespace raytracer {
 
     struct HitRecord
     {
-        glm::vec3 point;
-        glm::vec3 normal;
-        double t;
-        bool frontFace;
+        glm::vec3 Point;
+        glm::vec3 Normal;
+        double T;
+        bool FrontFace;
 
         void SetFaceNormal(const Ray& ray, const glm::vec3& outwardNormal);
     };

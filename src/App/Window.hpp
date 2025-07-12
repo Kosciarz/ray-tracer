@@ -2,12 +2,12 @@
 
 #include <functional>
 #include <string>
+#include <cstdint>
 
 #include "Events/Event.hpp"
 
 #include "Renderer/OpenGLHeaders.hpp"
 
-#include "Utils/Result.hpp"
 #include "Utils/RayTracerUtils.hpp"
 
 namespace raytracer {
@@ -24,35 +24,24 @@ namespace raytracer {
     class Window
     {
     public:
-        explicit Window(const WindowConfig& config);
+        explicit Window(const WindowConfig& config = WindowConfig());
         ~Window();
-
-        Window(const Window&) = delete;
-        Window& operator=(const Window&) = delete;
-
-        Window(Window&&) noexcept = default;
-        Window& operator=(Window&&) noexcept = default;
-
-        static Result<std::unique_ptr<Window>> Create(const WindowConfig& config = WindowConfig());
 
         void SetEventCallback(const std::function<void(Event&)>& callback);
 
         bool ShouldClose() const;
-
         void PollEvents() const;
-
         void SwapBuffers() const;
 
-        GLFWwindow* GetWindow() const;
-
-        std::uint32_t GetWidth() const;
-        std::uint32_t GetHeight() const;
-
-    private:
-        Result<void> Init();
+        GLFWwindow* GlfwWindow() const;
+        [[nodiscard]] std::uint32_t GetWidth() const;
+        [[nodiscard]] std::uint32_t GetHeight() const;
 
     private:
-        GLFWwindow* m_Window;
+        void Init();
+
+    private:
+        GLFWwindow* m_GlfwWindow;
         std::string m_Title;
         std::uint32_t m_Width;
         std::uint32_t m_Height;

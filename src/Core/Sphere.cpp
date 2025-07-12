@@ -40,9 +40,9 @@ namespace raytracer {
             }
         }
 
-        record.t = root;
-        record.point = ray.At(static_cast<float>(record.t));
-        const glm::vec3 outwardNormal = (record.point - m_Center) / static_cast<float>(m_Radius);
+        record.T = root;
+        record.Point = ray.At(static_cast<float>(record.T));
+        const glm::vec3 outwardNormal = (record.Point - m_Center) / static_cast<float>(m_Radius);
         record.SetFaceNormal(ray, outwardNormal);
 
         return true;

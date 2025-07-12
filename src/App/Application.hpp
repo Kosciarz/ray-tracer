@@ -3,8 +3,7 @@
 #include <memory>
 
 #include "Window.hpp"
-#include "LayerStack.hpp"
-#include "ImGuiLayer.hpp"
+#include "RayTracerLayer.hpp"
 
 #include "Events/ApplicationEvents.hpp"
 
@@ -14,13 +13,8 @@ namespace raytracer {
     {
     public:
         Application();
-        ~Application() = default;
 
-        void Run();
-
-        void PushLayer(std::unique_ptr<Layer> layer);
-        void PushOverlay(std::unique_ptr<Layer> layer);
-
+        void Run() const;
         void OnEvent(Event& e);
 
     private:
@@ -28,11 +22,10 @@ namespace raytracer {
         bool OnWindowResize(const WindowResizeEvent& e);
 
     private:
-        std::unique_ptr<Window> m_Window;
-        LayerStack m_LayerStack;
+        Window m_Window;
+        std::unique_ptr<RayTracerLayer> m_RayTracerLayer;
 
         bool m_Running = true;
-        float m_LastFrameTime = 0.0f;
     };
 
 }

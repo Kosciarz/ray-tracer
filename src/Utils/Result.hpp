@@ -81,7 +81,7 @@ namespace raytracer {
 
         explicit operator bool() const
         {
-            return m_Success;
+            return IsOk();
         }
 
     private:
@@ -148,7 +148,7 @@ namespace raytracer {
 
         explicit operator bool() const
         {
-            return m_Success;
+            return IsOk();
         }
 
     private:
