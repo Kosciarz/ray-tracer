@@ -54,12 +54,9 @@ set(HEADERS
     "Core/Camera.hpp"
 )
 
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES} ${HEADERS})
-
 add_library(RayCore STATIC ${SOURCES} ${HEADERS})
 target_compile_definitions(RayCore PRIVATE
     SHADERS_DIR="${CMAKE_SOURCE_DIR}/Shaders"
-    ASSETS_DIR="${CMAKE_SOURCE_DIR}/Assets"
 )
 target_include_directories(RayCore
     PUBLIC
@@ -68,7 +65,9 @@ target_include_directories(RayCore
     PRIVATE
     ${STB_IMAGE_DIR}
 )
-target_link_libraries(RayCore PUBLIC glfw glad glm)
+target_link_libraries(RayCore PUBLIC
+    glfw glad glm spdlog::spdlog
+)
 
 add_executable(RayTracer "${CMAKE_CURRENT_SOURCE_DIR}/Main.cpp")
 target_link_libraries(RayTracer PRIVATE RayCore)
