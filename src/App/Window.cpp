@@ -8,6 +8,7 @@
 #include "Events/ApplicationEvents.hpp"
 
 #include "Renderer/OpenGLHeaders.hpp"
+#include "spdlog/spdlog.h"
 
 #include "Utils/RayTracerUtils.hpp"
 
@@ -59,8 +60,11 @@ namespace raytracer {
 
         glfwMakeContextCurrent(m_GlfwWindow);
 
-        if (!gladLoadGL(glfwGetProcAddress))
+        const int version = gladLoadGL(glfwGetProcAddress);
+        if (!version)
             throw std::runtime_error{"Failed to initialize GLAD"};
+
+        spdlog::info("Loaded OpenGL {}.{}", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
 
         glfwSetWindowUserPointer(m_GlfwWindow, this);
 

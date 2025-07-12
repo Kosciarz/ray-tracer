@@ -22,6 +22,7 @@
 #include "Utils/GLUtils.hpp"
 
 #include "Core/Sphere.hpp"
+#include "spdlog/spdlog.h"
 
 namespace fs = std::filesystem;
 
@@ -101,6 +102,7 @@ namespace raytracer {
         m_Image = Image::Create(camera.ImageWidth(), camera.ImageHeight(), ImageFormat::RGBA, imageData.data(), 0);
 
         m_LastRenderTime = timer.ElapsedMilliseconds();
+        spdlog::info("Render time: {:.2f}ms", m_LastRenderTime);
     }
 
 }
