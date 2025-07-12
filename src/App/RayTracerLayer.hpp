@@ -11,7 +11,6 @@
 #include "Renderer/Image.hpp"
 #include "Renderer/Shader.hpp"
 
-#include "Core/Color.hpp"
 #include "Core/HittableList.hpp"
 
 namespace raytracer {
@@ -30,7 +29,6 @@ namespace raytracer {
 
     private:
         void Render();
-        void BuildScene();
 
     private:
         std::uint32_t m_ViewportWidth, m_ViewportHeight;
@@ -38,9 +36,7 @@ namespace raytracer {
 
         std::shared_ptr<VertexArray> m_VertexArray;
         std::shared_ptr<Shader> m_Shader;
-
         std::shared_ptr<Image> m_Image;
-
         HittableList m_World;
     };
 

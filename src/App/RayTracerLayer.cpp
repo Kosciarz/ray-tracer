@@ -2,7 +2,6 @@
 
 #include "Renderer/OpenGLHeaders.hpp"
 #include <imgui.h>
-#include <glm/glm.hpp>
 #include <glm/vec3.hpp>
 
 #include <memory>
@@ -38,26 +37,26 @@ namespace raytracer {
     void RayTracerLayer::OnAttach()
     {
 #ifndef NDEBUG
-        const fs::path shaderPath{SHADERS_DIR};
-        ShaderPaths paths{shaderPath / "vs.vert", shaderPath / "fs.frag"};
-        m_Shader = Shader::Create(paths);
+        const fs::path shadersPath{SHADERS_DIR};
+        m_Shader = Shader::Create({shadersPath / "vs.vert", shadersPath / "fs.frag"});
 #endif
 
-        const std::vector vertices = {
-            // Positions         // Texture Coords
-            1.0f,  1.0f, 0.0f,   1.0f, 1.0f,   // top right
-            1.0f, -1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
-           -1.0f,  1.0f, 0.0f,   0.0f, 1.0f,   // top left
-           -1.0f, -1.0f, 0.0f,   0.0f, 0.0f    // bottom left 
+        const std::vector<float> vertices = {
+            1.0f,  1.0f,   1.0f, 1.0f,   // top right
+            1.0f, -1.0f,   1.0f, 0.0f,   // bottom right
+           -1.0f,  1.0f,   0.0f, 1.0f,   // top left
+           -1.0f, -1.0f,   0.0f, 0.0f    // bottom left
         };
 
         m_VertexArray = VertexArray::Create();
         m_VertexArray->Bind();
+        
         const auto vertexBuffer = VertexBuffer::Create(vertices.data(), vertices.size() * sizeof(float));
-        m_VertexArray->AddVertexBuffer(vertexBuffer, 0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(0));
+        m_VertexArray->AddVertexBuffer(vertexBuffer, 0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(0));
         m_VertexArray->AddVertexBuffer(vertexBuffer, 1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 
-        BuildScene();
+        m_World.Add(std::make_unique<Sphere>(glm::vec3{0, 0, -1}, 0.5));
+        m_World.Add(std::make_unique<Sphere>(glm::vec3{0, -100.5, -1}, 100));
     }
 
     void RayTracerLayer::OnDetach()
@@ -87,9 +86,6 @@ namespace raytracer {
         if (ImGui::Button("Render"))
             Render();
 
-        if (ImGui::Button("Build Scene"))
-            BuildScene();
-
         ImGui::End();
     }
 
@@ -105,20 +101,12 @@ namespace raytracer {
             });
     }
 
-    void RayTracerLayer::BuildScene()
-    {
-        m_World.Clear();
-
-        m_World.Add(std::make_unique<Sphere>(glm::vec3{0, 0, -1}, 0.5));
-        m_World.Add(std::make_unique<Sphere>(glm::vec3{0, -100.5, -1}, 100));
-    }
-
     void RayTracerLayer::Render()
     {
-        Timer timer;
-        Camera camera(16.0 / 9.0, m_ViewportWidth);
+        const Timer timer;
+        const Camera camera(16.0 / 9.0, m_ViewportWidth);
 
-        auto imageData = camera.Render(m_World);
+        const auto imageData = camera.Render(m_World);
         m_Image = Image::Create(camera.ImageWidth(), camera.ImageHeight(), ImageFormat::RGBA, imageData.data(), 0);
 
         m_LastRenderTime = timer.ElapsedMilliseconds();
