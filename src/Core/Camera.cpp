@@ -7,22 +7,20 @@
 
 #include "HittableList.hpp"
 
+static void WriteColor(std::vector<uint8_t>& imageData, const std::size_t index, const raytracer::Color& color)
+{
+    imageData[index * 4 + 0] = color.r;
+    imageData[index * 4 + 1] = color.g;
+    imageData[index * 4 + 2] = color.b;
+    imageData[index * 4 + 3] = 255;
+}
+
 namespace raytracer {
 
-    Camera::Camera(const double aspectRatio, const std::uint32_t imageWidth)
-        : m_AspectRatio{aspectRatio},
-          m_ImageWidth{imageWidth},
-          m_ImageHeight{0},
-          m_Center{},
-          m_Pixel00Location{},
-          m_PixelDeltaU{},
-          m_PixelDeltaV{}
+    std::vector<std::uint8_t> Camera::Render(const HittableList& world)
     {
         Init();
-    }
 
-    std::vector<std::uint8_t> Camera::Render(const HittableList& world) const
-    {
         std::vector<std::uint8_t> imageData(m_ImageWidth * m_ImageHeight * 4, 0);
 
         for (std::uint32_t y = 0; y < m_ImageHeight; y++)
@@ -46,12 +44,14 @@ namespace raytracer {
         return imageData;
     }
 
-    void Camera::WriteColor(std::vector<uint8_t>& imageData, const std::size_t index, const Color& color)
+    void Camera::SetAspectRatio(const double ratio)
     {
-        imageData[index * 4 + 0] = color.r;
-        imageData[index * 4 + 1] = color.g;
-        imageData[index * 4 + 2] = color.b;
-        imageData[index * 4 + 3] = 255;
+        m_AspectRatio = ratio;
+    }
+
+    void Camera::SetImageWidth(const std::uint32_t width)
+    {
+        m_ImageWidth = width;
     }
 
     double Camera::AspectRatio() const

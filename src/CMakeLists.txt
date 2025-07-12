@@ -1,8 +1,6 @@
 set(SOURCES
     "App/Application.cpp"
     "App/Window.cpp"
-    "App/Layer.cpp"
-    "App/LayerStack.cpp"
     "App/RayTracerLayer.cpp"
 
     "Events/ApplicationEvents.cpp"
@@ -26,8 +24,6 @@ set(SOURCES
 set(HEADERS
     "App/Application.hpp"
     "App/Window.hpp"
-    "App/Layer.hpp"
-    "App/LayerStack.hpp"
     "App/RayTracerLayer.hpp"
 
     "Events/Event.hpp"

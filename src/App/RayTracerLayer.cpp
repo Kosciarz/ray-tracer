@@ -2,10 +2,10 @@
 
 #include "Renderer/OpenGLHeaders.hpp"
 #include <glm/vec3.hpp>
+#include "spdlog/spdlog.h"
 
 #include <memory>
-#include <filesystem>
-#include <iostream>
+#include <cstdint>
 #include <vector>
 
 #include "Core/Camera.hpp"
@@ -18,22 +18,21 @@
 #include "Renderer/Shader.hpp"
 
 #include "Utils/Timer.hpp"
-#include "Utils/Random.hpp"
 #include "Utils/GLUtils.hpp"
 
 #include "Core/Sphere.hpp"
-#include "spdlog/spdlog.h"
 
 namespace fs = std::filesystem;
 
 namespace raytracer {
 
-    RayTracerLayer::RayTracerLayer(const std::string& name)
-        : Layer{name}, m_ViewportWidth{1280}, m_ViewportHeight{720}
+    RayTracerLayer::RayTracerLayer(const std::uint32_t imageWidth)
+        : m_ImageWidth{imageWidth}
     {
+        Init();
     }
 
-    void RayTracerLayer::OnAttach()
+    void RayTracerLayer::Init()
     {
 #ifndef NDEBUG
         const fs::path shadersPath{SHADERS_DIR};
@@ -58,16 +57,9 @@ namespace raytracer {
         m_World.Add(std::make_unique<Sphere>(glm::vec3{0, -100.5, -1}, 100));
     }
 
-    void RayTracerLayer::OnDetach()
+    void RayTracerLayer::Update()
     {
-        m_VertexArray.reset();
-        m_Shader.reset();
-        m_Image.reset();
-    }
-
-    void RayTracerLayer::OnUpdate(float timeStep)
-    {
-        if (!m_Image)
+        if (!m_Image || m_ImageWidth != m_Image->Width())
             Render();
 
         m_VertexArray->Bind();
@@ -77,18 +69,13 @@ namespace raytracer {
         GL_CHECK(glDrawArrays(GL_TRIANGLE_STRIP, 0, 4));
     }
 
-    void RayTracerLayer::OnUIRender()
-    {
-    }
-
-    void RayTracerLayer::OnEvent(Event& e)
+    void RayTracerLayer::HandleEvent(Event& e)
     {
         EventDispatcher dispatcher(e);
         dispatcher.Dispatch<WindowResizeEvent>(
             [this](const WindowResizeEvent& e)
             {
-                m_ViewportWidth = e.GetWidth();
-                m_ViewportHeight = e.GetHeight();
+                m_ImageWidth = e.GetWidth();
                 return false;
             });
     }
@@ -96,10 +83,12 @@ namespace raytracer {
     void RayTracerLayer::Render()
     {
         const Timer timer;
-        const Camera camera(16.0 / 9.0, m_ViewportWidth);
 
-        const auto imageData = camera.Render(m_World);
-        m_Image = Image::Create(camera.ImageWidth(), camera.ImageHeight(), ImageFormat::RGBA, imageData.data(), 0);
+        m_Camera.SetAspectRatio(16.0 / 9.0);
+        m_Camera.SetImageWidth(m_ImageWidth);
+
+        const auto imageData = m_Camera.Render(m_World);
+        m_Image = Image::Create(m_Camera.ImageWidth(), m_Camera.ImageHeight(), ImageFormat::RGBA, imageData.data(), 0);
 
         m_LastRenderTime = timer.ElapsedMilliseconds();
         spdlog::info("Render time: {:.2f}ms", m_LastRenderTime);

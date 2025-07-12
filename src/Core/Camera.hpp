@@ -15,9 +15,12 @@ namespace raytracer {
     class Camera
     {
     public:
-        Camera(double aspectRatio, std::uint32_t imageWidth);
+        Camera() = default;
 
-        std::vector<std::uint8_t> Render(const HittableList& world) const;
+        std::vector<std::uint8_t> Render(const HittableList& world);
+
+        void SetAspectRatio(double ratio);
+        void SetImageWidth(std::uint32_t width);
 
         double AspectRatio() const;
         std::uint32_t ImageWidth() const;
@@ -25,8 +28,6 @@ namespace raytracer {
 
     private:
         void Init();
-
-        static void WriteColor(std::vector<uint8_t>& imageData, std::size_t index, const Color& color);
 
     private:
         double m_AspectRatio;
