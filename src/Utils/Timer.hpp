@@ -13,7 +13,6 @@ namespace raytracer {
     public:
         using Clock = std::chrono::high_resolution_clock;
 
-    public:
         Timer()
             : m_Start{Clock::now()}
         {
@@ -24,22 +23,22 @@ namespace raytracer {
             m_Start = Clock::now();
         }
 
-        [[nodicard]] double ElapsedSeconds() const noexcept
+        [[nodiscard]] double ElapsedSeconds() const noexcept
         {
             return std::chrono::duration<double>(GetTimeDifference()).count();
         }
 
-        [[nodicard]] double ElapsedMilliseconds() const noexcept
+        [[nodiscard]] double ElapsedMilliseconds() const noexcept
         {
             return std::chrono::duration<double, std::milli>(GetTimeDifference()).count();
         }
 
-        [[nodicard]] double ElapsedMicroseconds() const noexcept
+        [[nodiscard]] double ElapsedMicroseconds() const noexcept
         {
             return std::chrono::duration<double, std::micro>(GetTimeDifference()).count();
         }
 
-        [[nodicard]] double ElapsedNanoseconds() const noexcept
+        [[nodiscard]] double ElapsedNanoseconds() const noexcept
         {
             return std::chrono::duration<double, std::nano>(GetTimeDifference()).count();
         }
