@@ -30,6 +30,7 @@ namespace raytracer {
     {
         while (m_Running)
         {
+            glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
             m_RayTracerLayer->Update();
