@@ -6,6 +6,7 @@
 
 #include "Events/Event.hpp"
 #include "Events/ApplicationEvents.hpp"
+#include "Events/KeyEvents.hpp"
 
 #include "Renderer/OpenGLHeaders.hpp"
 #include "spdlog/spdlog.h"
@@ -71,7 +72,7 @@ namespace raytracer {
         glfwSetFramebufferSizeCallback(m_GlfwWindow,
             [](GLFWwindow* window, const int width, const int height)
             {
-                auto* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
+                Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
                 win->m_Width = width;
                 win->m_Height = height;
 
@@ -82,7 +83,7 @@ namespace raytracer {
         glfwSetWindowCloseCallback(m_GlfwWindow,
             [](GLFWwindow* window)
             {
-                const auto* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
+                const Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
                 WindowCloseEvent event;
                 win->m_EventCallback(event);
             });
@@ -95,8 +96,15 @@ namespace raytracer {
 
                 if (key == GLFW_KEY_ESCAPE)
                 {
-                    const auto* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
+                    const Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
                     WindowCloseEvent event;
+                    win->m_EventCallback(event);
+                }
+
+                if (key == GLFW_KEY_R)
+                {
+                    const Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
+                    KeyPressedEvent event{Key::R};
                     win->m_EventCallback(event);
                 }
             });

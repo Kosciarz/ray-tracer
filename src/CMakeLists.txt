@@ -4,6 +4,7 @@ set(SOURCES
     "App/RayTracerLayer.cpp"
 
     "Events/ApplicationEvents.cpp"
+    "Events/KeyEvents.cpp"
 
     "Renderer/Image.cpp"
     "Renderer/Shader.cpp"
@@ -28,6 +29,7 @@ set(HEADERS
 
     "Events/Event.hpp"
     "Events/ApplicationEvents.hpp"
+    "Events/KeyEvents.hpp"
 
     "Renderer/OpenGLHeaders.hpp"
     "Renderer/Image.hpp"

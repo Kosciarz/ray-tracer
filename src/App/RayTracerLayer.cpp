@@ -13,6 +13,7 @@
 
 #include "Events/Event.hpp"
 #include "Events/ApplicationEvents.hpp"
+#include "Events/KeyEvents.hpp"
 
 #include "Renderer/VertexArray.hpp"
 #include "Renderer/Buffer.hpp"
@@ -78,6 +79,16 @@ namespace raytracer {
                 m_ImageWidth = e.GetWidth();
                 return false;
             });
+
+        dispatcher.Dispatch<KeyPressedEvent>(
+            [this](const KeyPressedEvent& e)
+            {
+                if (e.GetKey() == Key::R)
+                    Render();
+                    
+                return true;
+            }
+        );
     }
 
     void RayTracerLayer::Render()

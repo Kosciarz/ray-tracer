@@ -7,7 +7,7 @@ namespace raytracer {
     enum class EventType
     {
         WindowClose = 0, WindowResize,
-        KeyPressed, KeyReleased
+        KeyPressed
     };
 
 #define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return EventType::type; };
