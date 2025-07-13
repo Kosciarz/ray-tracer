@@ -1,11 +1,11 @@
 #include "Application.hpp"
 
-#include "Renderer/OpenGLHeaders.hpp"
-
 #include <memory>
 
 #include "Window.hpp"
 #include "RayTracerLayer.hpp"
+
+#include "Renderer/OpenGLHeaders.hpp"
 
 #include "Events/Event.hpp"
 #include "Events/ApplicationEvents.hpp"
@@ -17,20 +17,21 @@ namespace fs = std::filesystem;
 namespace raytracer {
 
     Application::Application()
+        : m_RayTracerLayer{std::make_unique<RayTracerLayer>(m_Window.GetWidth())}
     {
         m_Window.SetEventCallback(
             [this](Event& event)
             {
                 OnEvent(event);
             });
-
-        m_RayTracerLayer = std::make_unique<RayTracerLayer>(m_Window.GetWidth());
     }
 
     void Application::Run() const
     {
         while (m_Running)
         {
+            glClear(GL_COLOR_BUFFER_BIT);
+
             m_RayTracerLayer->Update();
 
             m_Window.PollEvents();

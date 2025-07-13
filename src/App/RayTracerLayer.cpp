@@ -9,6 +9,8 @@
 #include <vector>
 
 #include "Core/Camera.hpp"
+#include "Core/Sphere.hpp"
+
 #include "Events/Event.hpp"
 #include "Events/ApplicationEvents.hpp"
 
@@ -19,8 +21,6 @@
 
 #include "Utils/Timer.hpp"
 #include "Utils/GLUtils.hpp"
-
-#include "Core/Sphere.hpp"
 
 namespace fs = std::filesystem;
 
@@ -90,8 +90,7 @@ namespace raytracer {
         const auto imageData = m_Camera.Render(m_World);
         m_Image = Image::Create(m_Camera.ImageWidth(), m_Camera.ImageHeight(), ImageFormat::RGBA, imageData.data(), 0);
 
-        m_LastRenderTime = timer.ElapsedMilliseconds();
-        spdlog::info("Render time: {:.2f}ms", m_LastRenderTime);
+        spdlog::info("Render time: {:.2f}ms", timer.ElapsedMilliseconds());
     }
 
 }

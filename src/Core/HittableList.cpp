@@ -37,14 +37,4 @@ namespace raytracer {
         return hitAnything;
     }
 
-    std::vector<std::shared_ptr<Hittable>>& HittableList::Objects()
-    {
-        return m_Objects;
-    }
-
-    const std::vector<std::shared_ptr<Hittable>>& HittableList::Objects() const
-    {
-        return m_Objects;
-    }
-
 }

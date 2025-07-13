@@ -34,7 +34,6 @@ namespace raytracer {
         Camera m_Camera;
 
         std::uint32_t m_ImageWidth;
-        float m_LastRenderTime = 0.0;
     };
 
 }
